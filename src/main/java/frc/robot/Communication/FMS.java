@@ -9,15 +9,13 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public class FMS{
 
-    //Gets a static reference to the driver station
-    private static DriverStation ds = DriverStation.getInstance();
 
     /**
      * Get the alliance the robot is currently on
      * @return the robot's alliance
      */
     public static DriverStation.Alliance getAlliance(){
-        return ds.getAlliance();
+        return DriverStation.getInstance().getAlliance();
     }
 
     /**
@@ -33,7 +31,7 @@ public class FMS{
      * @return the event name
      */
     public static String getEventName(){
-        return ds.getEventName();
+        return DriverStation.getInstance().getEventName();
     }
 
     /**
@@ -41,7 +39,7 @@ public class FMS{
      * @return the game message
      */
     public static String getGameMessage(){
-        return ds.getGameSpecificMessage();
+        return DriverStation.getInstance().getGameSpecificMessage();
     }
 
     /**
@@ -49,7 +47,7 @@ public class FMS{
      * @return the match number
      */
     public static int getMatchNumber(){
-        return ds.getMatchNumber();
+        return DriverStation.getInstance().getMatchNumber();
     }
 
     /**
@@ -57,7 +55,7 @@ public class FMS{
      * @return the match time
      */
     public static double getMatchTime(){
-        return ds.getMatchTime();
+        return DriverStation.getInstance().getMatchTime();
     }
 
     /**
