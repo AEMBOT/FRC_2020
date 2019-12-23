@@ -119,17 +119,31 @@ public class PID {
         d = p - lastError;
         lastError = p;
 
+        //If we are trying to account for the overflow of the turing
+        if(accountOverflow){
 
-        //TODO: Find a way to deal with range edge cases
-
-        //If the value is in the acceptable range set the flag to true
-        if(currentValue > setpoint-acceptableRange && currentValue < setpoint+acceptableRange) {
-            inRange = true;
-            output = (P * p + I * i + D * d);
+            //Use the output of error in the PID loop to determine if its in range (eg. P is only outputting a -1 or a 1 then stop)
+            //Using 0 because that is the point the loop is technically trying to get to
+            if(p > 0-acceptableRange && p < 0+acceptableRange){
+                inRange = true;
+                output = (P * p + I * i + D * d);
+            }
+            else{
+                inRange = false;
+                output = (P * p + I * i + D *d);
+            }
+            
         }
         else{
-            inRange = false;
-            output = (P * p + I * i + D *d);
+            //If the value is in the acceptable range set the flag to true
+            if(currentValue > setpoint-acceptableRange && currentValue < setpoint+acceptableRange) {
+                inRange = true;
+                output = (P * p + I * i + D * d);
+            }
+            else{
+                inRange = false;
+                output = (P * p + I * i + D *d);
+            }
         }
 
         //Scales the value to the max output
