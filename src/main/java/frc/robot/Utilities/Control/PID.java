@@ -26,6 +26,9 @@ public class PID {
     private boolean inRange;
     private double acceptableRange;
 
+    //Variable that determines whether or not to account for edge cases in this loop
+    private boolean accountOverflow;
+
     //The point the module is trying to reach
     private double setpoint;
 
@@ -34,11 +37,16 @@ public class PID {
 
     /**
      * Initialize the variables as well as assign PID constants
+     * When accountOverflow is being used the getCorrectYaw method must also be used
      * @param P the P scalar
      * @param I the I scalar
      * @param D the D scalar
+     * @param accountOverflow will alter the value to account for edge cases
      */
-    public PID(double P, double I, double D){
+    public PID(double P, double I, double D, boolean accountOverflow){
+
+        this.accountOverflow = accountOverflow;
+
         this.P = P;
         this.I = I;
         this.D = D;
@@ -93,8 +101,16 @@ public class PID {
      */
     public double calcOutput(double currentValue){
 
-        //Calculate the difference / error
-        p = setpoint - currentValue;
+        if (accountOverflow)
+        {
+            //Calculate the error to account for overflow
+            p = (((setpoint-currentValue)+180) % 360)-180;
+        }
+        else{
+
+            //Calculate the difference / error
+            p = setpoint - currentValue;
+        }
 
         //Error over time
         i += p;
@@ -102,6 +118,9 @@ public class PID {
         //Error rate of change
         d = p - lastError;
         lastError = p;
+
+
+        //TODO: Find a way to deal with range edge cases
 
         //If the value is in the acceptable range set the flag to true
         if(currentValue > setpoint-acceptableRange && currentValue < setpoint+acceptableRange) {

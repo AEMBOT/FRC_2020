@@ -2,6 +2,8 @@ package frc.robot.Hardware.Sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import org.opencv.core.Mat;
+
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
@@ -37,6 +39,20 @@ public class NavX{
      */
     public float getYaw(){
         return ahrs.getYaw();
+    }
+
+    /**
+     * Get the correct yaw to 0-360
+     * @return the correct yaw
+     */
+    public double getCorrectedYaw(){
+        double yaw = ahrs.getYaw();
+        if (yaw >= 0){
+            return yaw;
+        }
+        else{
+            return (360-Math.abs(yaw));
+        }
     }
 
     /**
