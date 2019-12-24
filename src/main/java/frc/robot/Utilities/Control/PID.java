@@ -27,7 +27,7 @@ public class PID {
     private double acceptableRange;
 
     //Variable that determines whether or not to account for edge cases in this loop
-    private boolean accountOverflow;
+    private boolean usingGyroscope;
 
     //The point the module is trying to reach
     private double setpoint;
@@ -37,15 +37,15 @@ public class PID {
 
     /**
      * Initialize the variables as well as assign PID constants
-     * When accountOverflow is being used the getCorrectYaw method must also be used
+     * When usingGyroscope is being used the getCorrectYaw method must also be used
      * @param P the P scalar
      * @param I the I scalar
      * @param D the D scalar
-     * @param accountOverflow will alter the value to account for edge cases
+     * @param usingGyroscope will alter the value to account for edge cases
      */
-    public PID(double P, double I, double D, boolean accountOverflow){
+    public PID(double P, double I, double D, boolean usingGyroscope){
 
-        this.accountOverflow = accountOverflow;
+        this.usingGyroscope = usingGyroscope;
 
         this.P = P;
         this.I = I;
@@ -101,7 +101,7 @@ public class PID {
      */
     public double calcOutput(double currentValue){
 
-        if (accountOverflow)
+        if (usingGyroscope)
         {
             //Calculate the error to account for overflow
             p = (((setpoint-currentValue)+180) % 360)-180;
@@ -119,8 +119,8 @@ public class PID {
         d = p - lastError;
         lastError = p;
 
-        //If we are trying to account for the overflow of the turing
-        if(accountOverflow){
+        //If we are trying to account for the overflow of the turing (eg. 0 = 360 and vice versa because if it overshoots instead of turning all the way back around it should just flip direction)
+        if(usingGyroscope){
 
             //Use the output of error in the PID loop to determine if its in range (eg. P is only outputting a -1 or a 1 then stop)
             //Using 0 because that is the point the loop is technically trying to get to
