@@ -8,18 +8,30 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Hardware.Joysticks.Xbox;
+import frc.robot.Subsystems.DriveTrainSystem;
 
 /**
  *  This is the main class where the robot control loop occurs
  */
 public class Robot extends TimedRobot {
 
+  //Drive train variable and joystick variable
+  private DriveTrainSystem drive;
+  private Xbox primary;
+
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
    */
   @Override
   public void robotInit() {
-  
+
+    //Assign the primary joystick to the correct port
+    primary = new Xbox(new XboxController(0));
+
+    //Init the drive train system with the correct gamepad
+    drive = new DriveTrainSystem();
   }
 
   /**
