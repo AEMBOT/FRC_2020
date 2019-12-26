@@ -5,7 +5,7 @@
 [Click Here](https://github.com/LibertyRobotics/FRC_2020/wiki/Setting-Up-The-Programming-Environment)
 
 ## Software ##
-* Visual Studios download -- NEED LINK
+* [Visual Studio Code](https://code.visualstudio.com/)
 * [Download Java](https://www.java.com/en/download/)
 * [NavX Libraries](https://pdocs.kauailabs.com/navx-mxp/software/roborio-libraries/java/)
 * [Git Bash](https://git-scm.com/downloads)
