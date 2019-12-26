@@ -12,7 +12,7 @@
 * [NavX Calibration Software](https://www.kauailabs.com/support/navx-mxp/kb/faq.php?id=26)
 * [Radio Config Software and Instructions](https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/144986-programming-your-radio)
 
-## 6443-Created Resources (Work in progress)
+## 6443 - Created Resources (Work in progress)
 * [Iterative Base 101](https://docs.google.com/document/d/18hkZJ3wOhLKlAkknS0ciWf_5eEOmXk4dkVMDdrEbzvQ/edit?usp=sharing)
 * [Drive Code Research](https://docs.google.com/document/d/1SagU7kNi_xJTMjs5hDFvnOA6GcI9Gn0muRMjG0X7Hbs/edit?usp=sharing)
 * [CAN Research](https://docs.google.com/document/d/1fmq2Wr10z2Ymt-QDoKVQbyG7ptekXvNlMf0Hw-Wumtc/edit?usp=sharing)
