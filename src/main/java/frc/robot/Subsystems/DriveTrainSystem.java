@@ -22,6 +22,12 @@ public class DriveTrainSystem {
     private Encoder leftSideEncoder;
     private Encoder rightSideEncoder;
 
+    //Implemented early to prevent issues regarding slowing down the drive train for demos
+    private boolean enableDemoMode = false;
+
+    //As well set a power cap while in demo mode
+    private double maximumDemoPower = 0.45;
+
     /**
      * Construct the class and init all the speed controller groups
      * @param gamepad reference to the primary gamepad
@@ -49,6 +55,12 @@ public class DriveTrainSystem {
      * Wrapper for the differential drive arcade drive
      */
     public void arcadeDrive(double drivePower, double turnPower){
+
+        //Cap power to max if in demo mode
+        if(enableDemoMode)
+            if(drivePower > maximumDemoPower)
+                drivePower = maximumDemoPower;
+        
         diffDrive.arcadeDrive(drivePower, turnPower);
     }
 
@@ -56,6 +68,15 @@ public class DriveTrainSystem {
      * Wrapper for the tank drive method in the diff drive class
      */
     public void tankDrive(double leftPower, double rightPower){
+
+        //Cap power to max if in demo mode
+        if(enableDemoMode){
+            if(leftPower > maximumDemoPower)
+                leftPower = maximumDemoPower;
+            if(rightPower > maximumDemoPower)
+                rightPower = maximumDemoPower;
+        }
+
         diffDrive.tankDrive(leftPower, rightPower);
     }
 
