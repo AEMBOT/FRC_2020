@@ -92,7 +92,7 @@ public class Shuffleboard {
     }
 
     /**
-     * A method used to add a table wide listener
+     * A method used to remove a listener from an entry
      */
     public void removeEntryListener(String entryName){
 
