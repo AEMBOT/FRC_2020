@@ -13,28 +13,32 @@ public class Shuffleboard {
 
     //Create an instance of a network table to interface with th
     private NetworkTableInstance instance;
+    //A refrence to the appropriate network table, default to SmartDashboard
+    private static NetworkTable networkTable = getInstance().getTable("SmartDashboard");;
 
-    //A refrence to the appropriate network table
-    private NetworkTable networkTable;
+    private static String tableName = "SmartDashboard" ;
 
-    private String tableName;
-
-    private ArrayList<String> entryList;
+    private static ArrayList<String> entryList;
 
     //Values for active listeners
-    private ArrayList<Integer> listenerHandlerList;
+    private static ArrayList<Integer> listenerHandlerList;
 
     /**
-     * Create the network table instance
-     * @implNote if other tables besides SmartDashboard and LiveWindow need to be used remove the switch statement below
+     * Get a static reference to the network table
      */
-    public Shuffleboard(String tableName){
-        this.instance = NetworkTableInstance.getDefault();
+    private static NetworkTableInstance getInstance(){
+        return NetworkTableInstance.getDefault();
+    }
+
+    /**
+     * Sets an alternative table to be used other than SmartDashboard
+     */
+    public static void setTable(String tableNameParam){
 
         //Make sure the table name is valid
-        if(tableName.equals("SmartDashboard") || tableName.equals("LiveWindow")){
-            networkTable = instance.getTable(tableName);
-            this.tableName = tableName;
+        if(tableNameParam.equals("SmartDashboard") || tableNameParam.equals("LiveWindow")){
+            networkTable = getInstance().getTable(tableNameParam);
+            tableName = tableNameParam;
         }
         else {
             throw new RuntimeException("Invalid Table Name, Use \"SmartDashboard\" or \"LiveWindow\"");
@@ -49,10 +53,18 @@ public class Shuffleboard {
      * Create an entry in the selected table
      * @param entryName the name of the entry
      */
-    public void createEntry(String entryName){
+    public static void createEntry(String entryName){
         networkTable.getEntry(entryName);
         entryList.add(networkTable.getEntry(entryName).getName());
         listenerHandlerList.add(0);
+    }
+
+    /**
+     * Debugging used on local client
+     */
+    public static void setup(){
+        getInstance().startServer();
+        getInstance().startClient("localhost");  // where TEAM=190, 294, etc, or use inst.startClient("hostname") or similar
     }
 
 
@@ -61,7 +73,7 @@ public class Shuffleboard {
      * @param entryName the entry to affect
      * @param value vague variable that allows multiple types
      */
-    public void setValue(String entryName, Object value){
+    public static void setValue(String entryName, Object value){
         networkTable.getEntry(entryName).setValue(value);
     }
 
@@ -70,7 +82,7 @@ public class Shuffleboard {
      * @param entryName the name of the entry to get the value from
      * @return the value of the entry
      */
-    public Object getValue(String entryName){
+    public static Object getValue(String entryName){
         return networkTable.getEntry(entryName).getValue();
     }
 
@@ -78,7 +90,7 @@ public class Shuffleboard {
      * A method used to easily setup entry listeners
      * @param entryName the name of the entry to listen on
      */
-    public void setUpEntryListener(String entryName, Consumer<NetworkTableValue> updateFunction){
+    public static void setUpEntryListener(String entryName, Consumer<NetworkTableValue> updateFunction){
 
         //Create the listner and add it to the correct spot in the listener list
         listenerHandlerList.set(entryList.indexOf("/"+tableName+"/"+entryName),
@@ -92,9 +104,9 @@ public class Shuffleboard {
     }
 
     /**
-     * A method used to remove a listener from an entry
+     * A method used to add a table wide listener
      */
-    public void removeEntryListener(String entryName){
+    public static void removeEntryListener(String entryName){
 
         //Remove the listener from the corresponding list
         networkTable.getEntry(entryName).removeListener(listenerHandlerList.get(entryList.indexOf("/"+tableName+"/"+entryName)));
@@ -102,6 +114,4 @@ public class Shuffleboard {
         //Reset the handler number back to 0
         listenerHandlerList.set(entryList.indexOf("/"+tableName+"/"+entryName), 0);
     }
-
-
 }
