@@ -12,15 +12,19 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Hardware.Joysticks.Xbox;
 import frc.robot.Subsystems.DriveTrainSystem;
+import frc.robot.Utilities.Teleop.TeleopControl;
 
 /**
  *  This is the main class where the robot control loop occurs
  */
 public class Robot extends TimedRobot {
 
-  //Drive train variable and joystick variable
-  private DriveTrainSystem drive;
+  //Joysticks / UI variables
   private Xbox primary;
+
+  //Subsystems
+  private DriveTrainSystem drive;
+  private TeleopControl teleop;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -33,6 +37,9 @@ public class Robot extends TimedRobot {
 
     //Init the drive train system with the correct gamepad
     drive = new DriveTrainSystem();
+
+    //Used to make button interaction easier
+    teleop = new TeleopControl();
   }
 
   /**
@@ -70,6 +77,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    //Called to signify the end of one teleop loop to reset button properties, don't delete
+    teleop.endPeriodic();
   }
 
   /**

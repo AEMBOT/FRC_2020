@@ -156,4 +156,5 @@ public class Xbox {
     public boolean dPadLeft(){
         return controller.getPOV(0) == 270;
     }
+
 }
