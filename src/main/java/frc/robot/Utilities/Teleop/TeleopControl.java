@@ -13,7 +13,7 @@ public class TeleopControl{
     //Signifies wheather or not its the first loop of the teleop periodic, used to init all the values
     private boolean firstLoop = true;
 
-    //The ID used to designate which method is currently being used
+    //The ID used to designate which method is currently being used, keeps track of button values
     private int oncePerPressMethodID = 0;
     private int toggleMethodID = 0;
 
@@ -76,8 +76,9 @@ public class TeleopControl{
         }
     }
 
+
     /**
-     * Used to toggle running a function on or off
+     * Used to toggle running a function on or off, called from the overhead method toggle which utilizes the run once per press method
      * @param button the button used to preform the operation
      * @param action the action to preform
      */

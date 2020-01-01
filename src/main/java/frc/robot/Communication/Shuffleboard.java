@@ -13,6 +13,7 @@ public class Shuffleboard {
 
     //Create an instance of a network table to interface with th
     private NetworkTableInstance instance;
+    
     //A refrence to the appropriate network table, default to SmartDashboard
     private static NetworkTable networkTable = getInstance().getTable("SmartDashboard");;
 

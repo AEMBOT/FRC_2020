@@ -28,18 +28,35 @@ public class DriveTrainSystem {
     //As well set a power cap while in demo mode
     private double maximumDemoPower = 0.45;
 
+    //Individual Left Side Motors
+    private CANSparkMax LeftFrontMotor;
+    private CANSparkMax LeftMiddleMotor;
+    private CANSparkMax LeftBackMotor;
+
+    //Individual Right Side Motors
+    private CANSparkMax RightFrontMotor;
+    private CANSparkMax RightMiddleMotor;
+    private CANSparkMax RightBackMotor;
+
     /**
      * Construct the class and init all the speed controller groups
      * @param gamepad reference to the primary gamepad
      */
     public DriveTrainSystem(){
-        leftSide = new SpeedControllerGroup(new CANSparkMax(RobotMap.LeftFrontMotor, MotorType.kBrushless), 
-                                            new CANSparkMax(RobotMap.LeftMiddleMotor, MotorType.kBrushless), 
-                                            new CANSparkMax(RobotMap.LeftBackMotor, MotorType.kBrushless));
-        
-        rightSide = new SpeedControllerGroup(new CANSparkMax(RobotMap.RightFrontMotor, MotorType.kBrushless), 
-                                             new CANSparkMax(RobotMap.RightMiddleMotor, MotorType.kBrushless), 
-                                             new CANSparkMax(RobotMap.RightBackMotor, MotorType.kBrushless));
+
+        //Create the individual motors for the left side to add to the SpeedControllerGroup
+        LeftFrontMotor = new CANSparkMax(RobotMap.LeftFrontMotor, MotorType.kBrushless);
+        LeftMiddleMotor =  new CANSparkMax(RobotMap.LeftMiddleMotor, MotorType.kBrushless);
+        LeftBackMotor = new CANSparkMax(RobotMap.LeftBackMotor, MotorType.kBrushless);
+
+        //Create the individual motors for the right side to add to the SpeedControllerGroup
+        RightFrontMotor = new CANSparkMax(RobotMap.RightFrontMotor, MotorType.kBrushless);
+        RightMiddleMotor =  new CANSparkMax(RobotMap.RightMiddleMotor, MotorType.kBrushless);
+        RightBackMotor = new CANSparkMax(RobotMap.RightBackMotor, MotorType.kBrushless);
+
+        //SpeedControllerGroups that hold all meaningful 
+        leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
+        rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
         
         //Flip the right side motors to account for the reversed direction of the motors
         rightSide.setInverted(true);
@@ -125,6 +142,24 @@ public class DriveTrainSystem {
     public void resetEncoders(){
         rightSideEncoder.reset();
         leftSideEncoder.reset();
+    }
+
+    /**
+     * Gets an array of the motors on the left side
+     * @return array of Spark Maxes
+     */
+    public CANSparkMax[] getLeftSideMotors(){
+        CANSparkMax[] leftSideMotors = {LeftFrontMotor, LeftMiddleMotor, LeftBackMotor};
+        return leftSideMotors;
+    }
+
+    /**
+     * Gets an array of the motors on the right side
+     * @return array of Spark Maxes
+     */
+    public CANSparkMax[] getRightSideMotors(){
+        CANSparkMax[] rightSideMotors = {RightFrontMotor, RightMiddleMotor, RightBackMotor};
+        return rightSideMotors;
     }
 
 }
