@@ -61,15 +61,6 @@ public class Shuffleboard {
     }
 
     /**
-     * Debugging used on local client
-     */
-    public static void setup(){
-        getInstance().startServer();
-        getInstance().startClient("localhost");  // where TEAM=190, 294, etc, or use inst.startClient("hostname") or similar
-    }
-
-
-    /**
      * Sets a value to a given entry
      * @param entryName the entry to affect
      * @param value vague variable that allows multiple types
