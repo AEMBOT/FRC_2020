@@ -1,6 +1,8 @@
-package frc.robot.Communication;
+package frc.robot.Communication.Dashboard;
 
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -67,6 +69,15 @@ public class Shuffleboard {
      */
     public static void setValue(String entryName, Object value){
         networkTable.getEntry(entryName).setValue(value);
+    }
+
+    /**
+     * Converts the method to a command and adds that to the dashboard
+     * @param entryName where we want to add it
+     * @param method the method we want to add
+     */
+    public static void setValue(String entryName, Runnable method){
+        SmartDashboard.putData(entryName, new Method2Command(method));
     }
 
     /**
