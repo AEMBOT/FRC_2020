@@ -6,97 +6,110 @@ import edu.wpi.first.wpilibj.SPI;
 
 /**
  * Wrapper class used to interface with the NavX
+ * 
  * @author Will Richards
  */
-public class NavX{
+public class NavX {
     public static NavX instance;
 
     private AHRS ahrs;
 
     /**
-     * Creates a private constructor so that this class cannot be created more than once
+     * Creates a private constructor so that this class cannot be created more than
+     * once
      */
-    private NavX(){
-        try{ ahrs = new AHRS(SPI.Port.kMXP); } catch(RuntimeException ex){}
+    private NavX() {
+        try {
+            ahrs = new AHRS(SPI.Port.kMXP);
+        } catch (RuntimeException ex) {
+        }
     }
 
     /**
      * Creates a global reference to the singular NavX
      */
-    public static NavX get(){
-        if(instance == null){
+    public static NavX get() {
+        if (instance == null) {
             instance = new NavX();
         }
         return instance;
     }
 
     /**
-     * Gets the yaw axis or for all intensive purposes the robot heading purely based on the gyro scope inside (0-180, -180-0)
+     * Gets the yaw axis or for all intensive purposes the robot heading purely
+     * based on the gyro scope inside (0-180, -180-0)
+     * 
      * @return the robot heading
      */
-    public float getYaw(){
+    public float getYaw() {
         return ahrs.getYaw();
     }
 
     /**
      * Get the correct yaw to 0-360
+     * 
      * @return the correct yaw
      */
-    public double getCorrectedYaw(){
+    public double getCorrectedYaw() {
         double yaw = ahrs.getYaw();
-        if (yaw >= 0){
+        if (yaw >= 0) {
             return yaw;
-        }
-        else{
-            return (360-Math.abs(yaw));
+        } else {
+            return (360 - Math.abs(yaw));
         }
     }
 
     /**
-     * This method can't truly be reset and will return a heading based of the gyro and the compass (0-360)
+     * This method can't truly be reset and will return a heading based of the gyro
+     * and the compass (0-360)
+     * 
      * @return
      */
-    public float getFusedHeading(){
+    public float getFusedHeading() {
         return ahrs.getFusedHeading();
     }
 
     /**
-     * !Warning! The value may not be accurate due to EMI from the motors
-     * Gets the value from the compass in the NavX 
+     * !Warning! The value may not be accurate due to EMI from the motors Gets the
+     * value from the compass in the NavX
+     * 
      * @return compass heading
      */
-    public float getCompassHeading(){
+    public float getCompassHeading() {
         return ahrs.getCompassHeading();
     }
 
     /**
      * Used to reset the robot heading on the NavX
      */
-    public void reset(){
+    public void reset() {
         ahrs.reset();
     }
 
     /**
      * Determines whether or not the robot is moving
+     * 
      * @return whether or not the robot is moving
      */
-    public boolean isMoving(){
+    public boolean isMoving() {
         return ahrs.isMoving();
     }
 
     /**
      * Determines whether or not the robot is rotating
+     * 
      * @return whether or not the robot is rotating
      */
-    public boolean isRotating(){
+    public boolean isRotating() {
         return ahrs.isRotating();
     }
 
     /**
      * Return the current state of the NavX calibration
+     * 
      * @return whether or not the robot is actively calibrating
      */
-    public boolean isCalibrating(){
+    public boolean isCalibrating() {
         return ahrs.isCalibrating();
     }
 }

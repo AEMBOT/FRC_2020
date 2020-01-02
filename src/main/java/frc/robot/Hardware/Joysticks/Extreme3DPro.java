@@ -16,12 +16,16 @@ public class Extreme3DPro {
     /**
      * @return The value of the X axis.
      */
-    public double xAxis() { return controller.getRawAxis(0); }
+    public double xAxis() {
+        return controller.getRawAxis(0);
+    }
 
     /**
      * @return The value of the Y axis.
      */
-    public double yAxis() { return controller.getRawAxis(1); }
+    public double yAxis() {
+        return controller.getRawAxis(1);
+    }
 
     /**
      * @return The value of the Z axis (rotation).
@@ -75,35 +79,49 @@ public class Extreme3DPro {
     /**
      * @return the value of the six button.
      */
-    public boolean six() { return controller.getRawButton(6); }
+    public boolean six() {
+        return controller.getRawButton(6);
+    }
 
     /**
      * @return the value of the seven button.
      */
-    public boolean seven() { return controller.getRawButton(7); }
+    public boolean seven() {
+        return controller.getRawButton(7);
+    }
 
     /**
      * @return the value of the eight button.
      */
-    public boolean eight() { return controller.getRawButton(8); }
+    public boolean eight() {
+        return controller.getRawButton(8);
+    }
 
     /**
      * @return the value of the nine button.
      */
-    public boolean nine() { return controller.getRawButton(9); }
+    public boolean nine() {
+        return controller.getRawButton(9);
+    }
 
     /**
      * @return the value of the ten button.
      */
-    public boolean ten() { return controller.getRawButton(10); }
+    public boolean ten() {
+        return controller.getRawButton(10);
+    }
 
     /**
      * @return the value of the eleven button.
      */
-    public boolean eleven() { return controller.getRawButton(11); }
+    public boolean eleven() {
+        return controller.getRawButton(11);
+    }
 
     /**
      * @return the value of the twelve button.
      */
-    public boolean twelve() { return controller.getRawButton(12); }
+    public boolean twelve() {
+        return controller.getRawButton(12);
+    }
 }

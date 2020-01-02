@@ -14,14 +14,14 @@ import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
 /**
- *  This is the main class where the robot control loop occurs
+ * This is the main class where the robot control loop occurs
  */
 public class Robot extends TimedRobot {
 
-  //Joysticks / UI variables
+  // Joysticks / UI variables
   private Xbox primary;
 
-  //Subsystems
+  // Subsystems
   private DriveTrainSystem drive;
   private TeleopControl teleop;
 
@@ -31,13 +31,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    //Assign the primary joystick to the correct port
+    // Assign the primary joystick to the correct port
     primary = new Xbox(new XboxController(0));
 
-    //Init the drive train system with the correct gamepad
+    // Init the drive train system with the correct gamepad
     drive = new DriveTrainSystem();
 
-    //Used to make button interaction easier
+    // Used to make button interaction easier
     teleop = new TeleopControl();
   }
 
@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-   
+
   }
 
   /**
@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    
+
   }
 
   /**
@@ -77,12 +77,14 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //Called to signify the end of one teleop loop to reset button properties, don't delete
+    // Called to signify the end of one teleop loop to reset button properties,
+    // don't delete
     teleop.endPeriodic();
   }
 
   /**
-   * This function is called periodically during test mode, can be used to quickly check systems, or maybe even a diagnostic program
+   * This function is called periodically during test mode, can be used to quickly
+   * check systems, or maybe even a diagnostic program
    */
   @Override
   public void testPeriodic() {

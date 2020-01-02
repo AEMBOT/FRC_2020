@@ -3,7 +3,8 @@ package frc.robot.Hardware.Joysticks;
 import edu.wpi.first.wpilibj.XboxController;
 
 /**
- * Wrapper for an Xbox 360 Xbox. Provides clearer interface with button and axis inputs.
+ * Wrapper for an Xbox 360 Xbox. Provides clearer interface with button and axis
+ * inputs.
  * 
  * @author Patrick Higgins
  */
@@ -28,8 +29,8 @@ public class Xbox {
     }
 
     /**
-     * @return The value of the Y axis of the left stick, reversed
-     * so that up is positive and down is negative.
+     * @return The value of the Y axis of the left stick, reversed so that up is
+     *         positive and down is negative.
      */
     public double leftStickY() {
         return -controller.getRawAxis(1);
@@ -43,8 +44,8 @@ public class Xbox {
     }
 
     /**
-     * @return The value of the Y axis of the right stick, reversed
-     * so that up is positive and down is negative.
+     * @return The value of the Y axis of the right stick, reversed so that up is
+     *         positive and down is negative.
      */
     public double rightStickY() {
         return -controller.getRawAxis(5);
@@ -119,8 +120,8 @@ public class Xbox {
     public boolean Y() {
         return controller.getRawButton(4);
     }
-    
-    //PLEASE FIND THE ACTUAL NAME FOR THESE
+
+    // PLEASE FIND THE ACTUAL NAME FOR THESE
     public boolean seven() {
         return controller.getRawButton(7);
     }
@@ -129,31 +130,31 @@ public class Xbox {
         return controller.getRawButton(8);
     }
 
-
     /**
      * @return if the dpad is pushed up
      */
-    public boolean dPadUp(){
+    public boolean dPadUp() {
         return controller.getPOV(0) == 0;
     }
 
     /**
      * @return if the dpad is pushed down
      */
-    public boolean dPadDown(){
+    public boolean dPadDown() {
         return controller.getPOV(0) == 180;
     }
 
     /**
      * @return if the dpad is pushed to the right
      */
-    public boolean dPadRight(){
+    public boolean dPadRight() {
         return controller.getPOV(0) == 90;
     }
+
     /**
      * @return if the dpad is pushed to the right
      */
-    public boolean dPadLeft(){
+    public boolean dPadLeft() {
         return controller.getPOV(0) == 270;
     }
 
