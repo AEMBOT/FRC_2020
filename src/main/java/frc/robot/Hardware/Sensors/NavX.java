@@ -2,10 +2,7 @@ package frc.robot.Hardware.Sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 /**
  * Wrapper class used to interface with the NavX

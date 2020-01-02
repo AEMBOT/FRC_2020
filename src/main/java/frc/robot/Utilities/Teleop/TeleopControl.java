@@ -2,8 +2,6 @@ package frc.robot.Utilities.Teleop;
 
 import java.util.ArrayList;
 
-import frc.robot.Hardware.Joysticks.Xbox;
-
 /**
  * A modified variant of the TeleopStructure.java file used in previous years (original author: Lizzy Milford)
  * @author Will Richards
