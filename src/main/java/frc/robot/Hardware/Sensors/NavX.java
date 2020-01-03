@@ -120,4 +120,12 @@ public class NavX {
     public double getRate(){
         return ahrs.getRate();
     }
+
+    /**
+     * Return a continuos angle greater than 360 degrees
+     * @return the total angle
+     */
+    public double getAngle(){
+        return ahrs.getAngle();
+    }
 }

@@ -67,7 +67,7 @@ public class TrajectoryFollow {
     }
 
     /**
-     * Starts following the path
+     * Starts following the path, call in auto init
      */
     public boolean followPath(){
         if(!hasRunCommand){

@@ -95,7 +95,7 @@ public class TrajectoryDrive{
      * @return the altered heading
      */
     public double getSpecificHeading(){
-        return Math.IEEEremainder(navX.getCorrectedHeading(), 360) * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
+        return Math.IEEEremainder(navX.getAngle(), 360) * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
     }
 
     /**
