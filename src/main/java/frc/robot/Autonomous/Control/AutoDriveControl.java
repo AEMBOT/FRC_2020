@@ -103,7 +103,7 @@ public class AutoDriveControl {
 
         // Use the yaw corrected from 0-180 to 0-360 and pass it as the input to the PID
         // loop
-        double power = turnPID.calcOutput(navX.getCorrectedYaw());
+        double power = turnPID.calcOutput(navX.getCorrectedHeading());
 
         // Check if the robot is in range yet and if so stop and return true saying the
         // manuever is complete

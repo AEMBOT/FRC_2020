@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.RobotConstants;
 import frc.robot.RobotMap;
 
 public class DriveTrainSystem {
@@ -58,6 +59,7 @@ public class DriveTrainSystem {
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
         rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
         
+        
         //Flip the right side motors to account for the reversed direction of the motors
         rightSide.setInverted(true);
 
@@ -66,6 +68,10 @@ public class DriveTrainSystem {
         //Create the encoders 
         leftSideEncoder = new Encoder(RobotMap.LeftSideEncoderA, RobotMap.LeftSideEncoderB);
         rightSideEncoder = new Encoder(RobotMap.RightSideEncoderA, RobotMap.RightSideEncoderB);
+
+        // Convert the pulses into usable distances
+        leftSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
+        rightSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
     }
 
     /**
@@ -79,6 +85,14 @@ public class DriveTrainSystem {
                 drivePower = maximumDemoPower;
         
         diffDrive.arcadeDrive(drivePower, turnPower);
+    }
+
+    /**
+     * Drive the robot with a tank style drive, but pass voltages to the motor controllers instead of "powers"
+     */
+    public void tankDriveVolts(double leftVolts, double rightVolts){
+        getLeftSideMotors().setVoltage(leftVolts);
+        getRightSideMotors().setVoltage(rightVolts);
     }
 
     /**
@@ -122,6 +136,22 @@ public class DriveTrainSystem {
     }
 
     /**
+     * Get a reference to the encoder on the left side
+     * @return leftSideEncoder
+     */
+    public Encoder getLeftSideEncoder(){
+        return leftSideEncoder;
+    }
+
+     /**
+     * Get a reference to the encoder on the right side
+     * @return rightSideEncoder
+     */
+    public Encoder getRightSideEncoder(){
+        return rightSideEncoder;
+    }
+
+    /**
      * Get the value from the right side encoder
      */
     public int getRightSideEncoderPosition(){
@@ -137,6 +167,14 @@ public class DriveTrainSystem {
     }
 
     /**
+     * The average distance traveled between both encoders
+     * @return the distance
+     */
+    public double getAverageEncoderDistance(){
+        return ((leftSideEncoder.getDistance() + rightSideEncoder.getDistance()) / 2.0);
+    }
+
+    /**
      * Reset both sides encoders
      */
     public void resetEncoders(){
@@ -148,18 +186,16 @@ public class DriveTrainSystem {
      * Gets an array of the motors on the left side
      * @return array of Spark Maxes
      */
-    public CANSparkMax[] getLeftSideMotors(){
-        CANSparkMax[] leftSideMotors = {LeftFrontMotor, LeftMiddleMotor, LeftBackMotor};
-        return leftSideMotors;
+    public SpeedControllerGroup getLeftSideMotors(){
+        return leftSide;
     }
 
     /**
      * Gets an array of the motors on the right side
      * @return array of Spark Maxes
      */
-    public CANSparkMax[] getRightSideMotors(){
-        CANSparkMax[] rightSideMotors = {RightFrontMotor, RightMiddleMotor, RightBackMotor};
-        return rightSideMotors;
+    public SpeedControllerGroup getRightSideMotors(){
+        return rightSide;
     }
 
 }

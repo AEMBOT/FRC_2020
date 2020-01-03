@@ -50,7 +50,7 @@ public class NavX {
      * 
      * @return the correct yaw
      */
-    public double getCorrectedYaw() {
+    public double getCorrectedHeading() {
         double yaw = ahrs.getYaw();
         if (yaw >= 0) {
             return yaw;
@@ -111,5 +111,13 @@ public class NavX {
      */
     public boolean isCalibrating() {
         return ahrs.isCalibrating();
+    }
+
+    /**
+     * Return the rate at which the NavX is moving
+     * @return rate of change in seconds
+     */
+    public double getRate(){
+        return ahrs.getRate();
     }
 }
