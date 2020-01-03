@@ -57,6 +57,22 @@ public class Path{
     }
 
     /**
+     * Overloaded constructor allows custom start and end poses
+     * @param initialPose the wanted start pose
+     * @param endPose the wanted end pose
+     */
+    public Path(TrajectoryConfig config, Pose2d initialPose, ArrayList<Translation2d> interiorWaypoints, Pose2d endPose){
+
+        this.config = config;
+
+        this.initialPose = initialPose;
+
+        this.endPose = endPose;
+
+        this.interiorWaypoints = interiorWaypoints;
+    }
+
+    /**
      * Compute and return the trajectory
      */
     public Trajectory getTrajectory(){

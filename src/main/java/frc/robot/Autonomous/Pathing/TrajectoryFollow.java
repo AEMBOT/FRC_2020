@@ -39,8 +39,10 @@ public class TrajectoryFollow {
 
     /**
      * Create all important path variables (constraints, etc.)
+     * @param drive a reference to the drive train
+     * @param pathFile a reference to the file containing waypoint information
      */
-    public TrajectoryFollow(DriveTrainSystem drive){
+    public TrajectoryFollow(DriveTrainSystem drive /*, String pathFile*/){
 
         //Create a voltage constraint do we dont accelerate too fast
         autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared),
@@ -57,11 +59,15 @@ public class TrajectoryFollow {
         //Make sure it plans for the voltage constraint
         pathConfig.addConstraint(autoVoltageConstraint);
 
+        //Note: Test normal pathing before trying this
+        //Path testPath = PathParser.generatePath(pathConfig, pathFile);
+
         //Create path and add points (1,1) and (2,-1) and set the end point to 3 meters ahead
         testPath = new Path(pathConfig, new Pose2d(3, 0, new Rotation2d(0)));
         testPath.addWaypoint(1, 1);
         testPath.addWaypoint(2, -1);
 
+        //Generate trajectory from path
         testTrajectory = testPath.getTrajectory();
 
     }

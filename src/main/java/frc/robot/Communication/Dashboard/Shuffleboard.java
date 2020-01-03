@@ -1,6 +1,8 @@
 package frc.robot.Communication.Dashboard;
 
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -18,7 +20,7 @@ public class Shuffleboard {
     private NetworkTableInstance instance;
 
     // A refrence to the appropriate network table, default to SmartDashboard
-    private static NetworkTable networkTable = getInstance().getTable("SmartDashboard");;
+    private static NetworkTable networkTable;
 
     private static String tableName = "SmartDashboard";
 
