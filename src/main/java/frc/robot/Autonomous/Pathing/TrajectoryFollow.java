@@ -69,7 +69,7 @@ public class TrajectoryFollow {
     /**
      * Starts following the path
      */
-    public void followPath(){
+    public boolean followPath(){
         if(!hasRunCommand){
             RamseteController controller = new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta);
 
@@ -79,9 +79,18 @@ public class TrajectoryFollow {
 
             ramseteCommand = new RamseteCommand(testTrajectory, trajectoryDrive::getPose, controller, feedforward, RobotConstants.kDriveKinematics, trajectoryDrive::getWheelSpeeds, motorControlPID, motorControlPID, trajectoryDrive::tankDriveVolts);
 
+            //Starts the command and then when its done tells the robot to stop moving
             ramseteCommand.andThen(() -> trajectoryDrive.tankDriveVolts(0, 0));
 
             hasRunCommand = true;
+        }
+
+        //Tell the iterative program that the command has finished
+        if(ramseteCommand.isFinished()){
+            return true;
+        }
+        else{
+            return false;
         }
     }
 }
