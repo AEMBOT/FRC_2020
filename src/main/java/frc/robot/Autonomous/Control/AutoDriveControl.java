@@ -6,7 +6,7 @@ import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Control.PID;
 
 /**
- * Class created to handle low level robot control during the autonomous period
+ * Class created to handle basic bare bones autonomous driving, mainly for use if pathing is unsuccessful
  * 
  * @author Will Richards
  */

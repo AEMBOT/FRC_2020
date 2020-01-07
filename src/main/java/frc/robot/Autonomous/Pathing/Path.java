@@ -57,7 +57,7 @@ public class Path{
     }
 
     /**
-     * Overloaded constructor allows custom start and end poses
+     * Overloaded constructor that allows entirely custom values
      * @param initialPose the wanted start pose
      * @param endPose the wanted end pose
      */
@@ -80,7 +80,7 @@ public class Path{
     }
 
     /**
-     * Adds a waypoint to pass through when creating the s-curve
+     * Adds a waypoint to pass through when creating the s-curve, kind of obsolete due to PathParser
      * @param x horizontal position of the waypoint
      * @param y vertical position of the waypoint
      */

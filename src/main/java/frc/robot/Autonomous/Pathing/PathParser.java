@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 
 /**
- * CSV Wrapper for java to allow reading of Paths
+ * Allows reading of CSV files to convert into paths
  * 
  * @author Will Richards
  */

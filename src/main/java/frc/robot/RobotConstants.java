@@ -14,6 +14,7 @@ public class RobotConstants {
     // Calculate the circumference of an 8in pneumatic wheel
     public static final double WHEEL_CIRCUMFERENCE = (Math.PI * 8);
 
+    //region Autonomous Robot Pathing Constants
     /**
      * Robot Characterization Link:
      * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/introduction.html#installing-and-launching-the-toolsuite
@@ -51,4 +52,5 @@ public class RobotConstants {
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
 
+    //endregion
 }
