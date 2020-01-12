@@ -112,7 +112,7 @@ public class PID {
 
         if (usingGyroscope) {
             // Calculate the error to account for overflow
-            p = (((setpoint - currentValue) + 180) % 360) - 180;
+            p = (((((setpoint - currentValue) + 180)+360) % 360) - 180);
         } else {
 
             // Calculate the difference / error
