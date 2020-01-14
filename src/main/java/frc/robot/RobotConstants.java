@@ -22,11 +22,13 @@ public class RobotConstants {
      * Trajectories TODO: Find values for 2020 bot drive train
      */
 
-    // The scale factor required to convert encoder pulses to meters
-    public static final double kEncoderDistancePerPulse = -1;
+    // The scale factor required to convert encoder pulses into a useable value, divide by 4 because of how WPI handles reading encoder pulses
+    public static final double kEncoderDistancePerPulse = 8192 / 4.0;
 
+    // The maximum voltage the drive motors can draw during this
     public static final double kMaxUsableVoltage = 10;
 
+    // Weather or not the gyro is flipped
     public static final boolean kGyroReversed = false;
 
     // Voltage for static friction velocity and acceleration
