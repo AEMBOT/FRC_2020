@@ -1,6 +1,7 @@
 package frc.robot.Communication.Dashboard;
 
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,6 +94,18 @@ public class Shuffleboard {
      */
     public static Object getValue(String entryName) {
         return networkTable.getEntry(entryName).getValue();
+    }
+
+    /**
+     * Adds A PID Controller to the 
+     * @param entryName the location to store it
+     * @param updateFunction the function to call when the values are changed
+     */
+    public static void createPIDController(String entryName, Consumer<NetworkTableValue> updateFunction){
+        PIDController pid = new PIDController(0, 0, 0);
+        SmartDashboard.putData(entryName, pid);
+
+        setUpEntryListener(entryName, updateFunction);
     }
 
     /**

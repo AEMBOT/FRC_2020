@@ -4,6 +4,8 @@ import org.junit.Test;
 
 /**
  * Test for checking the validity of the NavX calculations
+ * 
+ * @author Will Richards
  */
 public class NavXTest{
 
