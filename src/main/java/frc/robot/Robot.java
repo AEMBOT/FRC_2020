@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Autonomous.Pathing.TrajectoryFollow;
 import frc.robot.Hardware.Joysticks.Xbox;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Teleop.TeleopControl;
@@ -25,6 +26,9 @@ public class Robot extends TimedRobot {
   private DriveTrainSystem drive;
   private TeleopControl teleop;
 
+  // Autonomous Control
+  private TrajectoryFollow pathing;
+
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
    */
@@ -39,6 +43,8 @@ public class Robot extends TimedRobot {
 
     // Used to make button interaction easier
     teleop = new TeleopControl();
+
+    pathing = new TrajectoryFollow(drive);
   }
 
   /**

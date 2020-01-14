@@ -72,6 +72,7 @@ public class DriveTrainSystem {
         // Convert the pulses into usable distances
         leftSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
         rightSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
+
     }
 
     /**
