@@ -22,6 +22,12 @@ public class TrajectoryFollow {
     private DifferentialDriveVoltageConstraint autoVoltageConstraint;
     private TrajectoryConfig pathConfig;
 
+    //Reference to the drive train
+    private DriveTrainSystem drive;
+
+    //File path to the path file
+    private String pathFile;
+
     //A test path to get started
     private Path testPath;
 
@@ -42,34 +48,10 @@ public class TrajectoryFollow {
      * @param drive a reference to the drive train
      * @param pathFile a reference to the file containing waypoint information
      */
-    public TrajectoryFollow(DriveTrainSystem drive /*, String pathFile*/){
+    public TrajectoryFollow(DriveTrainSystem drive, String pathFile){
+        this.drive = drive;
 
-        //Create a voltage constraint do we dont accelerate too fast
-        autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared),
-        RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
-
-        trajectoryDrive = new TrajectoryDrive(drive);
-
-        //Create the path configuration
-        pathConfig = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared);
-
-        //Add the drive Kinematics to the config to make sure max speed is actually obeyed
-        pathConfig.setKinematics(RobotConstants.kDriveKinematics);
-
-        //Make sure it plans for the voltage constraint
-        pathConfig.addConstraint(autoVoltageConstraint);
-
-        //Note: Test normal pathing before trying this
-        //Path testPath = PathParser.generatePath(pathConfig, pathFile);
-
-        //Create path and add points (1,1) and (2,-1) and set the end point to 3 meters ahead
-        testPath = new Path(pathConfig, new Pose2d(3, 0, new Rotation2d(0)));
-        testPath.addWaypoint(1, 1);
-        testPath.addWaypoint(2, -1);
-
-        //Generate trajectory from path
-        testTrajectory = testPath.getTrajectory();
-
+        this.pathFile = pathFile;
     }
 
     /**
@@ -77,6 +59,35 @@ public class TrajectoryFollow {
      */
     public boolean followPath(){
         if(!hasRunCommand){
+
+            //Create a voltage constraint do we dont accelerate too fast
+            autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared),
+            RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
+
+            trajectoryDrive = new TrajectoryDrive(drive);
+
+            //Create the path configuration
+            pathConfig = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared);
+
+            //Add the drive Kinematics to the config to make sure max speed is actually obeyed
+            pathConfig.setKinematics(RobotConstants.kDriveKinematics);
+
+            //Make sure it plans for the voltage constraint
+            pathConfig.addConstraint(autoVoltageConstraint);
+
+            //Note: Test normal pathing before trying this
+            //Path testPath = PathParser.generatePath(pathConfig, pathFile);
+
+            //Create path and add points (1,1) and (2,-1) and set the end point to 3 meters ahead
+            testPath = new Path(pathConfig, new Pose2d(3, 0, new Rotation2d(0)));
+            testPath.addWaypoint(1, 1);
+            testPath.addWaypoint(2, -1);
+
+            //Generate trajectory from path
+            testTrajectory = testPath.getTrajectory();
+
+            System.out.println("Hello ");
+
             RamseteController controller = new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta);
 
             SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared);
@@ -94,6 +105,7 @@ public class TrajectoryFollow {
         //Tell the iterative program that the command has finished
         if(ramseteCommand.isFinished()){
             return true;
+            
         }
         else{
             return false;

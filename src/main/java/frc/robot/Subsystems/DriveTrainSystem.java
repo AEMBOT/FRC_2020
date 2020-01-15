@@ -59,10 +59,6 @@ public class DriveTrainSystem {
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
         rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
         
-        
-        //Flip the right side motors to account for the reversed direction of the motors
-        rightSide.setInverted(true);
-
         diffDrive = new DifferentialDrive(leftSide, rightSide);
 
         //Create the encoders 
@@ -73,6 +69,7 @@ public class DriveTrainSystem {
         leftSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
         rightSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
 
+        diffDrive.setSafetyEnabled(false);
     }
 
     /**

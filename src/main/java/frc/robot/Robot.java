@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Autonomous.Pathing.TrajectoryFollow;
 import frc.robot.Hardware.Joysticks.Xbox;
+import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
@@ -24,9 +25,9 @@ public class Robot extends TimedRobot {
 
   // Subsystems
   private DriveTrainSystem drive;
+  private ArcShooter shooter;
   private TeleopControl teleop;
 
-  // Autonomous Control
   private TrajectoryFollow pathing;
 
   /**
@@ -41,10 +42,14 @@ public class Robot extends TimedRobot {
     // Init the drive train system with the correct gamepad
     drive = new DriveTrainSystem();
 
+    //Create a new shooter object
+    shooter = new ArcShooter();
+
     // Used to make button interaction easier
     teleop = new TeleopControl();
 
-    pathing = new TrajectoryFollow(drive);
+    pathing = new TrajectoryFollow(drive, "");
+
   }
 
   /**
@@ -59,7 +64,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-
+    pathing.followPath();
   }
 
   /**
@@ -67,6 +72,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+   
   }
 
   /**
@@ -83,6 +89,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    //Control the robot drive train
+    drive.arcadeDrive(primary.leftStickY(), primary.rightStickX());
+
+    //Toggle the shooters run status
+    teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
+    
+    //Update subsystems
+    subsystemUpdater();
+    
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
     teleop.endPeriodic();
@@ -94,6 +109,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+      drive.arcadeDrive(0.8, 0);
+  }
 
+  /**
+   * Will call update methods for subsystems so as to not clutter the teleopPeriodic method
+   */
+  private void subsystemUpdater(){
+    shooter.runShooter();
   }
 }

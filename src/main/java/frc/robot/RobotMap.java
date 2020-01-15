@@ -23,4 +23,6 @@ public class RobotMap {
     // Ports for the right through bore encoder
     public static final int RightSideEncoderA = 3;
     public static final int RightSideEncoderB = 4;
+
+    public static final int ShooterTestMotor = 7;
 }
