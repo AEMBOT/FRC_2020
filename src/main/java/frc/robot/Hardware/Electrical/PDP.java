@@ -23,6 +23,9 @@ public class PDP {
         return pdp.getCurrent(channelNum);
     }
 
+    /**
+     * Gets a reference to the PDP object
+     */
     public static PowerDistributionPanel getInstance(){
         return pdp;
     }

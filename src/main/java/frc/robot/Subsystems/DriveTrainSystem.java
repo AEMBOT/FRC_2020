@@ -35,10 +35,14 @@ public class DriveTrainSystem {
     private CANSparkMax LeftMiddleMotor;
     private CANSparkMax LeftBackMotor;
 
+    private CANSparkMax[] leftMotorsArray;
+
     //Individual Right Side Motors
     private CANSparkMax RightFrontMotor;
     private CANSparkMax RightMiddleMotor;
     private CANSparkMax RightBackMotor;
+
+    private CANSparkMax[] rightMotorsArray;
 
     /**
      * Construct the class and init all the speed controller groups
@@ -51,10 +55,22 @@ public class DriveTrainSystem {
         LeftMiddleMotor =  new CANSparkMax(RobotMap.LeftMiddleMotor, MotorType.kBrushless);
         LeftBackMotor = new CANSparkMax(RobotMap.LeftBackMotor, MotorType.kBrushless);
 
+        // Create and add motors to the Left side motor contaniner
+        leftMotorsArray = new CANSparkMax[3];
+        leftMotorsArray[0] = LeftFrontMotor;
+        leftMotorsArray[1] = LeftMiddleMotor;
+        leftMotorsArray[2] = LeftBackMotor;
+
         //Create the individual motors for the right side to add to the SpeedControllerGroup
         RightFrontMotor = new CANSparkMax(RobotMap.RightFrontMotor, MotorType.kBrushless);
         RightMiddleMotor =  new CANSparkMax(RobotMap.RightMiddleMotor, MotorType.kBrushless);
         RightBackMotor = new CANSparkMax(RobotMap.RightBackMotor, MotorType.kBrushless);
+
+        // Create an array to hold the right side motors
+        rightMotorsArray = new CANSparkMax[3];
+        rightMotorsArray[0] = RightFrontMotor;
+        rightMotorsArray[1] = RightMiddleMotor;
+        rightMotorsArray[2] = RightBackMotor;
 
         //SpeedControllerGroups that hold all meaningful 
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
@@ -84,6 +100,8 @@ public class DriveTrainSystem {
                 drivePower = maximumDemoPower;
         
         diffDrive.arcadeDrive(drivePower, turnPower);
+
+        
     }
 
     /**
@@ -195,6 +213,35 @@ public class DriveTrainSystem {
      */
     public SpeedControllerGroup getRightSideMotors(){
         return rightSide;
+    }
+
+    /**
+     * Returns the left side current draw
+     */
+    public double[] getLeftSideCurrentDraw(){
+        double[] currentArray = new double[3];
+
+        // Loop through the motors in the array
+        for (int i=0; i<currentArray.length; i++){
+            currentArray[i] = leftMotorsArray[i].getOutputCurrent();
+        }
+
+        return currentArray;
+    }
+
+    
+    /**
+     * Returns the right side current draw
+     */
+    public double[] getRightSideCurrentDraw(){
+        double[] currentArray = new double[3];
+
+        // Loop through the motors in the array
+        for (int i=0; i<currentArray.length; i++){
+            currentArray[i] = rightMotorsArray[i].getOutputCurrent();
+        }
+
+        return currentArray;
     }
 
 }

@@ -57,8 +57,6 @@ public class Robot extends TimedRobot {
 
     pathing = new TrajectoryFollow(drive, "");
 
-    
-
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
 
@@ -69,6 +67,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    //Update dashboard information
+    updateDashboard();
   }
 
   /**
@@ -142,5 +142,22 @@ public class Robot extends TimedRobot {
       //Add options to the dashboards
       Dashboard.createEntry("Fly-Wheel-RPM", 0.0);
       Dashboard.createEntry("Fly-Wheel-Speed-Status", false);
+
+      //Create entry for the shooter current draw
+      Dashboard.createEntry("Shooter-Current-Draw");
+
+      //Create entries for the left side drive train current draw
+      Dashboard.createEntry("Left-Side-Current-Draw");
+      Dashboard.createEntry("Right-Side-Current-Draw");
+  }
+
+  /**
+   * Meant to update values that dont have accsessible update spots
+   */
+  private void updateDashboard(){
+
+    // Add the values to the shuffle board in graph form
+    Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
+    Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw());
   }
 }
