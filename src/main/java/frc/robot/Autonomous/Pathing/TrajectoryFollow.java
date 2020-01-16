@@ -59,13 +59,9 @@ public class TrajectoryFollow {
      */
     public void followPath(){
 
-        System.out.println("Test 1");
-
         //Create a voltage constraint do we dont accelerate too fast
         autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared),
         RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
-
-        System.out.println("Test 1.5");
 
         trajectoryDrive = new TrajectoryDrive(drive);
 
@@ -75,30 +71,27 @@ public class TrajectoryFollow {
         //Add the drive Kinematics to the config to make sure max speed is actually obeyed
         pathConfig.setKinematics(RobotConstants.kDriveKinematics);
 
-        System.out.println("Test 2");
-
         //Make sure it plans for the voltage constraint
         pathConfig.addConstraint(autoVoltageConstraint);
 
         //Note: Test normal pathing before trying this
         //Path testPath = PathParser.generatePath(pathConfig, pathFile);
+
         //Create path and add points (1,1) and (2,-1) and set the end point to 3 meters ahead
         testPath = new Path(pathConfig, new Pose2d(3, 0, new Rotation2d(0)));
         testPath.addWaypoint(1, 1);
         testPath.addWaypoint(2, -1);
 
-        //Generate trajectory from path
+        // Generate trajectory from path
+        // TODO:Constant values must be valid or the trajectory will not calculate
         testTrajectory = testPath.getTrajectory();
 
-        System.out.println("Test 2.5");
-        
+        // Setup the RamseteController
         RamseteController controller = new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta);
         SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared);
         PIDController motorControlPID = new PIDController(RobotConstants.kPDriveVal, 0, 0);
         ramseteCommand = new RamseteCommand(testTrajectory, trajectoryDrive::getPose, controller, feedforward, RobotConstants.kDriveKinematics, trajectoryDrive::getWheelSpeeds, motorControlPID, motorControlPID, trajectoryDrive::tankDriveVolts);
-        
-        System.out.println("Test 3");
-
+    
         //Starts the command and then when its done tells the robot to stop moving
         ramseteCommand.andThen(() -> trajectoryDrive.tankDriveVolts(0, 0));
         hasRunCommand = true;        

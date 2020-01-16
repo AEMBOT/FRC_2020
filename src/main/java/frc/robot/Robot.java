@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Autonomous.Pathing.TrajectoryFollow;
 import frc.robot.Communication.Dashboard.Dashboard;
+import frc.robot.Hardware.Electrical.PDP;
 import frc.robot.Hardware.Joysticks.Xbox;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.DriveTrainSystem;
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
   private ArcShooter shooter;
   private TeleopControl teleop;
 
+  // Autonomous Control
   private TrajectoryFollow pathing;
 
   /**
@@ -37,6 +39,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
+    //Setup the dashboard
+    DashboardSetup();
 
     // Assign the primary joystick to the correct port
     primary = new Xbox(new XboxController(0));
@@ -52,8 +57,10 @@ public class Robot extends TimedRobot {
 
     pathing = new TrajectoryFollow(drive, "");
 
-    //Setup the dashboard
-    DashboardSetup();
+    
+
+    //Clears sticky faults at robot start
+    PDP.clearStickyFaults();
 
   }
 

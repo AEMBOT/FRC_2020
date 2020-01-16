@@ -1,5 +1,7 @@
 package frc.robot.Hardware.Electrical;
 
+import java.io.ObjectInputFilter.Status;
+
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -9,14 +11,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
  */
 public class PDP {
 
-    private PowerDistributionPanel pdp;
-
-    /**
-     * Initialize the PDP to return values from
-     */
-    public PDP() {
-        pdp = new PowerDistributionPanel(0);
-    }
+    private static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
     /**
      * Get the current on a specific channel of the PDP
@@ -24,8 +19,12 @@ public class PDP {
      * @param channelNum the channel number
      * @return the being drawn from the specific channel
      */
-    public double getCurrent(int channelNum) {
+    public static double getCurrent(int channelNum) {
         return pdp.getCurrent(channelNum);
+    }
+
+    public static PowerDistributionPanel getInstance(){
+        return pdp;
     }
 
     /**
@@ -33,7 +32,7 @@ public class PDP {
      * 
      * @return the voltage required
      */
-    public double getVoltage() {
+    public static double getVoltage() {
         return pdp.getVoltage();
     }
 
@@ -42,7 +41,7 @@ public class PDP {
      * 
      * @return the temperature of the PDP
      */
-    public double getTemperature() {
+    public static double getTemperature() {
         return pdp.getTemperature();
     }
 
@@ -51,7 +50,14 @@ public class PDP {
      * 
      * @return the total wattage
      */
-    public double getTotalWattage() {
+    public static double getTotalWattage() {
         return pdp.getTotalEnergy();
+    }
+
+    /**
+     * Clears Sticky Faults on PDP
+     */
+    public static void clearStickyFaults(){
+        pdp.clearStickyFaults();
     }
 }

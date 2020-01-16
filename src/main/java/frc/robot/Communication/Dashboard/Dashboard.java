@@ -1,6 +1,7 @@
 package frc.robot.Communication.Dashboard;
 
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -65,13 +66,28 @@ public class Dashboard {
     }
 
     /**
+     * Create an entry in the selected table
+     * 
+     * @param entryName the name of the entry
+     */
+    public static void createEntry(String entryName) {
+        networkTable.getEntry(entryName);
+        entryList.add(networkTable.getEntry(entryName).getName());
+        listenerHandlerList.add(0);
+    }
+
+    /**
      * Sets a value to a given entry
      * 
      * @param entryName the entry to affect
      * @param value     vague variable that allows multiple types
      */
     public static void setValue(String entryName, Object value) {
-        networkTable.getEntry(entryName).setValue(value);
+        try {
+            networkTable.getEntry(entryName).setValue(value);
+        } catch (IllegalArgumentException e) {
+            SmartDashboard.putData(entryName, (Sendable) value);
+        }
     }
 
     /**
