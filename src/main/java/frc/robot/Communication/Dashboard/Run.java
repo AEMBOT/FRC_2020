@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  * 
  * @author Will Richards
  */
-public class Method2Command extends InstantCommand {
+public class Run extends InstantCommand {
 
   // Method that we want to run
   private Runnable method;
@@ -20,7 +20,7 @@ public class Method2Command extends InstantCommand {
    * 
    * @param method the method we want to run
    */
-  public Method2Command(Runnable method) {
+  public Run(Runnable method) {
     this.method = method;
   }
 

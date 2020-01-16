@@ -9,7 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Autonomous.Pathing.TrajectoryFollow;
+import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Joysticks.Xbox;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.DriveTrainSystem;
@@ -49,6 +51,9 @@ public class Robot extends TimedRobot {
     teleop = new TeleopControl();
 
     pathing = new TrajectoryFollow(drive, "");
+
+    //Setup the dashboard
+    DashboardSetup();
 
   }
 
@@ -109,7 +114,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-      drive.arcadeDrive(0.8, 0);
+      
   }
 
   /**
@@ -117,5 +122,18 @@ public class Robot extends TimedRobot {
    */
   private void subsystemUpdater(){
     shooter.runShooter();
+  }
+
+  /**
+   * Used to setup the Shuffleboard
+   */
+  private void DashboardSetup(){
+
+      //Set up the net table
+      Dashboard.setTable("SmartDashboard");
+
+      //Add options to the dashboards
+      Dashboard.createEntry("Fly-Wheel-RPM", 0.0);
+      Dashboard.createEntry("Fly-Wheel-Speed-Status", false);
   }
 }

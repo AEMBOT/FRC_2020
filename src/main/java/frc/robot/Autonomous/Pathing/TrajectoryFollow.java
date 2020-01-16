@@ -57,58 +57,50 @@ public class TrajectoryFollow {
     /**
      * Starts following the path, call in auto init
      */
-    public boolean followPath(){
-        if(!hasRunCommand){
+    public void followPath(){
 
-            //Create a voltage constraint do we dont accelerate too fast
-            autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared),
-            RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
+        System.out.println("Test 1");
 
-            trajectoryDrive = new TrajectoryDrive(drive);
+        //Create a voltage constraint do we dont accelerate too fast
+        autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared),
+        RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
 
-            //Create the path configuration
-            pathConfig = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared);
+        System.out.println("Test 1.5");
 
-            //Add the drive Kinematics to the config to make sure max speed is actually obeyed
-            pathConfig.setKinematics(RobotConstants.kDriveKinematics);
+        trajectoryDrive = new TrajectoryDrive(drive);
 
-            //Make sure it plans for the voltage constraint
-            pathConfig.addConstraint(autoVoltageConstraint);
+        //Create the path configuration
+        pathConfig = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared);
 
-            //Note: Test normal pathing before trying this
-            //Path testPath = PathParser.generatePath(pathConfig, pathFile);
+        //Add the drive Kinematics to the config to make sure max speed is actually obeyed
+        pathConfig.setKinematics(RobotConstants.kDriveKinematics);
 
-            //Create path and add points (1,1) and (2,-1) and set the end point to 3 meters ahead
-            testPath = new Path(pathConfig, new Pose2d(3, 0, new Rotation2d(0)));
-            testPath.addWaypoint(1, 1);
-            testPath.addWaypoint(2, -1);
+        System.out.println("Test 2");
 
-            //Generate trajectory from path
-            testTrajectory = testPath.getTrajectory();
+        //Make sure it plans for the voltage constraint
+        pathConfig.addConstraint(autoVoltageConstraint);
 
-            System.out.println("Hello ");
+        //Note: Test normal pathing before trying this
+        //Path testPath = PathParser.generatePath(pathConfig, pathFile);
+        //Create path and add points (1,1) and (2,-1) and set the end point to 3 meters ahead
+        testPath = new Path(pathConfig, new Pose2d(3, 0, new Rotation2d(0)));
+        testPath.addWaypoint(1, 1);
+        testPath.addWaypoint(2, -1);
 
-            RamseteController controller = new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta);
+        //Generate trajectory from path
+        testTrajectory = testPath.getTrajectory();
 
-            SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared);
+        System.out.println("Test 2.5");
+        
+        RamseteController controller = new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta);
+        SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared);
+        PIDController motorControlPID = new PIDController(RobotConstants.kPDriveVal, 0, 0);
+        ramseteCommand = new RamseteCommand(testTrajectory, trajectoryDrive::getPose, controller, feedforward, RobotConstants.kDriveKinematics, trajectoryDrive::getWheelSpeeds, motorControlPID, motorControlPID, trajectoryDrive::tankDriveVolts);
+        
+        System.out.println("Test 3");
 
-            PIDController motorControlPID = new PIDController(RobotConstants.kPDriveVal, 0, 0);
-
-            ramseteCommand = new RamseteCommand(testTrajectory, trajectoryDrive::getPose, controller, feedforward, RobotConstants.kDriveKinematics, trajectoryDrive::getWheelSpeeds, motorControlPID, motorControlPID, trajectoryDrive::tankDriveVolts);
-
-            //Starts the command and then when its done tells the robot to stop moving
-            ramseteCommand.andThen(() -> trajectoryDrive.tankDriveVolts(0, 0));
-
-            hasRunCommand = true;
-        }
-
-        //Tell the iterative program that the command has finished
-        if(ramseteCommand.isFinished()){
-            return true;
-            
-        }
-        else{
-            return false;
-        }
+        //Starts the command and then when its done tells the robot to stop moving
+        ramseteCommand.andThen(() -> trajectoryDrive.tankDriveVolts(0, 0));
+        hasRunCommand = true;        
     }
 }

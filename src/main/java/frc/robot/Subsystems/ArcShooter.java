@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.RobotMap;
+import frc.robot.Communication.Dashboard.Dashboard;
 
 /**
  * Implementation of an Arc Shooter Teleop/Autonomous
@@ -30,7 +31,7 @@ public class ArcShooter{
     }
 
     /**
-     * Constantly called only executed when toggled, allows for the flywheel to ramp up or down to allow for smooth-ish curvex
+     * Constantly called only executed when toggled, allows for the flywheel to ramp up or down to allow for smooth-ish curve
      */
     public void runShooter(){
         if(toggledStatus){
@@ -45,6 +46,9 @@ public class ArcShooter{
                 currentFlyWheelPower = 0;
             }
         }
+
+        //Add the RPM values to the smart dashboard
+        Dashboard.setValue("Fly-Wheel-RPM", shooterMotor.getEncoder().getVelocity());
         
         shooterMotor.set(currentFlyWheelPower);
     }

@@ -2,10 +2,7 @@ package frc.robot.Communication.Dashboard;
 
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -15,7 +12,7 @@ import java.util.function.Consumer;
  * 
  * @author Will Richards
  */
-public class Shuffleboard {
+public class Dashboard {
 
     // Create an instance of a network table to interface with th
     private NetworkTableInstance instance;
@@ -60,10 +57,11 @@ public class Shuffleboard {
      * 
      * @param entryName the name of the entry
      */
-    public static void createEntry(String entryName) {
+    public static void createEntry(String entryName, Object defaultValue) {
         networkTable.getEntry(entryName);
         entryList.add(networkTable.getEntry(entryName).getName());
         listenerHandlerList.add(0);
+        networkTable.getEntry(entryName).setValue(defaultValue);
     }
 
     /**
@@ -83,7 +81,7 @@ public class Shuffleboard {
      * @param method    the method we want to add
      */
     public static void addRunableMethod(String entryName, Runnable method) {
-        SmartDashboard.putData(entryName, new Method2Command(method));
+        SmartDashboard.putData(entryName, new Run(method));
     }
 
     /**
