@@ -106,10 +106,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    
-
-    System.out.println(Arrays.toString(Dashboard.getPID("TestPID")));
-
     //Control the robot drive train
     drive.arcadeDrive(primary.leftStickY(), primary.rightStickX());
 
@@ -159,9 +155,8 @@ public class Robot extends TimedRobot {
       Dashboard.createEntry("Left-Side-Current-Draw");
       Dashboard.createEntry("Right-Side-Current-Draw");
 
+      //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
-
-      Dashboard.createPIDController("TestPID");
   }
 
   /**

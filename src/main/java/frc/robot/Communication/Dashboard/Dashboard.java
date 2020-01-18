@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+import javax.management.RuntimeErrorException;
+
 /**
  * Wrapper style class for the network tables for use with Shuffleboard
  * 
@@ -115,9 +117,10 @@ public class Dashboard {
      * @param entryName the location to store it
      * @param updateFunction the function to call when the values are changed
      */
-    public static void createPIDController(String entryName){
+    public static void createPIDController(String entryName, boolean persistent){
         if(!SmartDashboard.containsKey(entryName)){
             PIDController pid = new PIDController(0, 0, 0);
+            createEntry(entryName);
             SmartDashboard.putData(entryName, pid);
         }
     }
