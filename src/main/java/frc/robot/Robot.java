@@ -14,6 +14,7 @@ import frc.robot.Autonomous.Pathing.TrajectoryFollow;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
 import frc.robot.Hardware.Joysticks.Xbox;
+import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Teleop.TeleopControl;
@@ -47,15 +48,15 @@ public class Robot extends TimedRobot {
     primary = new Xbox(new XboxController(0));
 
     // Init the drive train system with the correct gamepad
-    drive = new DriveTrainSystem();
+   // drive = new DriveTrainSystem();
 
     //Create a new shooter object
-    shooter = new ArcShooter();
+    //shooter = new ArcShooter();
 
     // Used to make button interaction easier
     teleop = new TeleopControl();
 
-    pathing = new TrajectoryFollow(drive, "");
+   // pathing = new TrajectoryFollow(drive, "");
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
@@ -149,6 +150,8 @@ public class Robot extends TimedRobot {
       //Create entries for the left side drive train current draw
       Dashboard.createEntry("Left-Side-Current-Draw");
       Dashboard.createEntry("Right-Side-Current-Draw");
+
+      Dashboard.createEntry("Gyro");
   }
 
   /**
@@ -157,7 +160,10 @@ public class Robot extends TimedRobot {
   private void updateDashboard(){
 
     // Add the values to the shuffle board in graph form
-    Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
-    Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw());
+   // Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
+    //Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw());
+
+    //Update the navX angle on the dashboard
+    Dashboard.setValue("Gyro", NavX.get().getAngle());
   }
 }
