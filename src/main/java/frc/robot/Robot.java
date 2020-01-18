@@ -164,6 +164,6 @@ public class Robot extends TimedRobot {
     Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw()); 
 
     //Update the navX angle on the dashboard
-    Dashboard.setValue("Gyro", NavX.get().getAngle());
+    Dashboard.setValue("Gyro", NavX.get().getAhrs());
   }
 }

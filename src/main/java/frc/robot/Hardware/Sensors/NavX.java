@@ -128,4 +128,7 @@ public class NavX {
     public double getAngle(){
         return ahrs.getAngle();
     }
+    public AHRS getAhrs(){
+        return ahrs;
+    }
 }
