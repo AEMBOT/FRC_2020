@@ -67,6 +67,8 @@ public class ArcShooter{
 
         Dashboard.setValue("Shooter-Current-Draw", getMotorCurrent());
 
+        System.out.println(getMotorCurrent()[0]);
+
         //Set the flywheel speed to the ramped speed
         shooterMotor.set(currentFlyWheelPower);
     }
@@ -76,7 +78,7 @@ public class ArcShooter{
      */
     public double[] getMotorCurrent(){
         double [] shooterCurrent = new double[1];
-        shooterCurrent[0] = shooterMotor.getEncoder().getVelocity();
+        shooterCurrent[0] = shooterMotor.getOutputCurrent();
 
         return shooterCurrent;
     }

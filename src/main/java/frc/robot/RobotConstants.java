@@ -9,10 +9,12 @@ public class RobotConstants {
 
     // Number of ticks per one revolution of the wheel, 8192 is based on a REV
     // through bore encoders
+    public static final int PULSES_PER_REV = 2048;
     public static final int TICKS_PER_REV = 8192;
 
+
     // Calculate the circumference of an 8in pneumatic wheel
-    public static final double WHEEL_CIRCUMFERENCE = (Math.PI * 8);
+    public static final double WHEEL_CIRCUMFERENCE = (Math.PI * 0.2032);
 
     //region Autonomous Robot Pathing Constants
     /**
@@ -23,7 +25,7 @@ public class RobotConstants {
      */
 
     // The scale factor required to convert encoder pulses into a useable value, divide by 4 because of how WPI handles reading encoder pulses
-    public static final double kEncoderDistancePerPulse = 8192 / 4.0;
+    public static final double kEncoderDistancePerPulse = WHEEL_CIRCUMFERENCE / PULSES_PER_REV;
 
     // The maximum voltage the drive motors can draw during this
     public static final double kMaxUsableVoltage = 10;

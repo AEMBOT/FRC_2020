@@ -82,6 +82,9 @@ public class DriveTrainSystem {
         leftSideEncoder = new Encoder(RobotMap.LeftSideEncoderA, RobotMap.LeftSideEncoderB);
         rightSideEncoder = new Encoder(RobotMap.RightSideEncoderA, RobotMap.RightSideEncoderB);
 
+        // Flip Encoder values
+        leftSideEncoder.setReverseDirection(true);
+
         // Convert the pulses into usable distances
         leftSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
         rightSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);

@@ -12,8 +12,8 @@ public class RobotMap {
     public static final int LeftBackMotor = 3;
 
     // Ports for the left through bore encoder
-    public static final int LeftSideEncoderA = 1;
-    public static final int LeftSideEncoderB = 2;
+    public static final int LeftSideEncoderA = 0;
+    public static final int LeftSideEncoderB = 1;
 
     // Right side of the drive train
     public static final int RightFrontMotor = 4;
@@ -21,8 +21,8 @@ public class RobotMap {
     public static final int RightBackMotor = 6;
 
     // Ports for the right through bore encoder
-    public static final int RightSideEncoderA = 3;
-    public static final int RightSideEncoderB = 4;
+    public static final int RightSideEncoderA = 2;
+    public static final int RightSideEncoderB = 3;
 
     public static final int ShooterTestMotor = 7;
 }
