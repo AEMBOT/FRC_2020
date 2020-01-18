@@ -3,6 +3,8 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import frc.robot.RobotMap;
 import frc.robot.Communication.Dashboard.Dashboard;
 
@@ -54,20 +56,20 @@ public class ArcShooter{
             }
         }
 
-        //Add the RPM values to the smart dashboard
-        Dashboard.setValue("Fly-Wheel-RPM", shooterMotor.getEncoder().getVelocity());
-        
-        //Inform the user of wheater or not the motor is up to speed
-        if(shooterMotor.getEncoder().getVelocity() > 6000){
-            Dashboard.setValue("Fly-Wheel-Speed-Status", true);
-        }
-        else{
-            Dashboard.setValue("Fly-Wheel-Speed-Status", false);
-        }
+        if(RobotBase.isReal()){
+            //Add the RPM values to the smart dashboard
+            Dashboard.setValue("Fly-Wheel-RPM", shooterMotor.getEncoder().getVelocity());
+            
+            //Inform the user of wheater or not the motor is up to speed
+            if(shooterMotor.getEncoder().getVelocity() > 6000){
+                Dashboard.setValue("Fly-Wheel-Speed-Status", true);
+            }
+            else{
+                Dashboard.setValue("Fly-Wheel-Speed-Status", false);
+            }
 
-        Dashboard.setValue("Shooter-Current-Draw", getMotorCurrent());
-
-        System.out.println(getMotorCurrent()[0]);
+            Dashboard.setValue("Shooter-Current-Draw", getMotorCurrent());
+        }
 
         //Set the flywheel speed to the ramped speed
         shooterMotor.set(currentFlyWheelPower);

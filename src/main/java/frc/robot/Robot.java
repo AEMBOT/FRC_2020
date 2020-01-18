@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.util.Arrays;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -56,7 +58,7 @@ public class Robot extends TimedRobot {
     // Used to make button interaction easier
     teleop = new TeleopControl();
 
-   // pathing = new TrajectoryFollow(drive, "");
+    pathing = new TrajectoryFollow(drive, "");
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
@@ -94,6 +96,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
+    Dashboard.getPID("TestPID");
+
   }
 
   /**
@@ -101,6 +105,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    
+
+    System.out.println(Arrays.toString(Dashboard.getPID("TestPID")));
 
     //Control the robot drive train
     drive.arcadeDrive(primary.leftStickY(), primary.rightStickX());
@@ -152,6 +160,8 @@ public class Robot extends TimedRobot {
       Dashboard.createEntry("Right-Side-Current-Draw");
 
       Dashboard.createEntry("Gyro");
+
+      Dashboard.createPIDController("TestPID");
   }
 
   /**

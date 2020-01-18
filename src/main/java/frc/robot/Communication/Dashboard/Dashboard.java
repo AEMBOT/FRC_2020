@@ -115,11 +115,48 @@ public class Dashboard {
      * @param entryName the location to store it
      * @param updateFunction the function to call when the values are changed
      */
-    public static void createPIDController(String entryName, Consumer<NetworkTableValue> updateFunction){
-        PIDController pid = new PIDController(0, 0, 0);
-        SmartDashboard.putData(entryName, pid);
+    public static void createPIDController(String entryName){
+        if(!SmartDashboard.containsKey(entryName)){
+            PIDController pid = new PIDController(0, 0, 0);
+            SmartDashboard.putData(entryName, pid);
+        }
+    }
 
-        setUpEntryListener(entryName, updateFunction);
+    /**
+     * Clears persistent data for a set key
+     */
+    public static void clearPersistance(String entryName){
+        SmartDashboard.clearPersistent(entryName);
+    }
+
+    /**
+     * Enable saving of data between restarts
+     * @param entryName
+     */
+    public static void enablePersistance(String entryName){
+        SmartDashboard.setPersistent(entryName);
+    }
+
+    /**
+     * Returns the PID values from a controller
+     * @param entryName
+     * @return the PID values in an array
+     */
+    public static double[] getPID(String entryName){
+        double[] pidConstants = new double[3];
+
+        PIDController pid = (PIDController) SmartDashboard.getData(entryName);
+
+        //P
+        pidConstants[0] = pid.getP();
+
+        //I
+        pidConstants[1] = pid.getI();
+
+        //D
+        pidConstants[2] = pid.getD();
+
+        return pidConstants;
     }
 
     /**
