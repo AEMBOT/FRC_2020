@@ -48,10 +48,10 @@ public class Robot extends TimedRobot {
     primary = new Xbox(new XboxController(0));
 
     // Init the drive train system with the correct gamepad
-   // drive = new DriveTrainSystem();
+    drive = new DriveTrainSystem();
 
     //Create a new shooter object
-    //shooter = new ArcShooter();
+    shooter = new ArcShooter();
 
     // Used to make button interaction easier
     teleop = new TeleopControl();
@@ -155,13 +155,13 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Meant to update values that dont have accsessible update spots
+   * Meant to update values that dont have accessible update spots
    */
   private void updateDashboard(){
 
     // Add the values to the shuffle board in graph form
-   // Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
-    //Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw());
+    Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
+    Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw()); 
 
     //Update the navX angle on the dashboard
     Dashboard.setValue("Gyro", NavX.get().getAngle());
