@@ -7,12 +7,12 @@
 
 package frc.robot;
 
-import java.util.Arrays;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import frc.robot.Autonomous.Pathing.TrajectoryFollow;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Autonomous.Pathing.Command.PathingCommand;
+import frc.robot.Autonomous.Pathing.Iterative.TrajectoryFollow;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
 import frc.robot.Hardware.Joysticks.Xbox;
@@ -37,6 +37,10 @@ public class Robot extends TimedRobot {
   // Autonomous Control
   private TrajectoryFollow pathing;
 
+  // Command based trajectory
+  private Command pathCommand;
+  private PathingCommand pathingCommand;
+
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
    */
@@ -60,6 +64,9 @@ public class Robot extends TimedRobot {
 
     pathing = new TrajectoryFollow(drive, "");
 
+
+    pathingCommand = new PathingCommand(drive);
+
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
 
@@ -72,6 +79,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     //Update dashboard information
     updateDashboard();
+
+    //Allow for commands to be scheduled
+    CommandScheduler.getInstance().run();
   }
 
   /**
@@ -79,7 +89,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    pathing.followPath();
+
+    //Init and schedule the pathing command
+    pathCommand = pathingCommand.getPathCommand();
+
+    if(pathCommand != null){
+      pathCommand.schedule();
+    }
   }
 
   /**
@@ -95,7 +111,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-
     Dashboard.getPID("TestPID");
 
   }
