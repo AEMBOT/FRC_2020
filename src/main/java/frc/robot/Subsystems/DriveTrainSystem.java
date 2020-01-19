@@ -55,6 +55,11 @@ public class DriveTrainSystem {
         LeftMiddleMotor =  new CANSparkMax(RobotMap.LeftMiddleMotor, MotorType.kBrushless);
         LeftBackMotor = new CANSparkMax(RobotMap.LeftBackMotor, MotorType.kBrushless);
 
+        LeftFrontMotor.setOpenLoopRampRate(2);
+        LeftMiddleMotor.setOpenLoopRampRate(2);
+        LeftBackMotor.setOpenLoopRampRate(2);
+
+
         // Create and add motors to the Left side motor contaniner
         leftMotorsArray = new CANSparkMax[3];
         leftMotorsArray[0] = LeftFrontMotor;
@@ -65,6 +70,11 @@ public class DriveTrainSystem {
         RightFrontMotor = new CANSparkMax(RobotMap.RightFrontMotor, MotorType.kBrushless);
         RightMiddleMotor =  new CANSparkMax(RobotMap.RightMiddleMotor, MotorType.kBrushless);
         RightBackMotor = new CANSparkMax(RobotMap.RightBackMotor, MotorType.kBrushless);
+
+        RightBackMotor.setOpenLoopRampRate(2);
+        RightMiddleMotor.setOpenLoopRampRate(2);
+        RightFrontMotor.setOpenLoopRampRate(2);
+
 
         // Create an array to hold the right side motors
         rightMotorsArray = new CANSparkMax[3];
@@ -105,14 +115,6 @@ public class DriveTrainSystem {
         diffDrive.arcadeDrive(drivePower, turnPower);
 
         
-    }
-
-    /**
-     * Drive the robot with a tank style drive, but pass voltages to the motor controllers instead of "powers"
-     */
-    public void tankDriveVolts(double leftVolts, double rightVolts){
-        getLeftSideMotors().setVoltage(leftVolts);
-        getRightSideMotors().setVoltage(rightVolts);
     }
 
     /**

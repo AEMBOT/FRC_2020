@@ -42,14 +42,14 @@ public class ArcShooter{
 
         //If the motor should be ramping up and the speed is less than one keep increasing
         if(toggledStatus){
-            if(currentFlyWheelPower < 1)
-                currentFlyWheelPower += 0.05;
+            if(currentFlyWheelPower > -1)
+                currentFlyWheelPower -= 0.05;
         }
 
         //If not toggled and the motor is at full power ramp it down, quicker than speeding up
         else{
-            if(currentFlyWheelPower >= 0.1){
-                currentFlyWheelPower -= 0.1;
+            if(currentFlyWheelPower <= -0.1){
+                currentFlyWheelPower += 0.1;
             }
             else{
                 currentFlyWheelPower = 0;

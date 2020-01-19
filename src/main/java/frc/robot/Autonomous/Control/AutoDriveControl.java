@@ -24,12 +24,12 @@ public class AutoDriveControl {
     private NavX navX;
 
     // PID Constants for turning, TODO: Tune
-    private final double turn_kP = 0;
+    private final double turn_kP = 0.001;
     private final double turn_kI = 0;
     private final double turn_kD = 0;
 
     // PID constants for driving, TODO: Tune
-    private final double drive_kP = 0;
+    private final double drive_kP = 1;
     private final double drive_kI = 0;
     private final double drive_kD = 0;
 
@@ -46,13 +46,13 @@ public class AutoDriveControl {
 
         // Creates a new PID controller that will account for the overflow of the NavX
         // when turning
-        turnPID = new PID(turn_kP, turn_kI, turn_kD, true);
+        turnPID = new PID(turn_kP, turn_kI, turn_kD);
         turnPID.setAcceptableRange(1);
 
         // Creates a new PID controller to handle accurate of distances, larger range
         // because working in ticks instead of degrees
-        drivePID = new PID(drive_kP, drive_kI, drive_kD, false);
-        drivePID.setAcceptableRange(100);
+        drivePID = new PID(drive_kP, drive_kI, drive_kD);
+        drivePID.setAcceptableRange(0.02);
     }
 
     /**
@@ -64,20 +64,24 @@ public class AutoDriveControl {
      */
     public boolean DriveDistance(double distance) {
 
-        // Divide the distance by the wheel circumfrance to get the number of rotations
-        // then multiply the number of rotations by the ticks per rotation to get the
-        // required ticks
-        double requiredTicks = (distance / RobotConstants.WHEEL_CIRCUMFERENCE) * RobotConstants.TICKS_PER_REV;
-
         // Set the point for the PID loop that we want to reach
-        drivePID.setSetpoint(requiredTicks);
+        drivePID.setSetpoint(distance);
 
         // Calculate the value needed to reach that point
-        double motorPower = drivePID.calcOutput(drive.getAveragePosition());
+        double motorPower = drivePID.calcOutput(drive.getAverageEncoderDistance());
+
+        System.out.println("Setpoint: " + distance);
+        System.out.println("Position: " + drive.getAverageEncoderDistance());
+
+
+        if(Math.abs(motorPower) > 0.5){
+            motorPower = Math.copySign(0.5, motorPower);
+        }
 
         // If in range stop the robot and report that the loop is done
         if (drivePID.isInRange()) {
             drive.arcadeDrive(0, 0);
+            drive.resetEncoders();
             return true;
         }
 
@@ -98,17 +102,20 @@ public class AutoDriveControl {
      */
     public boolean TurnToAngle(double angle) {
 
-        // Tell the robot the angle it needs to reach
-        turnPID.setSetpoint(angle);
-
         // Use the yaw corrected from 0-180 to 0-360 and pass it as the input to the PID
         // loop
-        double power = turnPID.calcOutput(navX.getCorrectedHeading());
+        double power = turnPID.calcOutput(navX.getEdgeCaseAngle(angle));
+        System.out.println("Calculated Angle: " + navX.getEdgeCaseAngle(angle));
+
+        if(Math.abs(power) > 0.5){
+            power = Math.copySign(0.5, power);
+        }
 
         // Check if the robot is in range yet and if so stop and return true saying the
         // manuever is complete
         if (turnPID.isInRange()) {
             drive.arcadeDrive(0, 0);
+            drive.resetEncoders();
             return true;
         }
 

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import frc.robot.Autonomous.Control.AutoDriveControl;
 import frc.robot.Autonomous.Pathing.TrajectoryFollow;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
@@ -34,8 +35,11 @@ public class Robot extends TimedRobot {
   private ArcShooter shooter;
   private TeleopControl teleop;
 
-  // Autonomous Control
-  private TrajectoryFollow pathing;
+  private AutoDriveControl autoControl;
+
+  private boolean hasRunDrive = false;
+  private boolean hasTurned = false;
+
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -55,13 +59,15 @@ public class Robot extends TimedRobot {
     //Create a new shooter object
     shooter = new ArcShooter();
 
+    autoControl = new AutoDriveControl(drive);
+
     // Used to make button interaction easier
     teleop = new TeleopControl();
 
-    pathing = new TrajectoryFollow(drive, "");
-
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
+    
+    drive.resetEncoders();
 
   }
 
@@ -79,7 +85,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    pathing.followPath();
+    NavX.get().getAhrs().zeroYaw();
+    drive.resetEncoders();   
+    hasRunDrive = false;
+    hasTurned = false;
   }
 
   /**
@@ -87,7 +96,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-   
+    if(!hasRunDrive){
+      hasRunDrive = autoControl.DriveDistance(1);
+    }
+    else if (hasRunDrive && !hasTurned){
+      hasTurned = autoControl.TurnToAngle(90);
+    }
   }
 
   /**
@@ -95,8 +109,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-
-    Dashboard.getPID("TestPID");
 
   }
 
@@ -157,6 +169,8 @@ public class Robot extends TimedRobot {
 
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
+
+      Dashboard.createEntry("ResetGyro");
   }
 
   /**
