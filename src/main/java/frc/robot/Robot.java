@@ -118,12 +118,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    if(!hasRunDrive){
-      hasRunDrive = autoControl.DriveDistance(1);
-    }
-    else if (hasRunDrive && !hasTurned){
-      hasTurned = autoControl.TurnToAngle(90);
-    }
+    
+    //TODO: Test autopathing command implementation
+    // if(!hasRunDrive){
+    //   hasRunDrive = autoControl.DriveDistance(1);
+    // }
+    // else if (hasRunDrive && !hasTurned){
+    //   hasTurned = autoControl.TurnToAngle(90);
+    // }
   }
 
   /**
