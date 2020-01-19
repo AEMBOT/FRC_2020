@@ -118,6 +118,20 @@ public class DriveTrainSystem {
     }
 
     /**
+     * Sets the ramp rate to zero seconds
+     */
+    public void disableRampRate(){
+        LeftFrontMotor.setOpenLoopRampRate(0);
+        LeftMiddleMotor.setOpenLoopRampRate(0);
+        LeftBackMotor.setOpenLoopRampRate(0);
+
+        
+        RightBackMotor.setOpenLoopRampRate(0);
+        RightMiddleMotor.setOpenLoopRampRate(0);
+        RightFrontMotor.setOpenLoopRampRate(0);
+    }
+
+    /**
      * Wrapper for the tank drive method in the diff drive class
      */
     public void tankDrive(double leftPower, double rightPower){
