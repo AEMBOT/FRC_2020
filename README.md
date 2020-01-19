@@ -25,7 +25,6 @@ This document goes over general Github and Java code standards for this reposito
 * [wpilibj](http://first.wpi.edu/FRC/roborio/release/docs/java/)
 * [Chief Delphi Forum](https://www.chiefdelphi.com/forums/portal.php)
 * [navX Info](https://pdocs.kauailabs.com/navx-mxp/)
-* [FRC Screen Steps Programming Tutorial](https://wpilib.screenstepslive.com/s/currentCS/m/java)
-* [PID Tuning PowerPoint](http://www.simbotics.org/files/pdf/programming-pid.pdf)
+* [WPILIB Docs](https://docs.wpilib.org/en/latest/)
 * [PID Background Video](https://www.youtube.com/watch?v=UR0hOmjaHp0)
 * [PID Examples](https://www.youtube.com/watch?annotation_id=annotation_891845&feature=iv&src_vid=UR0hOmjaHp0&v=XfAt6hNV8XM)
