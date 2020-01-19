@@ -21,7 +21,7 @@ public class RobotConstants {
      * Robot Characterization Link:
      * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/introduction.html#installing-and-launching-the-toolsuite
      * The following section of variables is specifically for use with the S-Curve
-     * Trajectories TODO: Find values for 2020 bot drive train
+     * Trajectories
      */
 
     // The scale factor required to convert encoder pulses into a useable value, divide by 4 because of how WPI handles reading encoder pulses
@@ -34,22 +34,24 @@ public class RobotConstants {
     public static final boolean kGyroReversed = false;
 
     // Voltage for static friction velocity and acceleration
-    public static final double kSVolts = -1;
-    public static final double kvVoltMetersPerSecond = -1;
-    public static final double kaVoltMetersPerSecondSquared = -1;
+    public static final double kSVolts = 0.0127;
+    public static final double kvVoltMetersPerSecond = 1.65;
+    public static final double kaVoltMetersPerSecondSquared = 0.0199;
 
     // PID values (Only P is required for velocity)
-    public static final double kPDriveVal = -1;
+    public static final double kPDriveVal = 0.387;
 
     // Kinematic information about our robot
-    public static final double kTrackWidthMeters = -1;
+    public static final double kTrackWidthMeters = 0.6223;
+    //public static final double kTrackWidthMeters = 0.719032956;
+    
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
             kTrackWidthMeters);
 
     // Sets values for the speed at which we will reach the max velocity and what
     // the max velocity
-    public static final double kMaxVelocityMetersPerSecond = -1;
-    public static final double kMaxAccelerationMetersPerSecondSquared = -1;
+    public static final double kMaxVelocityMetersPerSecond = 0.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds

@@ -47,9 +47,7 @@ public class PID {
      * @param D              the D scalar
      * @param usingGyroscope will alter the value to account for edge cases
      */
-    public PID(double P, double I, double D, boolean usingGyroscope) {
-
-        this.usingGyroscope = usingGyroscope;
+    public PID(double P, double I, double D) {
 
         this.P = P;
         this.I = I;
@@ -110,14 +108,11 @@ public class PID {
      */
     public double calcOutput(double currentValue) {
 
-        if (usingGyroscope) {
-            // Calculate the error to account for overflow
-            p = (((((setpoint - currentValue) + 180)+360) % 360) - 180);
-        } else {
-
+        
+        
             // Calculate the difference / error
-            p = setpoint - currentValue;
-        }
+        p = setpoint - currentValue;
+        
 
         // Error over time
         i += p;
@@ -126,31 +121,14 @@ public class PID {
         d = p - lastError;
         lastError = p;
 
-        // If we are trying to account for the overflow of the turing (eg. 0 = 360 and
-        // vice versa because if it overshoots instead of turning all the way back
-        // around it should just flip direction)
-        if (usingGyroscope) {
-
-            // Use the output of error in the PID loop to determine if its in range (eg. P
-            // is only outputting a -1 or a 1 then stop)
-            // Using 0 because that is the point the loop is technically trying to get to
-            if (p > 0 - acceptableRange && p < 0 + acceptableRange) {
-                inRange = true;
-                output = (P * p + I * i + D * d);
-            } else {
-                inRange = false;
-                output = (P * p + I * i + D * d);
-            }
-
+        
+        // If the value is in the acceptable range set the flag to true
+        if (currentValue > setpoint - acceptableRange && currentValue < setpoint + acceptableRange) {
+            inRange = true;
+            output = (P * p + I * i + D * d);
         } else {
-            // If the value is in the acceptable range set the flag to true
-            if (currentValue > setpoint - acceptableRange && currentValue < setpoint + acceptableRange) {
-                inRange = true;
-                output = (P * p + I * i + D * d);
-            } else {
-                inRange = false;
-                output = (P * p + I * i + D * d);
-            }
+            inRange = false;
+            output = (P * p + I * i + D * d);
         }
 
         // Scales the value to the max output

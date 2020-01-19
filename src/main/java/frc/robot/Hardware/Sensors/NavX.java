@@ -59,6 +59,10 @@ public class NavX {
         }
     }
 
+    public double getEdgeCaseAngle(double setpoint){
+        return (((((setpoint - getCorrectedHeading()) + 180)+360) % 360) - 180);
+    }
+
     /**
      * This method can't truly be reset and will return a heading based of the gyro
      * and the compass (0-360)

@@ -56,6 +56,9 @@ public class TrajectoryDrive{
     public void tankDriveVolts(double leftVolts, double rightVolts){
         drive.getLeftSideMotors().setVoltage(leftVolts);
         drive.getRightSideMotors().setVoltage(rightVolts);
+
+        System.out.println("Trans: " + getPose().getTranslation());
+        System.out.println("Rot: " + getPose().getRotation());
     }
 
     /**

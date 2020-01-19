@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Autonomous.Control.AutoDriveControl;
 import frc.robot.Autonomous.Pathing.Command.PathingCommand;
 import frc.robot.Autonomous.Pathing.Iterative.TrajectoryFollow;
 import frc.robot.Communication.Dashboard.Dashboard;
@@ -34,7 +35,11 @@ public class Robot extends TimedRobot {
   private ArcShooter shooter;
   private TeleopControl teleop;
 
-  // Autonomous Control
+  private AutoDriveControl autoControl;
+
+  private boolean hasRunDrive = false;
+  private boolean hasTurned = false;
+
   private TrajectoryFollow pathing;
 
   // Command based trajectory
@@ -59,16 +64,19 @@ public class Robot extends TimedRobot {
     //Create a new shooter object
     shooter = new ArcShooter();
 
+    autoControl = new AutoDriveControl(drive);
+
     // Used to make button interaction easier
     teleop = new TeleopControl();
 
     pathing = new TrajectoryFollow(drive, "");
 
-
     pathingCommand = new PathingCommand(drive);
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
+    
+    drive.resetEncoders();
 
   }
 
@@ -90,12 +98,19 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    NavX.get().getAhrs().zeroYaw();
+    drive.resetEncoders();   
+
     //Init and schedule the pathing command
     pathCommand = pathingCommand.getPathCommand();
 
     if(pathCommand != null){
       pathCommand.schedule();
     }
+
+    
+    //hasRunDrive = false;
+    //hasTurned = false;
   }
 
   /**
@@ -103,7 +118,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-   
+    if(!hasRunDrive){
+      hasRunDrive = autoControl.DriveDistance(1);
+    }
+    else if (hasRunDrive && !hasTurned){
+      hasTurned = autoControl.TurnToAngle(90);
+    }
   }
 
   /**
@@ -111,7 +131,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    Dashboard.getPID("TestPID");
 
   }
 
@@ -172,6 +191,8 @@ public class Robot extends TimedRobot {
 
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
+
+      Dashboard.createEntry("ResetGyro");
   }
 
   /**
