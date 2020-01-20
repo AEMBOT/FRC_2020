@@ -134,6 +134,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
+    //Allows for raw telop input (subject to change)
+    drive.disableRampRate();
   }
 
   /**
@@ -193,8 +195,6 @@ public class Robot extends TimedRobot {
 
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
-
-      Dashboard.createEntry("ResetGyro");
   }
 
   /**
