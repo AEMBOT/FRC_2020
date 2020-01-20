@@ -15,20 +15,19 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.RobotConstants;
-import frc.robot.Autonomous.Pathing.TrajectoryDrive;
 import frc.robot.Subsystems.DriveTrainSystem;
 
 public class PathingCommand{
 
     // Create new trajectory drive
-    private TrajectoryDrive robotDrive;
+    private TrajectoryDriveSubsystem robotDrive;
 
     /**
      * Construct the command with a drive train reference
      * @param drive reference to the DriveTrainSystem
      */
     public PathingCommand(DriveTrainSystem drive){
-        robotDrive = new TrajectoryDrive(drive);
+        robotDrive = new TrajectoryDriveSubsystem(drive);
     }
 
 
@@ -76,7 +75,8 @@ public class PathingCommand{
             robotDrive::getWheelSpeeds, 
             new PIDController(RobotConstants.kPDriveVal, 0, 0), 
             new PIDController(RobotConstants.kPDriveVal, 0, 0),
-            robotDrive::tankDriveVolts);
+            robotDrive::tankDriveVolts,
+            robotDrive);
 
         // Return the command stating that the robot should halt after the path is complete
         return ramseteCommand.andThen(() -> robotDrive.tankDriveVolts(0, 0));

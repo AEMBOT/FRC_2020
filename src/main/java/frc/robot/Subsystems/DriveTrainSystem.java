@@ -85,7 +85,11 @@ public class DriveTrainSystem {
         //SpeedControllerGroups that hold all meaningful 
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
         rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
+
+        // Flip the forward direction of the drive train
+        leftSide.setInverted(true);
         
+        //Create the differential robot control system
         diffDrive = new DifferentialDrive(leftSide, rightSide);
 
         //Create the encoders 
