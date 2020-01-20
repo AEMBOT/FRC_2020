@@ -49,18 +49,24 @@ public class DriveTrainSystem {
      * @param gamepad reference to the primary gamepad
      */
     public DriveTrainSystem(){
+        //Constructs the motors and adds them to speed controller groups
+        createMotors();
+
+        // Constructs the encoders
+        createEncoders();        
+    }
+
+    /**
+     * Intermediate used to construct the motors
+     */
+    private void createMotors(){
 
         //Create the individual motors for the left side to add to the SpeedControllerGroup
         LeftFrontMotor = new CANSparkMax(RobotMap.LeftFrontMotor, MotorType.kBrushless);
         LeftMiddleMotor =  new CANSparkMax(RobotMap.LeftMiddleMotor, MotorType.kBrushless);
         LeftBackMotor = new CANSparkMax(RobotMap.LeftBackMotor, MotorType.kBrushless);
 
-        LeftFrontMotor.setOpenLoopRampRate(2);
-        LeftMiddleMotor.setOpenLoopRampRate(2);
-        LeftBackMotor.setOpenLoopRampRate(2);
-
-
-        // Create and add motors to the Left side motor contaniner
+        // Create and add motors to the Left side motor container
         leftMotorsArray = new CANSparkMax[3];
         leftMotorsArray[0] = LeftFrontMotor;
         leftMotorsArray[1] = LeftMiddleMotor;
@@ -71,11 +77,6 @@ public class DriveTrainSystem {
         RightMiddleMotor =  new CANSparkMax(RobotMap.RightMiddleMotor, MotorType.kBrushless);
         RightBackMotor = new CANSparkMax(RobotMap.RightBackMotor, MotorType.kBrushless);
 
-        RightBackMotor.setOpenLoopRampRate(2);
-        RightMiddleMotor.setOpenLoopRampRate(2);
-        RightFrontMotor.setOpenLoopRampRate(2);
-
-
         // Create an array to hold the right side motors
         rightMotorsArray = new CANSparkMax[3];
         rightMotorsArray[0] = RightFrontMotor;
@@ -85,12 +86,19 @@ public class DriveTrainSystem {
         //SpeedControllerGroups that hold all meaningful 
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
         rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
-
         // Flip the forward direction of the drive train
         leftSide.setInverted(true);
-        
+    
         //Create the differential robot control system
         diffDrive = new DifferentialDrive(leftSide, rightSide);
+
+        diffDrive.setSafetyEnabled(false);
+    }
+    
+    /**
+     * Constructs the required drive train encoders
+     */
+    private void createEncoders(){
 
         //Create the encoders 
         leftSideEncoder = new Encoder(RobotMap.LeftSideEncoderA, RobotMap.LeftSideEncoderB);
@@ -102,8 +110,6 @@ public class DriveTrainSystem {
         // Convert the pulses into usable distances
         leftSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
         rightSideEncoder.setDistancePerPulse(RobotConstants.kEncoderDistancePerPulse);
-
-        diffDrive.setSafetyEnabled(false);
     }
 
     /**
@@ -133,6 +139,23 @@ public class DriveTrainSystem {
         RightBackMotor.setOpenLoopRampRate(0);
         RightMiddleMotor.setOpenLoopRampRate(0);
         RightFrontMotor.setOpenLoopRampRate(0);
+    }
+
+    /**
+     * Set the ramp rate on the drive train
+     * @param accelTime the time in seconds it takes to go from 0-100
+     */
+    public void enableRampRate(double accelTime){
+
+        //Left Ramp Rate
+        LeftFrontMotor.setOpenLoopRampRate(accelTime);
+        LeftMiddleMotor.setOpenLoopRampRate(accelTime);
+        LeftBackMotor.setOpenLoopRampRate(accelTime);
+
+        //Right Ramp Rate
+        RightBackMotor.setOpenLoopRampRate(accelTime);
+        RightMiddleMotor.setOpenLoopRampRate(accelTime);
+        RightFrontMotor.setOpenLoopRampRate(accelTime);
     }
 
     /**
