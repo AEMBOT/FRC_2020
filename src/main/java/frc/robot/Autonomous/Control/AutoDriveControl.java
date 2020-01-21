@@ -24,9 +24,9 @@ public class AutoDriveControl {
     private NavX navX;
 
     // PID Constants for turning, TODO: Tune
-    private final double turn_kP = 0.001;
+    private final double turn_kP = 0.02;
     private final double turn_kI = 0;
-    private final double turn_kD = 0;
+    private final double turn_kD = 0.01;
 
     // PID constants for driving, TODO: Tune
     private final double drive_kP = 1;
@@ -47,7 +47,7 @@ public class AutoDriveControl {
         // Creates a new PID controller that will account for the overflow of the NavX
         // when turning
         turnPID = new PID(turn_kP, turn_kI, turn_kD);
-        turnPID.setAcceptableRange(1);
+        turnPID.setAcceptableRange(0.02);
 
         // Creates a new PID controller to handle accurate of distances, larger range
         // because working in ticks instead of degrees
@@ -74,9 +74,10 @@ public class AutoDriveControl {
         System.out.println("Position: " + drive.getAverageEncoderDistance());
 
 
-        if(Math.abs(motorPower) > 0.5){
-            motorPower = Math.copySign(0.5, motorPower);
+        if(Math.abs(motorPower) > 0.7){
+            motorPower = Math.copySign(0.7, motorPower);
         }
+        
 
         // If in range stop the robot and report that the loop is done
         if (drivePID.isInRange()) {
@@ -102,13 +103,19 @@ public class AutoDriveControl {
      */
     public boolean TurnToAngle(double angle) {
 
+        turnPID.setSetpoint(angle);
+
         // Use the yaw corrected from 0-180 to 0-360 and pass it as the input to the PID
         // loop
-        double power = turnPID.calcOutput(navX.getEdgeCaseAngle(angle));
-        System.out.println("Calculated Angle: " + navX.getEdgeCaseAngle(angle));
+        double power = turnPID.calcOutput(navX.getYaw());
+        System.out.println("Calculated Angle: " + navX.getYaw());
 
         if(Math.abs(power) > 0.5){
             power = Math.copySign(0.5, power);
+        }
+
+        if(drive.getRightSideEncoder().getRate() <= 0.5){
+            power *= 1.2;
         }
 
         // Check if the robot is in range yet and if so stop and return true saying the
@@ -116,7 +123,7 @@ public class AutoDriveControl {
         if (turnPID.isInRange()) {
             drive.arcadeDrive(0, 0);
             drive.resetEncoders();
-            return true;
+            return false;
         }
 
         // If not in range keep driving and return false saying it is incomplete

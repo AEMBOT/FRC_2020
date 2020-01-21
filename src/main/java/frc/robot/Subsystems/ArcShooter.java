@@ -13,8 +13,10 @@ import frc.robot.Communication.Dashboard.Dashboard;
  */
 public class ArcShooter{
 
-    // Motor that runs the shooter
-    private CANSparkMax shooterMotor;
+    // Left motor in the shooter gear box
+    private CANSparkMax leftShooterMotor;
+
+    private CANSparkMax rightShooterMotor;
 
     // Weather or not the shooter should be running
     private boolean toggledStatus = false;
@@ -28,11 +30,14 @@ public class ArcShooter{
     public ArcShooter(){
 
         // Instance of the shooter motor
-        shooterMotor = new CANSparkMax(RobotMap.ShooterTestMotor, MotorType.kBrushless);
+        leftShooterMotor = new CANSparkMax(RobotMap.ShooterMotorLeft, MotorType.kBrushless);
         
-        // Flip the normal direction of the motor
-        shooterMotor.setInverted(true);
-        
+        // Instance of the shooter motor
+        rightShooterMotor = new CANSparkMax(RobotMap.ShooterMotorRight, MotorType.kBrushless);
+    
+        // Follow the left shooter motor to keep them moving at the same rate
+        rightShooterMotor.follow(leftShooterMotor);
+
     }
 
     /**
@@ -42,45 +47,33 @@ public class ArcShooter{
 
         //If the motor should be ramping up and the speed is less than one keep increasing
         if(toggledStatus){
-            if(currentFlyWheelPower > -1)
-                currentFlyWheelPower -= 0.05;
+            if(currentFlyWheelPower < 1)
+                currentFlyWheelPower += 0.05;
         }
 
         //If not toggled and the motor is at full power ramp it down, quicker than speeding up
         else{
-            if(currentFlyWheelPower <= -0.1){
-                currentFlyWheelPower += 0.1;
+            if(currentFlyWheelPower >= 0.1){
+                currentFlyWheelPower -= 0.1;
             }
             else{
                 currentFlyWheelPower = 0;
             }
         }
-
-        if(RobotBase.isReal()){
-            //Add the RPM values to the smart dashboard
-            Dashboard.setValue("Fly-Wheel-RPM", shooterMotor.getEncoder().getVelocity());
-            
-            //Inform the user of wheater or not the motor is up to speed
-            if(shooterMotor.getEncoder().getVelocity() > 6000){
-                Dashboard.setValue("Fly-Wheel-Speed-Status", true);
-            }
-            else{
-                Dashboard.setValue("Fly-Wheel-Speed-Status", false);
-            }
-
-            Dashboard.setValue("Shooter-Current-Draw", getMotorCurrent());
-        }
+        
+        updateShooterStats();
 
         //Set the flywheel speed to the ramped speed
-        shooterMotor.set(currentFlyWheelPower);
+        leftShooterMotor.set(currentFlyWheelPower);
     }
 
     /**
-     * Returns the output current of the shooter motor as an array so it can be put onto the dashboard
+     * Returns the output current of the shooter motors as an array so it can be put onto the dashboard
      */
     public double[] getMotorCurrent(){
-        double [] shooterCurrent = new double[1];
-        shooterCurrent[0] = shooterMotor.getOutputCurrent();
+        double [] shooterCurrent = new double[2];
+        shooterCurrent[0] = leftShooterMotor.getOutputCurrent();
+        shooterCurrent[1] = rightShooterMotor.getOutputCurrent();
 
         return shooterCurrent;
     }
@@ -89,7 +82,9 @@ public class ArcShooter{
      * Run the shooter motor given a manual power
      */
     public void manualShooter(double power){
-        shooterMotor.set(power);
+        leftShooterMotor.set(power);
+
+        updateShooterStats();
     }
 
     /**
@@ -97,5 +92,28 @@ public class ArcShooter{
      */
     public void toggleShooter(){
         toggledStatus = !toggledStatus;
+    }
+
+    /**
+     * Update the dashboard stats of the motor
+     */
+    private void updateShooterStats(){
+
+        // Only update on real robot to avoid crashing the simulation
+        if(RobotBase.isReal()){
+            //Add the RPM values to the smart dashboard
+            Dashboard.setValue("Fly-Wheel-RPM", leftShooterMotor.getEncoder().getVelocity());
+            
+            //Inform the user of wheater or not the motor is up to speed
+            if(leftShooterMotor.getEncoder().getVelocity() > 6000){
+                Dashboard.setValue("Fly-Wheel-Speed-Status", true);
+            }
+            else{
+                Dashboard.setValue("Fly-Wheel-Speed-Status", false);
+            }
+
+            //Adds a graph of the motor current draw
+            Dashboard.setValue("Shooter-Current-Draw", getMotorCurrent());
+        }
     }
 }

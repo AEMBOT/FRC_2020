@@ -24,5 +24,7 @@ public class RobotMap {
     public static final int RightSideEncoderA = 2;
     public static final int RightSideEncoderB = 3;
 
-    public static final int ShooterTestMotor = 7;
+    //Shooter neo 550s
+    public static final int ShooterMotorLeft = 7;
+    public static final int ShooterMotorRight = 8;
 }

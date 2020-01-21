@@ -102,15 +102,15 @@ public class Robot extends TimedRobot {
     drive.resetEncoders();   
 
     //Init and schedule the pathing command
-    pathCommand = pathingCommand.getPathCommand();
+    // pathCommand = pathingCommand.getPathCommand();
 
-    if(pathCommand != null){
-      pathCommand.schedule();
-    }
+    // if(pathCommand != null){
+    //   pathCommand.schedule();
+    // }
 
     
-    //hasRunDrive = false;
-    //hasTurned = false;
+    hasRunDrive = false;
+    hasTurned = false;
   }
 
   /**
@@ -119,13 +119,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     
-    //TODO: Test autopathing command implementation
-    // if(!hasRunDrive){
-    //   hasRunDrive = autoControl.DriveDistance(1);
-    // }
-    // else if (hasRunDrive && !hasTurned){
-    //   hasTurned = autoControl.TurnToAngle(90);
-    // }
+    if(!hasRunDrive){
+      hasRunDrive = autoControl.DriveDistance(1);
+    }
+    else if (hasRunDrive && !hasTurned){
+      hasTurned = autoControl.TurnToAngle(90);
+    }
   }
 
   /**
@@ -148,10 +147,12 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(primary.leftStickY(), primary.rightStickX());
 
     //Toggle the shooters run status
-    teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
+   // teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
+    shooter.manualShooter(primary.rightTrigger());
+
     //Update subsystems
-    subsystemUpdater();
+    //subsystemUpdater();
     
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
