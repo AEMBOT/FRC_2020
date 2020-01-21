@@ -1,41 +1,30 @@
-package frc.robot.Autonomous.Pathing;
+package frc.robot.Autonomous.Pathing.Command;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.DriveTrainSystem;
 
-/**
- * Class derived from the WPILIB Trajectory Drive (https://docs.wpilib.org/en/latest/docs/software/trajectory-end-to-end/creating-drive-subsystem.html)
- * This program essentially is just a more specific variant of robot drive train control
- * 
- * @author Will Richards
- */
-public class TrajectoryDrive{
+public class TrajectoryDriveSubsystem extends SubsystemBase{
 
-    // Reference to the drive train
-    private DriveTrainSystem drive;
+    DriveTrainSystem drive;
 
-    // Local references of the Encoders
-    private Encoder leftDriveTrainEncoder;
-    private Encoder rightDriveTrainEncoder;
+    //Create 2 encoders
+    Encoder leftDriveTrainEncoder;
+    Encoder rightDriveTrainEncoder;
 
-    // Local reference to the NavX
-    private NavX navX;
+    // Gyro
+    NavX navX;
 
-    // Keeps track of the robots position on the field
-    private final DifferentialDriveOdometry odometry;
-    
+    //Robots predictive location
+    DifferentialDriveOdometry odometry;
 
-    /**
-     * TrajectoryFollow constructor
-     * @param drive reference to a drive train class
-     */
-    public TrajectoryDrive(DriveTrainSystem drive){
+    public TrajectoryDriveSubsystem(DriveTrainSystem drive){
         this.drive = drive;
 
         // Get instances of the dt encoders
@@ -46,8 +35,14 @@ public class TrajectoryDrive{
         navX = NavX.get();
 
         //Initialize the robot odometry
-        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getSpecificHeading()));
-        
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+    }
+
+    @Override
+    public void periodic() {
+        // Update the odometry in the periodic block
+        odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance(),
+                        rightDriveTrainEncoder.getDistance());
     }
 
     /**
@@ -61,14 +56,7 @@ public class TrajectoryDrive{
         System.out.println("Rot: " + getPose().getRotation());
     }
 
-    /**
-     * Used to update the estimated position of the robot
-     */
-    public void updateOdometry(){
-        odometry.update(Rotation2d.fromDegrees(getSpecificHeading()), leftDriveTrainEncoder.getDistance(), rightDriveTrainEncoder.getDistance());
-    }
-
-    /**
+     /**
      * Returns the currently estimated pose of the robot
      * @return the pose
      */
@@ -76,7 +64,7 @@ public class TrajectoryDrive{
         return odometry.getPoseMeters();
     }
 
-    /**
+     /**
      * Gets the currents speeds of each output shaft
      * @return the current wheel speeds
      */
@@ -90,14 +78,14 @@ public class TrajectoryDrive{
      */
     public void resetOdometry(Pose2d pose){
         drive.resetEncoders();
-        odometry.resetPosition(pose, Rotation2d.fromDegrees(getSpecificHeading()));
+        odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
     }
 
     /**
      * Gets modified heading specifically for trajectory planning
      * @return the altered heading
      */
-    public double getSpecificHeading(){
+    public double getHeading(){
         return Math.IEEEremainder(navX.getAngle(), 360) * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
     }
 
@@ -108,4 +96,5 @@ public class TrajectoryDrive{
         return navX.getRate() * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
     }
     
+
 }
