@@ -36,6 +36,13 @@ public class SmartMotion {
     /**
      * Simply takes two speed controller groups assuming both have the desired Spark
      * Maxes in them
+     * 
+     * @param kP P gain
+     * @param kI I gain 
+     * @param kD D gain
+     * @param kFF Feed forward value
+     * @param minVel the minimum velocity of the motor
+     * @param motors array of motors the current smartmotion profiling applies to
      */
     public SmartMotion(double kP, double kI, double kD, double kFF, double minVel, CANSparkMax[] motors) {
 
@@ -49,9 +56,8 @@ public class SmartMotion {
         this.kI = kI;
         this.kD = kD;
         this.kFF = kFF;
-        this.maxVel = maxVel;
         this.minVel = minVel;
-        this.maxAcc = maxAcc;
+
 
         // Init all lists
         motorList = new ArrayList<>();
@@ -68,6 +74,18 @@ public class SmartMotion {
     /**
      * Overloaded constructor that allows passing of every single necessary constant
      * modification, this one probably wont get used
+     * 
+     * @param kP P gain
+     * @param kI I gain 
+     * @param kD D gain
+     * @param kFF Feed forward value
+     * @param kMaxOutput the maximum motor output
+     * @param kMinOutput the minimum motor output
+     * @param maxVel the max velocity the motors can spin
+     * @param minVel the min velocity the motors can spin
+     * @param maxAcc the maximum acceleration
+     * @param motors the list of motors the profile affects
+     * 
      */
     public SmartMotion(double kP, double kI, double kD, double kFF, double kMaxOutput, double kMinOutput, double maxVel,
             double minVel, double maxAcc, CANSparkMax[] motors) {
@@ -130,6 +148,7 @@ public class SmartMotion {
         controller.setSmartMotionMinOutputVelocity(this.minVel, slotID);
         controller.setSmartMotionMaxAccel(this.maxAcc, slotID);
         controller.setSmartMotionAllowedClosedLoopError(this.acceptableErr, slotID);
+
 
         return controller;
     }

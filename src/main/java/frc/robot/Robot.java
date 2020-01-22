@@ -76,6 +76,8 @@ public class Robot extends TimedRobot {
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
     
+
+    //Reset the encoder positions at start
     drive.resetEncoders();
 
   }
@@ -98,16 +100,16 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    //Reset the navX angle
     NavX.get().getAhrs().zeroYaw();
     drive.resetEncoders();   
 
     //Init and schedule the pathing command
-    // pathCommand = pathingCommand.getPathCommand();
+    pathCommand = pathingCommand.getPathCommand();
 
-    // if(pathCommand != null){
-    //   pathCommand.schedule();
-    // }
-
+    if(pathCommand != null){
+      pathCommand.schedule();
+    }
     
     hasRunDrive = false;
     hasTurned = false;
@@ -118,13 +120,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    
-    if(!hasRunDrive){
-      hasRunDrive = autoControl.DriveDistance(1);
-    }
-    else if (hasRunDrive && !hasTurned){
-      hasTurned = autoControl.TurnToAngle(90);
-    }
+    // if(!hasRunDrive){
+    //   hasRunDrive = autoControl.DriveDistance(1);
+    // }
+    // else if (hasRunDrive && !hasTurned){
+    //   hasTurned = autoControl.TurnToAngle(90);
+    // }
   }
 
   /**
@@ -144,7 +145,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     //Control the robot drive train
-    drive.arcadeDrive(primary.leftStickY(), primary.rightStickX());
+    drive.arcadeDrive(primary.rightStickX(), primary.rightStickY());
 
     //Toggle the shooters run status
    // teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
@@ -194,6 +195,14 @@ public class Robot extends TimedRobot {
       Dashboard.createEntry("Left-Side-Current-Draw");
       Dashboard.createEntry("Right-Side-Current-Draw");
 
+      //Create entries for drive train encoders
+      Dashboard.createEntry("Left-Side-Encoder");
+      Dashboard.createEntry("Right-Side-Encoder");
+
+      //Create entries to display graphs of temperature for the drive train
+      Dashboard.createEntry("Left-Side-Temperature");
+      Dashboard.createEntry("Right-Side-Temperature");
+
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
   }
@@ -205,7 +214,15 @@ public class Robot extends TimedRobot {
 
     // Add the values to the shuffle board in graph form
     Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
-    Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw()); 
+    Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw());
+
+    //Update the values on the dashboard for the drive train encoders
+    Dashboard.setValue("Left-Side-Encoder", drive.getLeftSideEncoder());
+    Dashboard.setValue("Right-Side-Encoder", drive.getRightSideEncoder());
+
+    //Sets the temperatures for the drive train
+    Dashboard.setValue("Left-Side-Temperature", drive.getLeftSideTemp());
+    Dashboard.setValue("Right-Side-Temperature", drive.getRightSideTemp());
 
     //Update the navX angle on the dashboard
     Dashboard.setValue("Gyro", NavX.get().getAhrs());

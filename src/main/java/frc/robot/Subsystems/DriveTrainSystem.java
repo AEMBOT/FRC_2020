@@ -44,6 +44,16 @@ public class DriveTrainSystem {
 
     private CANSparkMax[] rightMotorsArray;
 
+    //Static friction
+    private double staticCurrentPower = 0.0;
+    private boolean foundPowerStatic = false;
+
+     //Kinetic friction
+     private double kineticCurrentPower = 0.5;
+     private boolean foundPowerKinetic = false;
+
+     private boolean hasAccelerated = false;
+
     /**
      * Construct the class and init all the speed controller groups
      * @param gamepad reference to the primary gamepad
@@ -125,6 +135,41 @@ public class DriveTrainSystem {
         diffDrive.arcadeDrive(drivePower, turnPower);
 
         
+    }
+
+    /**
+     * Calculate min. value to turn the bot
+     * 0.152 power
+     */
+    public void getStaticFrictionAmount(){
+        if(Math.abs(getLeftSideEncoder().getRate()) > 0.00001){
+            arcadeDrive(0, 0);
+            foundPowerStatic = true;
+        }
+        else if (!foundPowerStatic){
+            staticCurrentPower+=0.001;
+            arcadeDrive(staticCurrentPower, 0);
+            System.out.println(staticCurrentPower);
+        }
+    }
+
+    /**
+     * Calculate the min value where it no longer moves
+     */
+    public void getKineticFriction(){
+        if(Math.abs(getLeftSideEncoder().getRate()) > 0.01){
+            hasAccelerated = true;
+        }
+
+        if(Math.abs(getLeftSideEncoder().getRate()) < 0.000001 && hasAccelerated){
+            arcadeDrive(0, 0);
+            foundPowerKinetic = true;
+        }
+        else if(!foundPowerKinetic){
+            kineticCurrentPower -= 0.001;
+            arcadeDrive(kineticCurrentPower, 0);
+            System.out.println(kineticCurrentPower);
+        }
     }
 
     /**
@@ -289,5 +334,34 @@ public class DriveTrainSystem {
 
         return currentArray;
     }
+
+    /**
+     * Returns the left side heat values in a graph able form
+     * @return array of temps. in C
+     */
+    public double[] getLeftSideTemp(){
+        double[] heatArray = new double[3];
+
+        for(int i=0; i<heatArray.length; i++){
+            heatArray[i] = leftMotorsArray[i].getMotorTemperature();
+        }
+
+        return heatArray;
+    }
+
+      /**
+     * Returns the right side heat values in a graph able form
+     * @return array of temps. in C
+     */
+    public double[] getRightSideTemp(){
+        double[] heatArray = new double[3];
+
+        for(int i=0; i<heatArray.length; i++){
+            heatArray[i] = rightMotorsArray[i].getMotorTemperature();
+        }
+
+        return heatArray;
+    }
+
 
 }

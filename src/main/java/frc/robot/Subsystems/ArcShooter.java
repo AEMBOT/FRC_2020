@@ -105,7 +105,7 @@ public class ArcShooter{
             Dashboard.setValue("Fly-Wheel-RPM", leftShooterMotor.getEncoder().getVelocity());
             
             //Inform the user of wheater or not the motor is up to speed
-            if(leftShooterMotor.getEncoder().getVelocity() > 6000){
+            if(leftShooterMotor.getEncoder().getVelocity() > 10_000){
                 Dashboard.setValue("Fly-Wheel-Speed-Status", true);
             }
             else{

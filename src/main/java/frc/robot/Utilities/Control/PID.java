@@ -28,10 +28,6 @@ public class PID {
     private boolean inRange;
     private double acceptableRange;
 
-    // Variable that determines whether or not to account for edge cases in this
-    // loop
-    private boolean usingGyroscope;
-
     // The point the module is trying to reach
     private double setpoint;
 
@@ -45,7 +41,6 @@ public class PID {
      * @param P              the P scalar
      * @param I              the I scalar
      * @param D              the D scalar
-     * @param usingGyroscope will alter the value to account for edge cases
      */
     public PID(double P, double I, double D) {
 

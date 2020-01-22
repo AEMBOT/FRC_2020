@@ -34,12 +34,12 @@ public class RobotConstants {
     public static final boolean kGyroReversed = false;
 
     // Voltage for static friction velocity and acceleration
-    public static final double kSVolts = 0.0127;
-    public static final double kvVoltMetersPerSecond = 1.65;
-    public static final double kaVoltMetersPerSecondSquared = 0.0199;
+    public static final double kSVolts = 0.14;
+    public static final double kvVoltMetersPerSecond = 1.44;
+    public static final double kaVoltMetersPerSecondSquared = -0.0138;
 
     // PID values (Only P is required for velocity)
-    public static final double kPDriveVal = 0.387;
+    public static final double kPDriveVal = 0.0;
 
     // Kinematic information about our robot
     public static final double kTrackWidthMeters = 0.6223;
