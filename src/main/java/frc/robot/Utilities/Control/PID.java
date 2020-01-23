@@ -102,10 +102,8 @@ public class PID {
      * @return motor power
      */
     public double calcOutput(double currentValue) {
-
         
-        
-            // Calculate the difference / error
+        // Calculate the difference / error
         p = setpoint - currentValue;
         
 
@@ -135,6 +133,14 @@ public class PID {
         }
 
         return output;
+    }
+
+    /**
+     * Get the deired point
+     * @return the desired point
+     */
+    public double getSetpoint(){
+        return setpoint;
     }
 
 }
