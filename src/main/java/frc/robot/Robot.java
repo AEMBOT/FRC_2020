@@ -206,6 +206,22 @@ public class Robot extends TimedRobot {
 
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
+
+
+      ///RAMSETE Specific Outputs
+      Dashboard.createEntry("Target-Wheel-Speeds");
+
+      //The speeds that we want to reach
+      Dashboard.createEntry("Left-Speed-Setpoint");
+      Dashboard.createEntry("Right-Speed-Setpoint");
+
+      // Output to the motors
+      Dashboard.createEntry("Left Wheel Output");
+      Dashboard.createEntry("Right Wheel Output");
+
+      // Add X and Y as well as angle to the dashboard
+      Dashboard.createEntry("Translational-Pose");
+      Dashboard.createEntry("Rotational-Pose");
   }
 
   /**

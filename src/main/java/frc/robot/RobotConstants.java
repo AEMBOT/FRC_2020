@@ -10,7 +10,6 @@ public class RobotConstants {
     // Number of ticks per one revolution of the wheel, 8192 is based on a REV
     // through bore encoders
     public static final int PULSES_PER_REV = 2048;
-    public static final int TICKS_PER_REV = 8192;
 
 
     // Calculate the circumference of an 8in pneumatic wheel

@@ -10,6 +10,9 @@ import frc.robot.RobotConstants;
 import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.DriveTrainSystem;
 
+/**
+ * A more specilized drive subsytstem solely for use with the ramsete controller
+ */
 public class TrajectoryDriveSubsystem extends SubsystemBase{
 
     DriveTrainSystem drive;
@@ -43,6 +46,10 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
         // Update the odometry in the periodic block
         odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance(),
                         rightDriveTrainEncoder.getDistance());
+
+        // Print out the current Translation and Rotational values
+        System.out.println("Current Translation: " + getPose().getTranslation());
+        System.out.println("Current Rotation: " + getPose().getRotation());
     }
 
     /**
@@ -52,8 +59,7 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
         drive.getLeftSideMotors().setVoltage(leftVolts);
         drive.getRightSideMotors().setVoltage(rightVolts);
 
-        System.out.println("Trans: " + getPose().getTranslation());
-        System.out.println("Rot: " + getPose().getRotation());
+       
     }
 
      /**
