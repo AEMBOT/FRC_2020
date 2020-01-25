@@ -19,8 +19,7 @@ public class RobotConstants {
     /**
      * Robot Characterization Link:
      * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/introduction.html#installing-and-launching-the-toolsuite
-     * The following section of variables is specifically for use with the S-Curve
-     * Trajectories
+     * The following section of variables is specifically for use with the S-Curve Trajectories / RAMSETE
      */
 
     // The scale factor required to convert encoder pulses into a useable value, divide by 4 because of how WPI handles reading encoder pulses
