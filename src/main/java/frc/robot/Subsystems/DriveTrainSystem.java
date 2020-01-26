@@ -132,7 +132,7 @@ public class DriveTrainSystem {
             if(drivePower > maximumDemoPower)
                 drivePower = maximumDemoPower;
         
-        diffDrive.arcadeDrive(drivePower, turnPower);
+        diffDrive.arcadeDrive(turnPower, drivePower);
 
         
     }

@@ -62,22 +62,19 @@ public class Robot extends TimedRobot {
     // Init the drive train system with the correct gamepad
     drive = new DriveTrainSystem();
 
+    pathingCommand = new PathingCommand(drive);
+
     //Create a new shooter object
     shooter = new ArcShooter();
 
     autoControl = new AutoDriveControl(drive);
 
     // Used to make button interaction easier
-    teleop = new TeleopControl();
-
-    pathing = new TrajectoryFollow(drive, "");
-
-    pathingCommand = new PathingCommand(drive);
+    teleop = new TeleopControl();    
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
     
-
     //Reset the encoder positions at start
     drive.resetEncoders();
 
@@ -101,14 +98,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    //Reset the navX angle
-    NavX.get().getAhrs().zeroYaw();
     drive.resetEncoders();   
 
-    //Init and schedule the pathing command
     pathCommand = pathingCommand.getPathCommand();
 
-    if(pathCommand != null){
+    if(pathCommand != null && !pathCommand.isScheduled()){
       pathCommand.schedule();
     }
     
@@ -146,12 +140,12 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     //Control the robot drive train
-    drive.arcadeDrive(primary.rightStickX(), primary.rightStickY());
+    drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
 
     //Toggle the shooters run status
    // teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
-    shooter.manualShooter(primary.rightTrigger());
+    shooter.manualShooter(primary.rightTrigger(), primary.leftTrigger());
 
     //Update subsystems
     //subsystemUpdater();
@@ -183,7 +177,7 @@ public class Robot extends TimedRobot {
   private void DashboardSetup(){
 
       //Set up the net table
-      Dashboard.setTable("SmartDashboard");
+      Dashboard.setTable("Subsystems");
 
       //Add options to the dashboards
       Dashboard.createEntry("Fly-Wheel-RPM", 0.0);
@@ -191,6 +185,9 @@ public class Robot extends TimedRobot {
 
       //Create entry for the shooter current draw
       Dashboard.createEntry("Shooter-Current-Draw");
+
+      //Switch the table to robot info
+      Dashboard.setTable("SmartDashboard");
 
       //Create entries for the left side drive train current draw
       Dashboard.createEntry("Left-Side-Current-Draw");
@@ -207,21 +204,25 @@ public class Robot extends TimedRobot {
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
 
-
       ///RAMSETE Specific Outputs
-      Dashboard.createEntry("Target-Wheel-Speeds");
+
+      Dashboard.setTable("RAMSETE");
+      Dashboard.createEntry("Target-Left-Wheel-Speed", 0);
+      Dashboard.createEntry("Target-Right-Wheel-Speed", 0);
 
       //The speeds that we want to reach
-      Dashboard.createEntry("Left-Speed-Setpoint");
-      Dashboard.createEntry("Right-Speed-Setpoint");
+      Dashboard.createEntry("Left-Speed-Setpoint", 0);
+      Dashboard.createEntry("Right-Speed-Setpoint", 0);
 
       // Output to the motors
-      Dashboard.createEntry("Left Wheel Output");
-      Dashboard.createEntry("Right Wheel Output");
+      Dashboard.createEntry("Left-Wheel-Output", 0);
+      Dashboard.createEntry("Right-Wheel-Output", 0);
 
       // Add X and Y as well as angle to the dashboard
-      Dashboard.createEntry("Translational-Pose");
-      Dashboard.createEntry("Rotational-Pose");
+      Dashboard.createEntry("Translational-Pose-X", 0);
+      Dashboard.createEntry("Translational-Pose-Y", 0);
+      Dashboard.createEntry("Rotational-Pose", 0);
+
   }
 
   /**
@@ -229,6 +230,8 @@ public class Robot extends TimedRobot {
    */
   private void updateDashboard(){
 
+    Dashboard.setTable("SmartDashboard");
+    
     // Add the values to the shuffle board in graph form
     Dashboard.setValue("Left-Side-Current-Draw", drive.getLeftSideCurrentDraw());
     Dashboard.setValue("Right-Side-Current-Draw", drive.getRightSideCurrentDraw());

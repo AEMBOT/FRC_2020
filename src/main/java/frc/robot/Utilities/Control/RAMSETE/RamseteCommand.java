@@ -11,6 +11,8 @@ package frc.robot.Utilities.Control.RAMSETE;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import org.opencv.core.Point;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -167,11 +169,18 @@ public class RamseteCommand extends CommandBase {
     var targetWheelSpeeds = m_kinematics.toWheelSpeeds(
         m_follower.calculate(m_pose.get(), m_trajectory.sample(curTime)));
 
+    Dashboard.setTable("RAMSETE");
+
     //Add the target speed to the dashboard
-    Dashboard.setValue("Target-Wheel-Speeds", targetWheelSpeeds);
+    Dashboard.setValue("Target-Left-Wheel-Speed", targetWheelSpeeds.leftMetersPerSecond);
+    Dashboard.setValue("Target-Right-Wheel-Speed", targetWheelSpeeds.rightMetersPerSecond);
 
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
+
+    // Shows the speed we want the wheels to be at
+    Dashboard.setValue("Left-Speed-Setpoint", leftSpeedSetpoint);
+    Dashboard.setValue("Right-Speed-Setpoint", rightSpeedSetpoint);
 
     double leftOutput;
     double rightOutput;
@@ -196,6 +205,17 @@ public class RamseteCommand extends CommandBase {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;
     }
+
+    // Shows the values for the wheel output
+    Dashboard.setValue("Left-Wheel-Output", leftOutput);
+    Dashboard.setValue("Right-Wheel-Output", rightOutput);
+
+    // Shows the translational and rotational values on the dashboard
+    Dashboard.setValue("Translational-Pose-X", m_pose.get().getTranslation().getX());
+    Dashboard.setValue("Translational-Pose-Y", m_pose.get().getTranslation().getY());
+    Dashboard.setValue("Rotational-Pose", m_pose.get().getRotation().getDegrees());
+
+    Dashboard.setTable("SmartDashboard");
 
     m_output.accept(leftOutput, rightOutput);
 

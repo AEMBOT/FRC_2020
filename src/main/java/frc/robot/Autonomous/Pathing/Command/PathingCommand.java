@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import edu.wpi.first.wpilibj2.command.Command;
 //import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.RobotConstants;
+import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.DriveTrainSystem;
 
 public class PathingCommand{
@@ -31,12 +32,19 @@ public class PathingCommand{
         robotDrive = new TrajectoryDriveSubsystem(drive);
     }
 
+    public void RestEncoder(){
+        robotDrive.resetEncoders();
+    }
+
 
     /**
      * Returns the command to run in autonomous
      * @return
      */
     public Command getPathCommand(){
+
+        RestEncoder();
+        NavX.get().getAhrs().zeroYaw();
 
         //Voltage/Speed Constraints
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
@@ -54,11 +62,10 @@ public class PathingCommand{
 
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
-                    new Translation2d(1, 1),
-                    new Translation2d(2, -1)
+                    new Translation2d(1.5, 0)
                 ),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
+            new Pose2d(3, 0, new Rotation2d(Math.toRadians(80))),
 
             // Pass config
             config

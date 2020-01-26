@@ -41,18 +41,15 @@ public class Dashboard {
      * Sets an alternative table to be used other than SmartDashboard
      */
     public static void setTable(String tableNameParam) {
+       
+        networkTable = getInstance().getTable(tableNameParam);
+        tableName = tableNameParam;
 
-        // Make sure the table name is valid
-        if (tableNameParam.equals("SmartDashboard") || tableNameParam.equals("LiveWindow")) {
-            networkTable = getInstance().getTable(tableNameParam);
-            tableName = tableNameParam;
-        } else {
-            throw new RuntimeException("Invalid Table Name, Use \"SmartDashboard\" or \"LiveWindow\"");
+        if(entryList == null){
+            // List of all the entries existing in the current table
+            entryList = new ArrayList<>();
+            listenerHandlerList = new ArrayList<>();
         }
-
-        // List of all the entries existing in the current table
-        entryList = new ArrayList<>();
-        listenerHandlerList = new ArrayList<>();
     }
 
     /**

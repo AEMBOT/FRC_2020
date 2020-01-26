@@ -48,8 +48,8 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
                         rightDriveTrainEncoder.getDistance());
 
         // Print out the current Translation and Rotational values
-        System.out.println("Current Translation: " + getPose().getTranslation());
-        System.out.println("Current Rotation: " + getPose().getRotation());
+        //System.out.println("Current Translation: " + getPose().getTranslation());
+        //System.out.println("Current Rotation: " + getPose().getRotation());
     }
 
     /**
@@ -60,6 +60,14 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
         drive.getRightSideMotors().setVoltage(rightVolts);
 
        
+    }
+
+    /**
+     * Reset Encoders
+     */
+    public void resetEncoders(){
+        leftDriveTrainEncoder.reset();
+        rightDriveTrainEncoder.reset();
     }
 
      /**

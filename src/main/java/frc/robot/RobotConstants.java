@@ -33,24 +33,24 @@ public class RobotConstants {
     public static final boolean kGyroReversed = false;
 
     // Voltage for static friction velocity and acceleration
-    public static final double kSVolts = 0.14;
-    public static final double kvVoltMetersPerSecond = 1.44;
-    public static final double kaVoltMetersPerSecondSquared = -0.0138;
+    public static final double kSVolts = 0.166;
+    public static final double kvVoltMetersPerSecond = 1.42;
+    public static final double kaVoltMetersPerSecondSquared = 0.0;
 
     // PID values (Only P is required for velocity)
-    public static final double kPDriveVal = 0.0;
+    public static final double kPDriveVal = 0.377;
 
     // Kinematic information about our robot
-    public static final double kTrackWidthMeters = 0.6223;
-    //public static final double kTrackWidthMeters = 0.719032956;
+    //public static final double kTrackWidthMeters = 0.6223;
+    public static final double kTrackWidthMeters = 0.7173162575718999;
     
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
             kTrackWidthMeters);
 
     // Sets values for the speed at which we will reach the max velocity and what
     // the max velocity
-    public static final double kMaxVelocityMetersPerSecond = 0.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
+    public static final double kMaxVelocityMetersPerSecond = 1.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds

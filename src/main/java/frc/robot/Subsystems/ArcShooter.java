@@ -35,6 +35,8 @@ public class ArcShooter{
         // Instance of the shooter motor
         rightShooterMotor = new CANSparkMax(RobotMap.ShooterMotorRight, MotorType.kBrushless);
     
+        leftShooterMotor.setInverted(true);
+
         // Follow the left shooter motor to keep them moving at the same rate
         rightShooterMotor.follow(leftShooterMotor);
 
@@ -81,8 +83,14 @@ public class ArcShooter{
     /**
      * Run the shooter motor given a manual power
      */
-    public void manualShooter(double power){
-        leftShooterMotor.set(power);
+    public void manualShooter(double leftPower, double rightPower){
+        if(leftPower>0.1)
+            leftShooterMotor.set(leftPower);
+        else if(rightPower>0.1)
+            leftShooterMotor.set(rightPower  * -1);
+        else{
+            leftShooterMotor.set(0);
+        }
 
         updateShooterStats();
     }
@@ -98,7 +106,7 @@ public class ArcShooter{
      * Update the dashboard stats of the motor
      */
     private void updateShooterStats(){
-
+        Dashboard.setTable("Subsystems");
         // Only update on real robot to avoid crashing the simulation
         if(RobotBase.isReal()){
             //Add the RPM values to the smart dashboard
