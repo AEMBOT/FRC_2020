@@ -32,8 +32,11 @@ public class PathingCommand{
         robotDrive = new TrajectoryDriveSubsystem(drive);
     }
 
-    public void RestEncoder(){
-        robotDrive.resetEncoders();
+    /**
+     * Reset the drive 
+     */
+    public void resetOdometry(){
+        robotDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
     }
 
 
@@ -42,9 +45,6 @@ public class PathingCommand{
      * @return
      */
     public Command getPathCommand(){
-
-        RestEncoder();
-        NavX.get().getAhrs().zeroYaw();
 
         //Voltage/Speed Constraints
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 

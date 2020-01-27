@@ -98,7 +98,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    drive.resetEncoders();   
+    drive.resetEncoders(); 
+    NavX.get().getAhrs().zeroYaw();  
+    pathingCommand.resetOdometry();
 
     pathCommand = pathingCommand.getPathCommand();
 
