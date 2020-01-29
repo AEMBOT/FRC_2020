@@ -26,4 +26,7 @@ public class RobotMap {
 
     //Shooter Motor
     public static final int ShooterFlyWheelMotor = 8;
+
+    //Intake motor
+    public static final int FrontIntakeMotor = 7;
 }

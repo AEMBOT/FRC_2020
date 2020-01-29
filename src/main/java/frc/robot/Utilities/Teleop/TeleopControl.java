@@ -66,10 +66,14 @@ public class TeleopControl {
      * @param button the status of the pressed button
      * @param action the method that is run when the button is pressed
      */
-    public void pressed(boolean button, Runnable action) {
+    public void pressed(boolean button, Runnable action, Runnable stoppedAction) {
         if (button) {
             action.run();
         }
+        else{
+            stoppedAction.run();
+        }
+
     }
 
     /**

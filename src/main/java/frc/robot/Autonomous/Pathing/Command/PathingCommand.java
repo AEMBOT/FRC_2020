@@ -33,10 +33,17 @@ public class PathingCommand{
     }
 
     /**
-     * Reset the drive 
+     * Reset the artifical position of the robot
      */
     public void resetOdometry(){
         robotDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+    }
+
+    /**
+     * Sets the position / rotation of the robot to a set position based on a given value
+     */
+    public void setOdometry(double x, double y, double angle){
+        robotDrive.resetOdometry(new Pose2d(x, y, new Rotation2d(angle)));
     }
 
 

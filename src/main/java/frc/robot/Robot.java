@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,6 +20,7 @@ import frc.robot.Hardware.Electrical.PDP;
 import frc.robot.Hardware.Joysticks.Xbox;
 import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
+import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Control.PIDF;
 import frc.robot.Utilities.Teleop.TeleopControl;
@@ -35,15 +37,9 @@ public class Robot extends TimedRobot {
   private DriveTrainSystem drive;
   private ArcShooter shooter;
   private TeleopControl teleop;
+  private BallSystem ballSystem;
 
-  private AutoDriveControl autoControl;
-
-  private boolean hasRunDrive = false;
-  private boolean hasTurned = false;
-
-  private TrajectoryFollow pathing;
-
-  // Command based trajectory
+  // Trajectory Based Autonomous
   private Command pathCommand;
   private PathingCommand pathingCommand;
 
@@ -67,7 +63,7 @@ public class Robot extends TimedRobot {
     //Create a new shooter object
     shooter = new ArcShooter();
 
-    autoControl = new AutoDriveControl(drive);
+    ballSystem = new BallSystem();
 
     // Used to make button interaction easier
     teleop = new TeleopControl();    
@@ -108,8 +104,6 @@ public class Robot extends TimedRobot {
       pathCommand.schedule();
     }
     
-    hasRunDrive = false;
-    hasTurned = false;
   }
 
   /**
@@ -147,7 +141,10 @@ public class Robot extends TimedRobot {
     //Toggle the shooters run status
    // teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
-    shooter.manualShooter(primary.rightTrigger(), primary.leftTrigger());
+    shooter.manualShooter(primary.rightTrigger(), 0);
+
+    //When A is pressed run the intake
+    teleop.pressed(primary.A(), () -> ballSystem.getIntake().runFrontIntake();, () -> ballSystem.getIntake().stopFrontIntake());
 
     //Update subsystems
     //subsystemUpdater();

@@ -1,6 +1,7 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.RobotBase;
@@ -12,7 +13,6 @@ import frc.robot.Communication.Dashboard.Dashboard;
  * Implementation of an Arc Shooter
  */
 public class ArcShooter{
-
 
     private CANSparkMax flywheelMotor;
 
@@ -29,7 +29,7 @@ public class ArcShooter{
         
         // Instance of the shooter motor
         flywheelMotor = new CANSparkMax(RobotMap.ShooterFlyWheelMotor, MotorType.kBrushless);
-    
+
         flywheelMotor.setInverted(true);
 
     }
