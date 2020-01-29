@@ -1,30 +1,29 @@
 package frc.robot.Utilities.Control.RAMSETE;
 
 /*----------------------------------------------------------------------------*/
+
 /* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import org.opencv.core.Point;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import frc.robot.Utilities.Control.RAMSETE.RamseteController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Communication.Dashboard.Dashboard;
-import frc.robot.Utilities.Control.RAMSETE.Trajectory;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
