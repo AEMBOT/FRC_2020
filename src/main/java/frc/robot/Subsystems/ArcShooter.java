@@ -30,6 +30,9 @@ public class ArcShooter{
         // Instance of the shooter motor
         flywheelMotor = new CANSparkMax(RobotMap.ShooterFlyWheelMotor, MotorType.kBrushless);
 
+        //Set a 300ms ramp rate for the motor
+        flywheelMotor.setOpenLoopRampRate(0.3);
+
         flywheelMotor.setInverted(true);
 
     }
@@ -41,18 +44,12 @@ public class ArcShooter{
 
         //If the motor should be ramping up and the speed is less than one keep increasing
         if(toggledStatus){
-            if(currentFlyWheelPower < 1)
-                currentFlyWheelPower += 0.05;
+           currentFlyWheelPower = 1;
         }
 
         //If not toggled and the motor is at full power ramp it down, quicker than speeding up
         else{
-            if(currentFlyWheelPower >= 0.1){
-                currentFlyWheelPower -= 0.1;
-            }
-            else{
-                currentFlyWheelPower = 0;
-            }
+            currentFlyWheelPower = 0;
         }
         
         updateShooterStats();
