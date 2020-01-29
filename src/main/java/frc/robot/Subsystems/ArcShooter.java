@@ -98,8 +98,9 @@ public class ArcShooter{
         Dashboard.setTable("Subsystems");
         // Only update on real robot to avoid crashing the simulation
         if(RobotBase.isReal()){
+            
             //Add the RPM values to the smart dashboard
-            Dashboard.setValue("Fly-Wheel-RPM", flywheelMotor.getEncoder().getVelocity());
+            Dashboard.setValue("Fly-Wheel-RPM", flywheelMotor.getEncoder().getVelocity()*2);
             
             //Inform the user of wheater or not the motor is up to speed
             if(flywheelMotor.getEncoder().getVelocity() > 10_000){
