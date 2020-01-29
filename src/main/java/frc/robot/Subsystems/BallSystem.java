@@ -47,19 +47,19 @@ public class BallSystem{
      /**
      * Nested class used to handle intake controls while still remaining part of the BallSystem
      */
-    class Intake{
+    public class Intake{
         /**
          * Runs the intake
          */
         public void runFrontIntake(){
-            frontIntakeMotor.set(0.5);
+            frontIntakeMotor.set(0.3);
         }
 
         /**
          * Stops running the front intake
          */
         public void stopFrontIntake(){
-            frontIntakeMotor.set(0.5);
+            frontIntakeMotor.set(0);
         }
 
         /**
@@ -74,7 +74,7 @@ public class BallSystem{
     /**
      * Class used to handle indexing of balls into the shooter
      */
-    class Indexer{
+    public class Indexer{
 
     }
 }

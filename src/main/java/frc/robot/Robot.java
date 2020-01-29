@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
     shooter.manualShooter(primary.rightTrigger(), 0);
 
     //When A is pressed run the intake
-    teleop.pressed(primary.A(), () -> ballSystem.getIntake().runFrontIntake();, () -> ballSystem.getIntake().stopFrontIntake());
+    teleop.pressed(primary.A(), () -> ballSystem.getIntake().runFrontIntake(), () -> ballSystem.getIntake().stopFrontIntake());
 
     //Update subsystems
     //subsystemUpdater();
