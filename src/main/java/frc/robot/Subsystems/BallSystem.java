@@ -23,10 +23,15 @@ public class BallSystem{
     //Indexer variable
     private Indexer indexer;
 
+    //Hopper variable
+    private Hopper hopper;
+
     /**
-     * Constructor to initilize the intake motors
+     * Constructor to initialize the intake motors
      */
     public BallSystem(){
+
+        // Motor to run the front intake
         frontIntakeMotor = new CANSparkMax(RobotMap.FrontIntakeMotor, MotorType.kBrushless);
 
         //New intake object
@@ -34,14 +39,30 @@ public class BallSystem{
 
         //New indexer object
         indexer = new Indexer();
+
+        //New hopper object
+        hopper = new Hopper();
     }
 
+    /**
+     * Get a reference to he Intake sub class
+     */
     public Intake getIntake(){
         return intake;
     }
 
+    /**
+     * Get a reference to the indexer sub class
+     */
     public Indexer getIndexer(){
         return indexer;
+    }
+
+    /**
+     * Get a reference to the hopper sub class
+     */
+    public Hopper getHopper() {
+        return hopper;
     }
 
      /**
@@ -75,6 +96,13 @@ public class BallSystem{
      * Class used to handle indexing of balls into the shooter
      */
     public class Indexer{
+
+    }
+
+    /**
+     * Class used to handle storage and passing of balls to the indexer
+     */
+    public class Hopper{
 
     }
 }
