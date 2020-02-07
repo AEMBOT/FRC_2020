@@ -28,5 +28,11 @@ public class RobotMap {
     public static final int ShooterFlyWheelMotor = 8;
 
     //Intake motor
-    public static final int FrontIntakeMotor = 7;
+   // public static final int FrontIntakeMotor = 7;
+
+    public static final int BeltMotor = 10;
+
+    //Indexer Motors
+    public static final int FrontIndexerMotor = 7;
+    public static final int BackIndexerMotor = 9;
 }

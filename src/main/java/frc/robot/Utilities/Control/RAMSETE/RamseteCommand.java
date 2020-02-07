@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -165,8 +166,11 @@ public class RamseteCommand extends CommandBase {
     double curTime = m_timer.get();
     double dt = curTime - m_prevTime;
 
+    //The state at the current time
+    State sampledState = m_trajectory.sample(curTime);
+
     var targetWheelSpeeds = m_kinematics.toWheelSpeeds(
-        m_follower.calculate(m_pose.get(), m_trajectory.sample(curTime)));
+        m_follower.calculate(m_pose.get(), sampledState));
 
     Dashboard.setTable("RAMSETE");
 
@@ -180,6 +184,13 @@ public class RamseteCommand extends CommandBase {
     // Shows the speed we want the wheels to be at
     Dashboard.setValue("Left-Speed-Setpoint", leftSpeedSetpoint);
     Dashboard.setValue("Right-Speed-Setpoint", rightSpeedSetpoint);
+
+    //Adds the expected current position to the dashboard
+    getExpectedPose(sampledState);
+
+    // Shows the translational and rotational values on the dashboard
+    Dashboard.setValue("Translational-Pose-X", m_pose.get().getTranslation().getX());
+    Dashboard.setValue("Translational-Pose-Y", m_pose.get().getTranslation().getY());
 
     double leftOutput;
     double rightOutput;
@@ -209,9 +220,7 @@ public class RamseteCommand extends CommandBase {
     Dashboard.setValue("Left-Wheel-Output", leftOutput);
     Dashboard.setValue("Right-Wheel-Output", rightOutput);
 
-    // Shows the translational and rotational values on the dashboard
-    Dashboard.setValue("Translational-Pose-X", m_pose.get().getTranslation().getX());
-    Dashboard.setValue("Translational-Pose-Y", m_pose.get().getTranslation().getY());
+
     Dashboard.setValue("Rotational-Pose", m_pose.get().getRotation().getDegrees());
 
     Dashboard.setTable("SmartDashboard");
@@ -220,6 +229,15 @@ public class RamseteCommand extends CommandBase {
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;
+  }
+
+  /**
+   * Adds the expected pose coords to the dashboard
+   */
+  private void getExpectedPose(State state){
+
+    Dashboard.setValue("Expected-State-X", state.poseMeters.getTranslation().getX());
+    Dashboard.setValue("Expected-State-Y", state.poseMeters.getTranslation().getY());
   }
 
   @Override

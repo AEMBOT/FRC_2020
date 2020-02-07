@@ -144,7 +144,10 @@ public class Robot extends TimedRobot {
     shooter.manualShooter(primary.rightTrigger(), 0);
 
     //When A is pressed run the intake
-    teleop.pressed(primary.A(), () -> ballSystem.getIntake().runFrontIntake(), () -> ballSystem.getIntake().stopFrontIntake());
+  //  teleop.pressed(primary.A(), () -> ballSystem.getIntake().runFrontIntake(), () -> ballSystem.getIntake().stopFrontIntake());
+
+    //When Y is pressed attempt to index the balls into the shooter
+    teleop.pressed(primary.Y(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
     //Update subsystems
     //subsystemUpdater();
@@ -221,6 +224,10 @@ public class Robot extends TimedRobot {
       Dashboard.createEntry("Translational-Pose-X", 0);
       Dashboard.createEntry("Translational-Pose-Y", 0);
       Dashboard.createEntry("Rotational-Pose", 0);
+
+      //Graphs of where the robot is supposed to be 
+      Dashboard.createEntry("Expected-State-X", 0);
+      Dashboard.createEntry("Expected-State-Y", 0);
 
   }
 
