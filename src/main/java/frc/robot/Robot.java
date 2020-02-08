@@ -18,11 +18,11 @@ import frc.robot.Autonomous.Pathing.Iterative.TrajectoryFollow;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
 import frc.robot.Hardware.Joysticks.Xbox;
+import frc.robot.Hardware.Pneumatics.AdvancedCompressor;
 import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
-import frc.robot.Subsystems.Pnuematics;
 import frc.robot.Utilities.Control.PIDF;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
 
 
   //Hardware
-  private Pnuematics pnuematics;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -72,8 +71,7 @@ public class Robot extends TimedRobot {
 
     // Used to make button interaction easier
     teleop = new TeleopControl();   
-    
-    pnuematics = new Pnuematics();
+
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
@@ -159,11 +157,11 @@ public class Robot extends TimedRobot {
     //When Y is pressed attempt to index the balls into the shooter
     //teleop.pressed(primary.Y(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
-    teleop.runOncePerPress(primary.X(), () -> pnuematics.actuatePiston1());
-    teleop.runOncePerPress(primary.B(), () -> pnuematics.retractPiston1());
+    teleop.runOncePerPress(primary.Y(), () -> ballSystem.getIntake().extendIntake());
+    teleop.runOncePerPress(primary.A(), () -> ballSystem.getIntake().retractIntake());
 
-    teleop.runOncePerPress(primary.leftBumper(), () -> pnuematics.startCompressor());
-    teleop.runOncePerPress(primary.rightBumper(), () -> pnuematics.stopCompressor());
+    teleop.runOncePerPress(primary.leftBumper(), () -> AdvancedCompressor.startCompressor());
+    teleop.runOncePerPress(primary.rightBumper(), () -> AdvancedCompressor.stopCompressor());
 
 
     //Update subsystems

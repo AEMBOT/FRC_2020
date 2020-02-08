@@ -5,6 +5,9 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.RobotMap;
+import frc.robot.Hardware.Pneumatics.AdvancedCompressor;
+import frc.robot.Hardware.Pneumatics.DoublePiston;
+import frc.robot.Hardware.Pneumatics.PistonGroup;
 
 /**
  * Class used to control the ball system
@@ -32,6 +35,9 @@ public class BallSystem{
     //Hopper variable
     private Hopper hopper;
 
+    // Intake pistons
+    private DoublePiston intakePiston;
+
     /**
      * Constructor to initialize the intake motors
      */
@@ -56,6 +62,9 @@ public class BallSystem{
 
         //New hopper object
         hopper = new Hopper();
+
+        // Construct Pneumatics
+        intakePiston = new DoublePiston(RobotMap.IntakePistonA, RobotMap.IntakePistonB);
     }
 
     /**
@@ -110,6 +119,26 @@ public class BallSystem{
          */
         public void manualIntake(double value) {
             frontIntakeMotor.set(value * -1);
+        }
+
+        /**
+         * Actuates both pistons causing the intake to extend
+         */
+        public void extendIntake(){
+            intakePiston.actuate();
+
+            // Attempt to maintain a constant pressure by recharging after use
+            AdvancedCompressor.startTimedRecharge(0.75);
+        }
+
+        /**
+         * Retracts both pistons causing the intake to retract
+         */
+        public void retractIntake(){
+            intakePiston.retract();
+
+            // Attempt to maintain a constant pressure by recharging after use
+            AdvancedCompressor.startTimedRecharge(0.75);
         }
     }
 
