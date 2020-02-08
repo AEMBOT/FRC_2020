@@ -22,6 +22,7 @@ import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
+import frc.robot.Subsystems.Pnuematics;
 import frc.robot.Utilities.Control.PIDF;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
@@ -42,6 +43,10 @@ public class Robot extends TimedRobot {
   // Trajectory Based Autonomous
   private Command pathCommand;
   private PathingCommand pathingCommand;
+
+
+  //Hardware
+  private Pnuematics pnuematics;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -66,7 +71,9 @@ public class Robot extends TimedRobot {
     ballSystem = new BallSystem();
 
     // Used to make button interaction easier
-    teleop = new TeleopControl();    
+    teleop = new TeleopControl();   
+    
+    pnuematics = new Pnuematics();
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
@@ -144,10 +151,20 @@ public class Robot extends TimedRobot {
     shooter.manualShooter(primary.rightTrigger(), 0);
 
     //When A is pressed run the intake
-  //  teleop.pressed(primary.A(), () -> ballSystem.getIntake().runFrontIntake(), () -> ballSystem.getIntake().stopFrontIntake());
+    if(primary.dPadUp())
+      teleop.pressed(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward(), () -> ballSystem.getIntake().stopFrontIntake());
+    else
+      teleop.pressed(primary.dPadDown(), () -> ballSystem.getIntake().runFrontIntakeBack(), () -> ballSystem.getIntake().stopFrontIntake());
 
     //When Y is pressed attempt to index the balls into the shooter
-    teleop.pressed(primary.Y(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+    //teleop.pressed(primary.Y(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+
+    teleop.runOncePerPress(primary.X(), () -> pnuematics.actuatePiston1());
+    teleop.runOncePerPress(primary.B(), () -> pnuematics.retractPiston1());
+
+    teleop.runOncePerPress(primary.leftBumper(), () -> pnuematics.startCompressor());
+    teleop.runOncePerPress(primary.rightBumper(), () -> pnuematics.stopCompressor());
+
 
     //Update subsystems
     //subsystemUpdater();

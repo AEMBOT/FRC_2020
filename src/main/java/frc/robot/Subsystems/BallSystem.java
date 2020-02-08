@@ -36,11 +36,13 @@ public class BallSystem{
      * Constructor to initialize the intake motors
      */
     public BallSystem(){
-        //frontIntakeMotor = new CANSparkMax(RobotMap.FrontIntakeMotor, MotorType.kBrushless);
+        frontIntakeMotor = new CANSparkMax(RobotMap.FrontIntakeMotor, MotorType.kBrushless);
+
+        frontIntakeMotor.setOpenLoopRampRate(0.5);
 
         //Indexer motor creation
         backIndexerMotor = new CANSparkMax(RobotMap.BackIndexerMotor, MotorType.kBrushless);
-        frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
+        //frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
 
         transportBeltMotor = new CANSparkMax(RobotMap.BeltMotor, MotorType.kBrushed);
 
@@ -84,8 +86,15 @@ public class BallSystem{
         /**
          * Runs the intake
          */
-        public void runFrontIntake(){
-            frontIntakeMotor.set(0.3);
+        public void runFrontIntakeForward(){
+            frontIntakeMotor.set(-0.5);
+        }
+
+         /**
+         * Runs the intake
+         */
+        public void runFrontIntakeBack(){
+            frontIntakeMotor.set(0.5);
         }
 
         /**
