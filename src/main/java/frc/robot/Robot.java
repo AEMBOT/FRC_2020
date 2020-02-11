@@ -144,25 +144,26 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
 
     //Toggle the shooters run status
-   // teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
+   //teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
-    shooter.manualShooter(primary.rightTrigger(), 0);
+   shooter.manualShooter(primary.rightTrigger(), 0);
 
-    //When A is pressed run the intake
-    if(primary.dPadUp())
-      teleop.pressed(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward(), () -> ballSystem.getIntake().stopFrontIntake());
-    else
-      teleop.pressed(primary.dPadDown(), () -> ballSystem.getIntake().runFrontIntakeBack(), () -> ballSystem.getIntake().stopFrontIntake());
+   //When A is pressed run the intake
+   if(primary.dPadUp())
+     teleop.pressed(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward(), () -> ballSystem.getIntake().stopFrontIntake());
+   else
+     teleop.pressed(primary.dPadDown(), () -> ballSystem.getIntake().runFrontIntakeBack(), () -> ballSystem.getIntake().stopFrontIntake());
 
-    //When Y is pressed attempt to index the balls into the shooter
-    //teleop.pressed(primary.Y(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+   //When Y is pressed attempt to index the balls into the shooter
+   teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
-    teleop.runOncePerPress(primary.Y(), () -> ballSystem.getIntake().extendIntake());
-    teleop.runOncePerPress(primary.A(), () -> ballSystem.getIntake().retractIntake());
+   //Extend and retract intake
+   //teleop.runOncePerPress(primary.Y(), () -> ballSystem.getIntake().extendIntake());
+   //teleop.runOncePerPress(primary.A(), () -> ballSystem.getIntake().retractIntake());
 
-    teleop.runOncePerPress(primary.leftBumper(), () -> AdvancedCompressor.startCompressor());
-    teleop.runOncePerPress(primary.rightBumper(), () -> AdvancedCompressor.stopCompressor());
-
+   //Manually start and stop the compressor
+   teleop.runOncePerPress(primary.leftBumper(), () -> AdvancedCompressor.startCompressor());
+   teleop.runOncePerPress(primary.rightBumper(), () -> AdvancedCompressor.stopCompressor());
 
     //Update subsystems
     //subsystemUpdater();

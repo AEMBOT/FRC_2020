@@ -73,10 +73,10 @@ public class ArcShooter{
      */
     public void manualShooter(double leftPower, double rightPower){
         if(leftPower>0.1){
-            flywheelMotor.set(leftPower * -1);
+            flywheelMotor.set(leftPower);
         }
         else if(rightPower>0.1)
-            flywheelMotor.set(rightPower);
+            flywheelMotor.set(-rightPower);
         else
             flywheelMotor.set(0);
         

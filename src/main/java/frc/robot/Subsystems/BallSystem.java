@@ -48,11 +48,9 @@ public class BallSystem{
 
         //Indexer motor creation
         backIndexerMotor = new CANSparkMax(RobotMap.BackIndexerMotor, MotorType.kBrushless);
-        //frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
+        frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
 
-        transportBeltMotor = new CANSparkMax(RobotMap.BeltMotor, MotorType.kBrushed);
-
-        transportBeltMotor.setInverted(true);
+        transportBeltMotor = new CANSparkMax(RobotMap.BeltMotor, MotorType.kBrushless);
 
         //New intake object
         intake = new Intake();
@@ -65,6 +63,8 @@ public class BallSystem{
 
         // Construct Pneumatics
         intakePiston = new DoublePiston(RobotMap.IntakePistonA, RobotMap.IntakePistonB);
+
+        intake.retractIntake();
     }
 
     /**
@@ -92,6 +92,7 @@ public class BallSystem{
      * Nested class used to handle intake controls while still remaining part of the BallSystem
      */
     public class Intake{
+
         /**
          * Runs the intake
          */
@@ -151,13 +152,13 @@ public class BallSystem{
          * Run normal shooter index
          */
         public void standardIndex(){
-            backIndexerMotor.set(-0.75);
-            frontIndexerMotor.set(0.75);
+            backIndexerMotor.set(-0.25);
+            frontIndexerMotor.set(-0.25);
             runBelts();
         }
 
         public void runBelts(){
-            transportBeltMotor.set(-0.75);
+            transportBeltMotor.set(-0.3);
         }
 
         public void stopBelts(){

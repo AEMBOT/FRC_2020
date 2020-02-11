@@ -1,5 +1,6 @@
 package frc.robot.Hardware.Pneumatics;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 

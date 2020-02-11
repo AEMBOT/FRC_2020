@@ -30,15 +30,19 @@ public class RobotMap {
     //Intake motor
     public static final int FrontIntakeMotor = 7;
 
-    public static final int BeltMotor = 10;
+    //public static final int BeltMotor = 11;
+    public static final int BeltMotor = 12;
 
     //Indexer Motors
-    //public static final int FrontIndexerMotor = 7;
+    public static final int FrontIndexerMotor = 10;
     public static final int BackIndexerMotor = 9;
 
     // Pneumatics Ports / PCM Ports
     public static final int IntakePistonA = 0;
     public static final int IntakePistonB = 1;
+
+    public static final int ClimberPistonA = 2;
+    public static final int ClimberPistonB = 3;
 
     
 
