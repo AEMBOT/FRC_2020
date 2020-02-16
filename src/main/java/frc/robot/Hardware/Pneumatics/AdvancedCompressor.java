@@ -84,6 +84,18 @@ public class AdvancedCompressor{
     }
 
     /**
+     * Runs the compressor until the pressure switch is hit
+     */
+    public static void runUntilFull(){
+        if(!getPressureSwitchStatus()){
+            startCompressor();
+        }
+        else{
+            stopCompressor();
+        }
+    }
+
+    /**
      * Returns the current status of the compressor
      * @return boolean showing true / false for on or off
      */

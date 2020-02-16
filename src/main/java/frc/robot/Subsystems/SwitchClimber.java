@@ -16,6 +16,7 @@ public class SwitchClimber{
      */
     public SwitchClimber(){
         climberPiston = new DoublePiston(RobotMap.ClimberPistonA, RobotMap.ClimberPistonB);
+    
     }
 
     /**
@@ -23,6 +24,10 @@ public class SwitchClimber{
      */
     public void deployClimber(){
         climberPiston.actuate();
+    }
+
+    public void retractClimber(){
+        climberPiston.retract();
     }
 
 }

@@ -23,6 +23,7 @@ import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
+import frc.robot.Subsystems.SwitchClimber;
 import frc.robot.Utilities.Control.PIDF;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
@@ -39,6 +40,7 @@ public class Robot extends TimedRobot {
   private ArcShooter shooter;
   private TeleopControl teleop;
   private BallSystem ballSystem;
+  private SwitchClimber climber;
 
   // Trajectory Based Autonomous
   private Command pathCommand;
@@ -59,11 +61,6 @@ public class Robot extends TimedRobot {
     // Assign the primary joystick to the correct port
     primary = new Xbox(new XboxController(0));
 
-    // Init the drive train system with the correct gamepad
-    drive = new DriveTrainSystem();
-
-    pathingCommand = new PathingCommand(drive);
-
     //Create a new shooter object
     shooter = new ArcShooter();
 
@@ -71,6 +68,12 @@ public class Robot extends TimedRobot {
 
     // Used to make button interaction easier
     teleop = new TeleopControl();   
+
+    drive = new DriveTrainSystem(ballSystem);
+
+    climber = new SwitchClimber();
+
+    pathingCommand = new PathingCommand(drive);
 
 
     //Clears sticky faults at robot start
@@ -144,29 +147,26 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
 
     //Toggle the shooters run status
-   //teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
+    teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
-   shooter.manualShooter(primary.rightTrigger(), 0);
+  // shooter.manualShooter(primary.rightTrigger(), 0);
 
    //When A is pressed run the intake
-   if(primary.dPadUp())
-     teleop.pressed(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward(), () -> ballSystem.getIntake().stopFrontIntake());
-   else
-     teleop.pressed(primary.dPadDown(), () -> ballSystem.getIntake().runFrontIntakeBack(), () -> ballSystem.getIntake().stopFrontIntake());
+     teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
+     teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
 
    //When Y is pressed attempt to index the balls into the shooter
    teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
    //Extend and retract intake
-   //teleop.runOncePerPress(primary.Y(), () -> ballSystem.getIntake().extendIntake());
-   //teleop.runOncePerPress(primary.A(), () -> ballSystem.getIntake().retractIntake());
+   teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
+   teleop.runOncePerPress(primary.X(), () -> ballSystem.getIntake().retractIntake());
 
-   //Manually start and stop the compressor
-   teleop.runOncePerPress(primary.leftBumper(), () -> AdvancedCompressor.startCompressor());
-   teleop.runOncePerPress(primary.rightBumper(), () -> AdvancedCompressor.stopCompressor());
+   // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
+   // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
 
     //Update subsystems
-    //subsystemUpdater();
+    subsystemUpdater();
     
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
@@ -187,6 +187,8 @@ public class Robot extends TimedRobot {
    */
   private void subsystemUpdater(){
     shooter.runShooter();
+
+    AdvancedCompressor.runUntilFull();
   }
 
   /**
@@ -218,6 +220,9 @@ public class Robot extends TimedRobot {
       //Create entries to display graphs of temperature for the drive train
       Dashboard.createEntry("Left-Side-Temperature");
       Dashboard.createEntry("Right-Side-Temperature");
+
+      Dashboard.createEntry("Belt-Current", 0.0);
+      Dashboard.createEntry("FrontIndexer-Current", 0.0);
 
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
@@ -266,6 +271,8 @@ public class Robot extends TimedRobot {
     Dashboard.setValue("Left-Side-Temperature", drive.getLeftSideTemp());
     Dashboard.setValue("Right-Side-Temperature", drive.getRightSideTemp());
 
+    Dashboard.setValue("Belt-Current", ballSystem.getIndexer().getBeltCurrent());
+    Dashboard.setValue("FrontIndexer-Current", ballSystem.getIndexer().getIndexerCurrent());
     //Update the navX angle on the dashboard
     Dashboard.setValue("Gyro", NavX.get().getAhrs());
   }

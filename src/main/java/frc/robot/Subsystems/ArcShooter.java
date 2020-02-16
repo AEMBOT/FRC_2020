@@ -31,7 +31,7 @@ public class ArcShooter{
         flywheelMotor = new CANSparkMax(RobotMap.ShooterFlyWheelMotor, MotorType.kBrushless);
 
         //Set a 300ms ramp rate for the motor
-        flywheelMotor.setOpenLoopRampRate(0);
+        flywheelMotor.setOpenLoopRampRate(4);
 
         flywheelMotor.setInverted(true);
 

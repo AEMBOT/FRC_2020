@@ -44,6 +44,8 @@ public class DriveTrainSystem {
 
     private CANSparkMax[] rightMotorsArray;
 
+    private BallSystem ballSystem;
+
     //Static friction
     private double staticCurrentPower = 0.0;
     private boolean foundPowerStatic = false;
@@ -53,17 +55,20 @@ public class DriveTrainSystem {
      private boolean foundPowerKinetic = false;
 
      private boolean hasAccelerated = false;
+     
 
     /**
      * Construct the class and init all the speed controller groups
      * @param gamepad reference to the primary gamepad
      */
-    public DriveTrainSystem(){
+    public DriveTrainSystem(BallSystem ballSystem){
         //Constructs the motors and adds them to speed controller groups
         createMotors();
 
         // Constructs the encoders
-        createEncoders();        
+        createEncoders();    
+        
+        this.ballSystem = ballSystem;
     }
 
     /**
@@ -133,6 +138,10 @@ public class DriveTrainSystem {
         if(enableDemoMode)
             if(drivePower > maximumDemoPower)
                 drivePower = maximumDemoPower;
+
+      //  if(ballSystem.getIntake().isIntakeRunning()){
+        //    drivePower = 0.5;
+        //}
         
         diffDrive.arcadeDrive(drivePower, turnPower);
 

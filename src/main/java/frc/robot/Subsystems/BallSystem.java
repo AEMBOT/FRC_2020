@@ -114,6 +114,10 @@ public class BallSystem{
             frontIntakeMotor.set(0);
         }
 
+        public boolean isIntakeRunning(){
+            return (frontIntakeMotor.get() > 0);
+        }
+
         /**
          * Sets the values for the intake 
          * @param value
@@ -152,19 +156,27 @@ public class BallSystem{
          * Run normal shooter index
          */
         public void standardIndex(){
-            backIndexerMotor.set(-0.25);
-            frontIndexerMotor.set(-0.25);
+            backIndexerMotor.set(-1);
+            frontIndexerMotor.set(-1);
             runBelts();
         }
 
         public void runBelts(){
-            transportBeltMotor.set(-0.3);
+            transportBeltMotor.set(-1);
         }
 
         public void stopBelts(){
             transportBeltMotor.set(0);
         }
+
+        public double getBeltCurrent(){
+            return transportBeltMotor.getOutputCurrent();
+        }
         
+        public double getIndexerCurrent(){
+            return frontIndexerMotor.getOutputCurrent();
+        }
+
         /**
          * Stop running the indexer motors
          */
