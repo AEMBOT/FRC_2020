@@ -26,7 +26,7 @@ public class SmartMotion {
      * Maximum RPM of the motor (currently set to slightly higher than the free spin
      * RPM for a neo)
      */
-    private double kP, kI, kD, kIz, kFF, kMaxOutput = 1, kMinOutput = -1, maxRPM = 5700, maxVel = 2000, minVel = 0,
+    private double kP, kI, kD, kIz, kFF, kMaxOutput = 1, kMinOutput = -1, maxRPM = 5700, maxVel = maxRPM, minVel = 0,
             maxAcc = 1500, acceptableErr;
 
     // The slotID signifies which gain values are being used, it can be between 0-3
@@ -44,7 +44,7 @@ public class SmartMotion {
      * @param minVel the minimum velocity of the motor
      * @param motors array of motors the current smartmotion profiling applies to
      */
-    public SmartMotion(double kP, double kI, double kD, double kFF, double minVel, CANSparkMax[] motors) {
+    public SmartMotion(double kP, double kI, double kD, double kFF, double minVel, CANSparkMax... motors) {
 
         /**
          * PID Coefficients kP - Error kI - Error Over Time kD - Predictive Future
@@ -88,7 +88,7 @@ public class SmartMotion {
      * 
      */
     public SmartMotion(double kP, double kI, double kD, double kFF, double kMaxOutput, double kMinOutput, double maxVel,
-            double minVel, double maxAcc, CANSparkMax[] motors) {
+            double minVel, double maxAcc, CANSparkMax... motors) {
 
         /**
          * PID Coefficients kP - Error kI - Error Over Time kD - Predictive Future

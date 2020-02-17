@@ -24,13 +24,13 @@ public class RobotMap {
     public static final int RightSideEncoderA = 2;
     public static final int RightSideEncoderB = 3;
 
-    //Shooter Motor
+    //Shooter Constants
     public static final int ShooterFlyWheelMotor = 8;
+    public static final int ShooterFlyWheelMotor2 = 13;
 
-    //Intake motor
+    //Intake Constants
     public static final int FrontIntakeMotor = 7;
 
-    //public static final int BeltMotor = 11;
     public static final int BeltMotor = 12;
 
     //Indexer Motors

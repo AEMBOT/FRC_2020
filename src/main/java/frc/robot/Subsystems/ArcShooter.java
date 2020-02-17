@@ -4,10 +4,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
+import frc.robot.RobotConstants;
 import frc.robot.RobotMap;
 import frc.robot.Communication.Dashboard.Dashboard;
+import frc.robot.Utilities.Control.SmartMotion;
 
 /**
  * Implementation of an Arc Shooter
@@ -15,12 +18,21 @@ import frc.robot.Communication.Dashboard.Dashboard;
 public class ArcShooter{
 
     private CANSparkMax flywheelMotor;
+    private CANSparkMax flywheelMotor2;
 
     // Weather or not the shooter should be running
     private boolean toggledStatus = false;
 
     // If the fly wheel is up to speed
     private boolean flywheelStatus = false;
+
+    private SmartMotion flyWheelProfile;
+
+    //PIDF, TODO: Tune Values
+    private final double[] pidf = {1.0, 0.0, 0.0, 0.0};
+
+    //Only setup the pid controller once from inside the rpmControl method
+    private boolean hasSetupPIDController = false;
 
     // The power to give to the flywheel motor
     private double currentFlyWheelPower = 0.0;
@@ -30,10 +42,16 @@ public class ArcShooter{
         // Instance of the shooter motor
         flywheelMotor = new CANSparkMax(RobotMap.ShooterFlyWheelMotor, MotorType.kBrushless);
 
+        flywheelMotor2 = new CANSparkMax(RobotMap.ShooterFlyWheelMotor2, MotorType.kBrushless);
+
+        flywheelMotor2.follow(flywheelMotor);
+
         //Set a 300ms ramp rate for the motor
         flywheelMotor.setOpenLoopRampRate(4);
 
         flywheelMotor.setInverted(true);
+
+     
 
     }
 
@@ -82,6 +100,23 @@ public class ArcShooter{
         
 
         updateShooterStats();
+    }
+
+    /**
+     * Set the RPM value to reach, using a motion profiling style
+     * @param rpm the value to reach
+     */
+    public void rpmControl(double rpm){
+
+        if(!hasSetupPIDController){
+            // Spark Max motion profile to control a velocity motion profiling loop
+            flyWheelProfile = new SmartMotion(pidf[0], pidf[1], pidf[2], pidf[3], 20.0, flywheelMotor);
+            flyWheelProfile.setAcceptableRange(50);
+            hasSetupPIDController = true;
+        }
+
+        flyWheelProfile.runVelocityProfile(rpm);
+        
     }
 
     /**
