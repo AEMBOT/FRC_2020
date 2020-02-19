@@ -24,6 +24,7 @@ public class PID {
 
     // The value returned on calcOutput
     private double output;
+    private double lastOutput = 0;
 
     // Weather or not the current value is in the acceptable range and then what
     // that acceptable range is
@@ -172,15 +173,11 @@ public class PID {
 
         // Scales the value to the max output
         if (Math.abs(output) > maxOutput) {
-            if (output < 0)
-                return -maxOutput;
-            else
-                return maxOutput;
+           return Math.copySign(maxOutput, output);
         }
 
-        // If the static friction offset is not 0 and the current power is less than the output then apply it
-        if(staticFrictionOffset != 0 && output < staticFrictionOffset){
-            output = output + Math.copySign(staticFrictionOffset, output);
+        if(Math.abs(output) < 0.26){
+            output += Math.copySign(0.3, output);
         }
 
         return output;
