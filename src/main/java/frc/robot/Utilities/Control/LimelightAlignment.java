@@ -20,9 +20,6 @@ public class LimelightAlignment{
     // The power to be given to the motors from the PID loop
     private double power = 0;
 
-    // Constant
-    private final double staticFricitionOffset = 0.2;
-
 
     /**
      * The constructor for aligning the robot to the target
@@ -31,10 +28,12 @@ public class LimelightAlignment{
         limelight = new Limelight();
 
         // P, I, D, staticFrictionOffset
-        pid = new PID(.029,0.0,0.0, 0.2);
+        pid = new PID(.029,0,0.0);
         pid.setAcceptableRange(approxRange);
         
+        
         this.drive = drive;
+        this.drive.enableClosedRampRate(0.05);
     }
 
     /**
@@ -42,13 +41,17 @@ public class LimelightAlignment{
      */
     public void controlLoop(){
         limelightX = limelight.getX(); 
-        approxRange = 1.9; 
         power = 0;
-        power = pid.calcOutput(limelightX);
+        power = pid.calcOutput(limelightX*-1);
+
+        // Check if the robots output power is less than 0.26 motor power if so apply an additional power of 0.3 ontop of the current power
+        if(Math.abs(power) < 0.26){
+            power += Math.copySign(0.3, power);
+        }
 
         // Check if the PID value is in range and there is more than one active target
         if(pid.isInRange() && limelight.getValidTarget() > 0){
-            System.out.println("Aligned");
+            //System.out.println("Aligned");
             drive.arcadeDrive(0, 0);
         }
 

@@ -61,13 +61,16 @@ public class PathingCommand{
      */
     public Command getPathCommand(Path path){
 
-        /**
-         * Sets the actual config in the PathContainer
-         */
-        PathContainer.setupConfig();
+    //Voltage/Speed Constraints
+    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
+    RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
 
-        // An example trajectory to follow.  All units in meters.
-        Trajectory exampleTrajectory = path.getTrajectory();
+    //Constraints for the trajectory to follow
+    TrajectoryConfig config = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
+    .setKinematics(RobotConstants.kDriveKinematics).addConstraint(autoVoltageConstraint);
+
+       // An example trajectory to follow.  All units in meters.
+    Trajectory exampleTrajectory = path.getTrajectory();
 
         // Create the ramsete controller command with the guide
         RamseteCommand ramseteCommand = new RamseteCommand(

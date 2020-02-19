@@ -67,7 +67,7 @@ public class DriveTrainSystem {
 
         // Constructs the encoders
         createEncoders();    
-        
+                
         this.ballSystem = ballSystem;
     }
 
@@ -107,7 +107,7 @@ public class DriveTrainSystem {
     
         //Create the differential robot control system
         //NOTE: Right and Left are flipped to account for weird inverted values that I dont want to change because autonmous works
-        diffDrive = new DifferentialDrive(rightSide, leftSide);
+        diffDrive = new DifferentialDrive(leftSide, rightSide);
 
         diffDrive.setSafetyEnabled(false);
     }
@@ -143,7 +143,7 @@ public class DriveTrainSystem {
         //    drivePower = 0.5;
         //}
         
-        diffDrive.arcadeDrive(drivePower, turnPower);
+        diffDrive.arcadeDrive(drivePower, -turnPower);
 
         
     }
@@ -186,7 +186,7 @@ public class DriveTrainSystem {
     /**
      * Sets the ramp rate to zero seconds
      */
-    public void disableRampRate(){
+    public void disableOpenRampRate(){
         LeftFrontMotor.setOpenLoopRampRate(0);
         LeftMiddleMotor.setOpenLoopRampRate(0);
         LeftBackMotor.setOpenLoopRampRate(0);
@@ -201,7 +201,7 @@ public class DriveTrainSystem {
      * Set the ramp rate on the drive train
      * @param accelTime the time in seconds it takes to go from 0-100
      */
-    public void enableRampRate(double accelTime){
+    public void enableOpenRampRate(double accelTime){
 
         //Left Ramp Rate
         LeftFrontMotor.setOpenLoopRampRate(accelTime);
@@ -212,6 +212,40 @@ public class DriveTrainSystem {
         RightBackMotor.setOpenLoopRampRate(accelTime);
         RightMiddleMotor.setOpenLoopRampRate(accelTime);
         RightFrontMotor.setOpenLoopRampRate(accelTime);
+    }
+
+    /**
+     * Set the ramp rate on the drive train
+     * @param accelTime the time in seconds it takes to go from 0-100
+     */
+    public void enableClosedRampRate(double rate){
+
+        //Left Ramp Rate
+        LeftFrontMotor.setClosedLoopRampRate(rate);
+        LeftMiddleMotor.setClosedLoopRampRate(rate);
+        LeftBackMotor.setClosedLoopRampRate(rate);
+
+        //Right Ramp Rate
+        RightBackMotor.setClosedLoopRampRate(rate);
+        RightMiddleMotor.setClosedLoopRampRate(rate);
+        RightFrontMotor.setClosedLoopRampRate(rate);
+    }
+
+    /**
+     * Set the ramp rate on the drive train
+     * @param accelTime the time in seconds it takes to go from 0-100
+     */
+    public void disabledClosedRampRate(){
+
+        //Left Ramp Rate
+        LeftFrontMotor.setClosedLoopRampRate(1);
+        LeftMiddleMotor.setClosedLoopRampRate(1);
+        LeftBackMotor.setClosedLoopRampRate(1);
+
+        //Right Ramp Rate
+        RightBackMotor.setClosedLoopRampRate(1);
+        RightMiddleMotor.setClosedLoopRampRate(1);
+        RightFrontMotor.setClosedLoopRampRate(1);
     }
 
     /**

@@ -23,6 +23,7 @@ import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Subsystems.SwitchClimber;
+import frc.robot.Utilities.Control.LimelightAlignment;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
 /**
@@ -40,8 +41,11 @@ public class Robot extends TimedRobot {
   private BallSystem ballSystem;
   private SwitchClimber climber;
 
-  //Auto pathing
-  Pathing pathing;
+  //Auto
+  private Pathing pathing;
+  private LimelightAlignment alignment;
+
+  private boolean tracking = false;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -68,6 +72,8 @@ public class Robot extends TimedRobot {
     climber = new SwitchClimber();
 
     pathing = new Pathing(drive);
+
+    alignment = new LimelightAlignment(drive);
 
 
     //Clears sticky faults at robot start
@@ -96,7 +102,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    //Run the example path
+    // Reset Gryo, Position and Encoders
+    pathing.resetProperties();
+
+    // Schedule the path to run
     pathing.runPath(PathContainer.getExamplePath());
   }
 
@@ -115,7 +124,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
 
     //Allows for raw telop input (subject to change)
-    drive.disableRampRate();
+    //drive.disableRampRate();
   }
 
   /**
@@ -125,32 +134,43 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     //Control the robot drive train
-    drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
+    if(!tracking){
+      drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
+      drive.disableOpenRampRate();
+    }
+    else{
+      alignment.controlLoop();
+      drive.enableClosedRampRate(0.05);
+    }
 
-    //Toggle the shooters run status
-    //teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
+    // //Toggle the shooters run status
+    teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
-    shooter.manualShooter(primary.rightTrigger(), 0);
+    teleop.runOncePerPress(primary.X(), () -> tracking = true);
+    teleop.runOncePerPress(primary.Y(), () -> tracking = false);
 
-    //When A is pressed run the intake
-    teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
-    teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
 
-    teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
-    teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
+    ///shooter.manualShooter(primary.rightTrigger(), 0);
 
-    //When Y is pressed attempt to index the balls into the shooter
+    // //When A is pressed run the intake
+    // teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
+    // teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
+
+    // teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
+    // teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
+
+    // //When Y is pressed attempt to index the balls into the shooter
     teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
-    //Extend and retract intake
-    teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
-    teleop.runOncePerPress(primary.X(), () -> ballSystem.getIntake().retractIntake());
+    // //Extend and retract intake
+    // teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
+    // teleop.runOncePerPress(primary.X(), () -> ballSystem.getIntake().retractIntake());
 
-    // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
-    // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
+    // // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
+    // // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
 
-    //Update subsystems
-    subsystemUpdater();
+    // //Update subsystems
+     subsystemUpdater();
     
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
@@ -170,9 +190,9 @@ public class Robot extends TimedRobot {
    * Will call update methods for subsystems so as to not clutter the teleopPeriodic method
    */
   private void subsystemUpdater(){
-    //shooter.runShooter();
+    shooter.runShooter();
 
-    AdvancedCompressor.runUntilFull();
+    //AdvancedCompressor.runUntilFull();
   }
 
   /**

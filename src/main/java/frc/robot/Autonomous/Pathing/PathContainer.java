@@ -14,12 +14,12 @@ import frc.robot.RobotConstants;
  */
 public class PathContainer{
 
-    private static TrajectoryConfig config;
+  
 
     /**
      * Setup the actual drive train configuration variable
      */
-    public static void setupConfig(){
+    public static TrajectoryConfig getConfig(){
         
         //Voltage/Speed Constraints
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
@@ -29,20 +29,20 @@ public class PathContainer{
         TrajectoryConfig Localconfig = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
         .setKinematics(RobotConstants.kDriveKinematics).addConstraint(autoVoltageConstraint);
 
-        config = Localconfig;
+        return Localconfig;
     }
 
     /**
-     * Get the example sin like path
+     * Get the example straight 1 meter path
      * 
      * @return the path
      */
     public static Path getExamplePath(){
         
         // Trajectory Config, End Pose at 90 degrees (80 cause weird over shoot)
-        Path path = new Path(config, new Pose2d(3, 0, new Rotation2d(Math.toRadians(80))));
+        Path path = new Path(getConfig(), new Pose2d(1, 0, new Rotation2d(0)));
 
-        path.addWaypoint(1.5, 0);
+        path.addWaypoint(0.5, 0);
 
         return path;
     }

@@ -176,10 +176,6 @@ public class PID {
            return Math.copySign(maxOutput, output);
         }
 
-        if(Math.abs(output) < 0.26){
-            output += Math.copySign(0.3, output);
-        }
-
         return output;
     }
 

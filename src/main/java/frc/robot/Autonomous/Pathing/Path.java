@@ -3,6 +3,8 @@ package frc.robot.Autonomous.Pathing;
 
 import java.util.ArrayList;
 
+import javax.management.RuntimeErrorException;
+
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -77,6 +79,14 @@ public class Path{
      * Compute and return the trajectory
      */
     public Trajectory getTrajectory(){
+        if(initialPose == null)
+            throw new RuntimeException("Inital Pose");
+        if(interiorWaypoints == null)
+            throw new RuntimeException("Waypoints");
+        if(endPose == null)
+            throw new RuntimeException("end Pose");
+        if(config == null)
+            throw new RuntimeException("Config");
         return TrajectoryGenerator.generateTrajectory(initialPose, interiorWaypoints, endPose, config);
     }
 
