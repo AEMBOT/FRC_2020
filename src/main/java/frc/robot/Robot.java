@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Autonomous.Pathing.PathContainer;
+import frc.robot.Autonomous.Pathing.Pathing;
 import frc.robot.Autonomous.Pathing.PathingCommand;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
@@ -39,12 +40,8 @@ public class Robot extends TimedRobot {
   private BallSystem ballSystem;
   private SwitchClimber climber;
 
-  // Trajectory Based Autonomous
-  private Command pathCommand;
-  private PathingCommand pathingCommand;
-
-
-  //Hardware
+  //Auto pathing
+  Pathing pathing;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -70,7 +67,7 @@ public class Robot extends TimedRobot {
 
     climber = new SwitchClimber();
 
-    pathingCommand = new PathingCommand(drive);
+    pathing = new Pathing(drive);
 
 
     //Clears sticky faults at robot start
@@ -99,16 +96,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // Reset all auto properties o
-    pathingCommand.resetProperties();
-
-    // Get the actual auto path command we will be running
-    pathCommand = pathingCommand.getPathCommand(PathContainer.getExamplePath());
-
-    if(pathCommand != null && !pathCommand.isScheduled()){
-      pathCommand.schedule();
-    }
-    
+    //Run the example path
+    pathing.runPath(PathContainer.getExamplePath());
   }
 
   /**
@@ -116,12 +105,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    // if(!hasRunDrive){
-    //   hasRunDrive = autoControl.DriveDistance(1);
-    // }
-    // else if (hasRunDrive && !hasTurned){
-    //   hasTurned = autoControl.TurnToAngle(90);
-    // }
+    
   }
 
   /**
