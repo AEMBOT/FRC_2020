@@ -17,6 +17,8 @@ public class PID {
     private double i;
     private double d;
 
+    private double staticFrictionOffset = 0;
+
     // The last p value (error)
     private double lastError;
 
@@ -44,20 +46,64 @@ public class PID {
      */
     public PID(double P, double I, double D) {
 
+        // PID Constants
         this.P = P;
         this.I = I;
         this.D = D;
 
+        // Local pid values
         p = 0;
         i = 0;
         d = 0;
 
+        // The error of the last loop
         lastError = 0;
 
+        // Whether or not the PID loop is in range
         inRange = false;
+
+        // The offset +/- that is deemed in range
         acceptableRange = 0;
 
+        // Motor power to output
         output = 0;
+    }
+
+      /**
+     * Initialize the variables as well as assign PID constants When usingGyroscope
+     * is being used the getCorrectYaw method must also be used
+     * 
+     * @param P                      the P scalar
+     * @param I                      the I scalar
+     * @param D                      the D scalar
+     * @param staticFrictionOffset   the motor power to offset the motor when the power gets too low
+     */
+    public PID(double P, double I, double D, double staticFrictionOffset) {
+
+        // PID Constants
+        this.P = P;
+        this.I = I;
+        this.D = D;
+
+        // Local pid values
+        p = 0;
+        i = 0;
+        d = 0;
+
+        // The error of the last loop
+        lastError = 0;
+
+        // Whether or not the PID loop is in range
+        inRange = false;
+
+        // The offset +/- that is deemed in range
+        acceptableRange = 0;
+
+        // Motor power to output
+        output = 0;
+
+        // The motor power to offset the PID loop by to overcome static friction
+        this.staticFrictionOffset = staticFrictionOffset;
     }
 
     /**
@@ -130,6 +176,11 @@ public class PID {
                 return -maxOutput;
             else
                 return maxOutput;
+        }
+
+        // If the static friction offset is not 0 and the current power is less than the output then apply it
+        if(staticFrictionOffset != 0 && output < staticFrictionOffset){
+            output = output + Math.copySign(staticFrictionOffset, output);
         }
 
         return output;

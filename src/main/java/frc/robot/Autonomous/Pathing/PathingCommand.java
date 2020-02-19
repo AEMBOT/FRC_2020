@@ -1,4 +1,4 @@
-package frc.robot.Autonomous.Pathing.Command;
+package frc.robot.Autonomous.Pathing;
 
 import java.util.List;
 

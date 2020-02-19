@@ -44,15 +44,14 @@ public class ArcShooter{
 
         flywheelMotor2 = new CANSparkMax(RobotMap.ShooterFlyWheelMotor2, MotorType.kBrushless);
 
-        flywheelMotor2.follow(flywheelMotor);
+        flywheelMotor2.follow(flywheelMotor, true);
+
+        //flywheelMotor2.setInverted(true);
 
         //Set a 300ms ramp rate for the motor
-        flywheelMotor.setOpenLoopRampRate(4);
+        //flywheelMotor.setOpenLoopRampRate(4);
 
         flywheelMotor.setInverted(true);
-
-     
-
     }
 
     /**
@@ -136,6 +135,7 @@ public class ArcShooter{
             
             //Add the RPM values to the smart dashboard
             Dashboard.setValue("Fly-Wheel-RPM", flywheelMotor.getEncoder().getVelocity()*2);
+            Dashboard.setValue("Fly-Wheel-Total", flywheelMotor.getOutputCurrent() + flywheelMotor2.getOutputCurrent());
             
             //Inform the user of wheater or not the motor is up to speed
             if(flywheelMotor.getEncoder().getVelocity() > 10_000){

@@ -118,6 +118,10 @@ public class BallSystem{
             return (frontIntakeMotor.get() > 0);
         }
 
+        public double getIntakeCurrent(){
+            return frontIntakeMotor.getOutputCurrent();
+        }
+
         /**
          * Sets the values for the intake 
          * @param value
@@ -162,7 +166,7 @@ public class BallSystem{
         }
 
         public void runBelts(){
-            transportBeltMotor.set(-1);
+            transportBeltMotor.set(-0.5);
         }
 
         public void stopBelts(){

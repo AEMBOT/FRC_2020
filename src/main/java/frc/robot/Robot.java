@@ -7,14 +7,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Autonomous.Control.AutoDriveControl;
-import frc.robot.Autonomous.Pathing.Command.PathingCommand;
-import frc.robot.Autonomous.Pathing.Iterative.TrajectoryFollow;
+import frc.robot.Autonomous.Pathing.PathingCommand;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
 import frc.robot.Hardware.Joysticks.Xbox;
@@ -24,7 +21,6 @@ import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Subsystems.SwitchClimber;
-import frc.robot.Utilities.Control.PIDF;
 import frc.robot.Utilities.Teleop.TeleopControl;
 
 /**
@@ -147,13 +143,16 @@ public class Robot extends TimedRobot {
     drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
 
     //Toggle the shooters run status
-    teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
+    //teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
     
-  // shooter.manualShooter(primary.rightTrigger(), 0);
+    shooter.manualShooter(primary.rightTrigger(), 0);
 
    //When A is pressed run the intake
      teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
      teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
+
+     teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
+     teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
 
    //When Y is pressed attempt to index the balls into the shooter
    teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
@@ -186,7 +185,7 @@ public class Robot extends TimedRobot {
    * Will call update methods for subsystems so as to not clutter the teleopPeriodic method
    */
   private void subsystemUpdater(){
-    shooter.runShooter();
+    //shooter.runShooter();
 
     AdvancedCompressor.runUntilFull();
   }
@@ -202,6 +201,7 @@ public class Robot extends TimedRobot {
       //Add options to the dashboards
       Dashboard.createEntry("Fly-Wheel-RPM", 0.0);
       Dashboard.createEntry("Fly-Wheel-Speed-Status", false);
+      Dashboard.createEntry("Fly-Wheel-Total", 0.0);
 
       //Create entry for the shooter current draw
       Dashboard.createEntry("Shooter-Current-Draw");
@@ -272,7 +272,7 @@ public class Robot extends TimedRobot {
     Dashboard.setValue("Right-Side-Temperature", drive.getRightSideTemp());
 
     Dashboard.setValue("Belt-Current", ballSystem.getIndexer().getBeltCurrent());
-    Dashboard.setValue("FrontIndexer-Current", ballSystem.getIndexer().getIndexerCurrent());
+    Dashboard.setValue("FrontIndexer-Current", ballSystem.getIntake().getIntakeCurrent());
     //Update the navX angle on the dashboard
     Dashboard.setValue("Gyro", NavX.get().getAhrs());
   }

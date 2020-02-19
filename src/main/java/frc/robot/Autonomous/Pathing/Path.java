@@ -1,4 +1,4 @@
-package frc.robot.Autonomous.Pathing.Iterative;
+package frc.robot.Autonomous.Pathing;
 
 
 import java.util.ArrayList;
@@ -18,19 +18,19 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 public class Path{
 
     //List of waypoints to follow after starting
-    private ArrayList<Translation2d> interiorWaypoints;
+    private final ArrayList<Translation2d> interiorWaypoints;
 
     //Variables to store the start and end poses 
-    private Pose2d initialPose;
-    private Pose2d endPose;
+    private final Pose2d initialPose;
+    private final Pose2d endPose;
 
-    private TrajectoryConfig config;
+    private final TrajectoryConfig config;
     
     /**
      * constructor initializes the initial pose to 0 and the end pose to 0
      * @param config the config to use in this path
      */
-    public Path(TrajectoryConfig config, Pose2d endPose){
+    public Path(final TrajectoryConfig config, final Pose2d endPose){
 
         this.config = config;
 
@@ -46,7 +46,7 @@ public class Path{
      * @param initialPose the wanted start pose
      * @param endPose the wanted end pose
      */
-    public Path(TrajectoryConfig config, Pose2d initialPose, Pose2d endPose){
+    public Path(final TrajectoryConfig config, final Pose2d initialPose, final Pose2d endPose){
 
         this.config = config;
 
@@ -62,7 +62,7 @@ public class Path{
      * @param initialPose the wanted start pose
      * @param endPose the wanted end pose
      */
-    public Path(TrajectoryConfig config, Pose2d initialPose, ArrayList<Translation2d> interiorWaypoints, Pose2d endPose){
+    public Path(final TrajectoryConfig config, final Pose2d initialPose, final ArrayList<Translation2d> interiorWaypoints, final Pose2d endPose){
 
         this.config = config;
 
@@ -85,7 +85,7 @@ public class Path{
      * @param x horizontal position of the waypoint
      * @param y vertical position of the waypoint
      */
-    public void addWaypoint(double x, double y){
+    public void addWaypoint(final double x, final double y){
         interiorWaypoints.add(new Translation2d(x, y));
     }
 }

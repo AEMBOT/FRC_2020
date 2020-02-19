@@ -1,4 +1,4 @@
-package frc.robot.Autonomous.Pathing.Iterative;
+package frc.robot.Autonomous.Pathing;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package frc.robot.Autonomous.Pathing.Command;
+package frc.robot.Autonomous.Pathing;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
