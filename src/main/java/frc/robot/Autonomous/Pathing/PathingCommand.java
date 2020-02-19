@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotConstants;
+import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Control.RAMSETE.RamseteCommand;
 
@@ -44,37 +45,29 @@ public class PathingCommand{
         robotDrive.resetOdometry(new Pose2d(x, y, new Rotation2d(angle)));
     }
 
+    /**
+     * Reset all important parts of the path, NavX, Encoders, Odometry, etc.
+     */
+    public void resetProperties(){
+        robotDrive.resetEncoders();
+        NavX.get().resetYaw();
+        resetOdometry();
+    }
+
 
     /**
      * Returns the command to run in autonomous
      * @return
      */
-    public Command getPathCommand(){
+    public Command getPathCommand(Path path){
 
-        //Voltage/Speed Constraints
-        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
-        RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
-
-        //Constraints for the trajectory to follow
-        TrajectoryConfig config = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
-        .setKinematics(RobotConstants.kDriveKinematics).addConstraint(autoVoltageConstraint);
+        /**
+         * Sets the actual config in the PathContainer
+         */
+        PathContainer.setupConfig();
 
         // An example trajectory to follow.  All units in meters.
-        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(
-                    new Translation2d(1.5, 0)
-                ),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(Math.toRadians(80))),
-
-            // Pass config
-            config
-        );
+        Trajectory exampleTrajectory = path.getTrajectory();
 
         // Create the ramsete controller command with the guide
         RamseteCommand ramseteCommand = new RamseteCommand(

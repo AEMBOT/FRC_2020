@@ -74,6 +74,13 @@ public class NavX {
     }
 
     /**
+     * Reset the yaw axis on the robot
+     */
+    public void resetYaw(){
+        ahrs.zeroYaw();
+    }
+
+    /**
      * !Warning! The value may not be accurate due to EMI from the motors Gets the
      * value from the compass in the NavX
      * 

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Autonomous.Pathing.PathContainer;
 import frc.robot.Autonomous.Pathing.PathingCommand;
 import frc.robot.Communication.Dashboard.Dashboard;
 import frc.robot.Hardware.Electrical.PDP;
@@ -98,11 +99,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    drive.resetEncoders(); 
-    NavX.get().getAhrs().zeroYaw();  
-    pathingCommand.resetOdometry();
+    // Reset all auto properties o
+    pathingCommand.resetProperties();
 
-    pathCommand = pathingCommand.getPathCommand();
+    // Get the actual auto path command we will be running
+    pathCommand = pathingCommand.getPathCommand(PathContainer.getExamplePath());
 
     if(pathCommand != null && !pathCommand.isScheduled()){
       pathCommand.schedule();
@@ -147,22 +148,22 @@ public class Robot extends TimedRobot {
     
     shooter.manualShooter(primary.rightTrigger(), 0);
 
-   //When A is pressed run the intake
-     teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
-     teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
+    //When A is pressed run the intake
+    teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
+    teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
 
-     teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
-     teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
+    teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
+    teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
 
-   //When Y is pressed attempt to index the balls into the shooter
-   teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+    //When Y is pressed attempt to index the balls into the shooter
+    teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
-   //Extend and retract intake
-   teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
-   teleop.runOncePerPress(primary.X(), () -> ballSystem.getIntake().retractIntake());
+    //Extend and retract intake
+    teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
+    teleop.runOncePerPress(primary.X(), () -> ballSystem.getIntake().retractIntake());
 
-   // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
-   // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
+    // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
+    // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
 
     //Update subsystems
     subsystemUpdater();
