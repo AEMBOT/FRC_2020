@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
   private Pathing pathing;
   private LimelightAlignment alignment;
 
+  // Temp-Auto
   private boolean tracking = false;
 
   /**
@@ -67,12 +68,16 @@ public class Robot extends TimedRobot {
     // Used to make button interaction easier
     teleop = new TeleopControl();   
 
+    // Used to control the drive train of the robot
     drive = new DriveTrainSystem(ballSystem);
 
+    // Climber used to climb the generator switch
     climber = new SwitchClimber();
 
+    // Overall pathing class used to load paths and run them
     pathing = new Pathing(drive);
 
+    // Uses the limelight to align the robot to the goal
     alignment = new LimelightAlignment(drive);
 
 
