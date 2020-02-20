@@ -94,7 +94,7 @@ public class Path{
     }
 
     /**
-     * Get the status of inverted
+     * Get the status of whether the path is inverted
      */
     public boolean getInverted(){
         return inverted;

@@ -31,7 +31,7 @@ public class PathContainer{
     }
 
     /**
-     * Get the example straight 1 meter path
+     * Get the example path of driving 3 meters with a curve at 1 meter and coming back in line at 2 meters
      * 
      * @return the path
      */

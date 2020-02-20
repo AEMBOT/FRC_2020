@@ -50,11 +50,14 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
 
+        // If the path is inverted then flip the drive train encoder directions to account 
         if(inverted){
              // Update the odometry in the periodic block
             odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance()*-1,
             rightDriveTrainEncoder.getDistance()*-1);
         }
+
+        // If not update as normal
         else{
             // Update the odometry in the periodic block
             odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance(),
@@ -66,6 +69,10 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
         //System.out.println("Current Rotation: " + getPose().getRotation());
     }
 
+    /**
+     * Set whether or not the path is meant to be run backwards
+     * @param value inverted status
+     */
     public void setInverted(boolean value){
         inverted = value;
     }
@@ -77,13 +84,12 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
         drive.getLeftSideMotors().setVoltage(leftVolts);
         drive.getRightSideMotors().setVoltage(rightVolts);
 
-       
     }
 
     /**
-     * Adds the ability to drive the robot backwards
-     * @param leftVolts
-     * @param rightVolts
+     * Adds the ability to drive the robot backwards, to run paths in reverse
+     * @param leftVolts power to the left side of the drive train
+     * @param rightVolts power to the right side of the drive train
      */
     public void inverseTankDriveVolts(double leftVolts, double rightVolts){
         drive.getLeftSideMotors().setVoltage(-leftVolts);
@@ -128,6 +134,8 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
      * @return the altered heading
      */
     public double getHeading(){
+
+        // If set to invert flip whatever the current reversed gyro value to flip directions
         if(inverted)
             return Math.IEEEremainder(navX.getAngle(), 360) * (!RobotConstants.kGyroReversed ? -1.0 : 1.0);
         
@@ -138,8 +146,11 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
      * Returns the turn rate factoring in weather or not the gyro is reversed
      */
     public double getTurnRate(){
+
+        // If set to invert flip whatever the current reversed gyro value to flip directions
         if(inverted)
             return navX.getRate() * (!RobotConstants.kGyroReversed ? -1.0 : 1.0);
+
         return navX.getRate() * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
     }
     
