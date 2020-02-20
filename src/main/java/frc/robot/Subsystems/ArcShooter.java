@@ -44,14 +44,19 @@ public class ArcShooter{
 
         flywheelMotor2 = new CANSparkMax(RobotMap.ShooterFlyWheelMotor2, MotorType.kBrushless);
 
+
+        flywheelMotor.setInverted(true);
+       // flywheelMotor.burnFlash();
+       // flywheelMotor2.burnFlash();
+
         flywheelMotor2.follow(flywheelMotor, true);
 
         //flywheelMotor2.setInverted(true);
 
         //Set a 300ms ramp rate for the motor
-        //flywheelMotor.setOpenLoopRampRate(4);
+        //flywheelMotor.setClosedLoopRampRate(0.7);
 
-        flywheelMotor.setInverted(true);
+        
     }
 
     /**
@@ -83,6 +88,18 @@ public class ArcShooter{
         shooterCurrent[0] = flywheelMotor.getOutputCurrent();
 
         return shooterCurrent;
+    }
+
+    public boolean getStatus(){
+        return (Math.abs(flywheelMotor.get()) > 0.3);
+    }
+
+    /**
+     * Returns if the shooter is at full speed
+     * @return
+     */
+    public boolean isFull(){
+        return ((Math.abs(flywheelMotor.getEncoder().getVelocity())*2) > 10_000);
     }
 
     /**

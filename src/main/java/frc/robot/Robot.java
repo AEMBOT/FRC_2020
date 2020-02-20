@@ -47,6 +47,9 @@ public class Robot extends TimedRobot {
 
   // Temp-Auto
   private boolean tracking = false;
+  private boolean hasAligned = false;
+  private boolean runningShooter = false;
+  private int alignCount = 0;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -110,16 +113,48 @@ public class Robot extends TimedRobot {
     // Reset Gryo, Position and Encoders
     pathing.resetProperties();
 
+    hasAligned = false;
+    runningShooter = false;
+
+    AdvancedCompressor.stopCompressor();
+
+    ballSystem.getIndexer().stopIndexing();
+
     // Schedule the path to run
-    pathing.runPath(PathContainer.getExamplePath());
+    //pathing.runPath(PathContainer.getExamplePath());
+    pathing.runPath(PathContainer.turnAndShoot(), () -> stopRobotAndRunMethod(()->tracking = true));
   }
 
   /**
    * This function is called periodically during autonomous.
    */
   @Override
-  public void autonomousPeriodic() {
-    
+  public void autonomousPeriodic() {  
+    if(tracking == true){
+      alignShoot();
+    }
+  }
+
+  private void alignShoot(){
+    if( !hasAligned && alignment.controlLoop()){
+      if(alignCount == 10)
+        hasAligned = true;
+      else
+        alignCount++;
+        System.out.println(alignCount);
+
+    }
+    else if(!runningShooter){
+        shooter.toggleShooter();
+        runningShooter = true;
+    }
+
+    if(hasAligned == true && shooter.isFull()){
+      ballSystem.getIndexer().standardIndex();
+    }
+
+    subsystemUpdater();
+
   }
 
   /**
@@ -154,6 +189,7 @@ public class Robot extends TimedRobot {
     teleop.runOncePerPress(primary.X(), () -> tracking = true);
     teleop.runOncePerPress(primary.Y(), () -> tracking = false);
 
+    AdvancedCompressor.runUntilFull();
 
     ///shooter.manualShooter(primary.rightTrigger(), 0);
 
@@ -165,11 +201,11 @@ public class Robot extends TimedRobot {
     // teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
 
     // //When Y is pressed attempt to index the balls into the shooter
-    teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+    //teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
     // //Extend and retract intake
-    // teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
-    // teleop.runOncePerPress(primary.X(), () -> ballSystem.getIntake().retractIntake());
+     teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
+     teleop.runOncePerPress(primary.A(), () -> ballSystem.getIntake().retractIntake());
 
     // // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
     // // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
@@ -285,5 +321,10 @@ public class Robot extends TimedRobot {
     Dashboard.setValue("FrontIndexer-Current", ballSystem.getIntake().getIntakeCurrent());
     //Update the navX angle on the dashboard
     Dashboard.setValue("Gyro", NavX.get().getAhrs());
+  }
+
+  private void stopRobotAndRunMethod(Runnable action){
+    drive.arcadeDrive(0, 0);
+    action.run();
   }
 }

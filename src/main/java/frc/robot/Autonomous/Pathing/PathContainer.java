@@ -43,7 +43,15 @@ public class PathContainer{
         path.addWaypoint(1, 0.5);
         path.addWaypoint(2, 0);
 
+        return path;
+    }
 
+    public static Path turnAndShoot(){
+        Path path = new Path(getConfig(), new Pose2d(1, 0, new Rotation2d(0)));
+
+        path.setInverted(true);
+
+        path.addWaypoint(0.75, 0);
 
         return path;
     }

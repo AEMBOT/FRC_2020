@@ -27,6 +27,8 @@ public class Path{
     private final Pose2d endPose;
 
     private final TrajectoryConfig config;
+
+    private boolean inverted = false;
     
     /**
      * constructor initializes the initial pose to 0 and the end pose to 0
@@ -79,15 +81,22 @@ public class Path{
      * Compute and return the trajectory
      */
     public Trajectory getTrajectory(){
-        if(initialPose == null)
-            throw new RuntimeException("Inital Pose");
-        if(interiorWaypoints == null)
-            throw new RuntimeException("Waypoints");
-        if(endPose == null)
-            throw new RuntimeException("end Pose");
-        if(config == null)
-            throw new RuntimeException("Config");
         return TrajectoryGenerator.generateTrajectory(initialPose, interiorWaypoints, endPose, config);
+    }
+
+    /**
+     * Invert the path
+     * @param value wheater or not to invert
+     */
+    public void setInverted(boolean value){
+        inverted = value;
+    }
+
+    /**
+     * Get the status of inverted
+     */
+    public boolean getInverted(){
+        return inverted;
     }
 
     /**

@@ -23,6 +23,8 @@ public class PathingCommand{
     // Create new trajectory drive
     private TrajectoryDriveSubsystem robotDrive;
 
+    RamseteCommand ramseteCommand;
+
     /**
      * Construct the command with a drive train reference
      * @param drive reference to the DriveTrainSystem
@@ -54,13 +56,14 @@ public class PathingCommand{
         resetOdometry();
     }
 
-
-    /**
+     /**
      * Returns the command to run in autonomous
      * @return
      */
-    public Command getPathCommand(Path path){
+    public Command getPathCommand(Path path, boolean inverted){
 
+
+    robotDrive.setInverted(inverted);
     //Voltage/Speed Constraints
     var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
     RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
@@ -72,8 +75,9 @@ public class PathingCommand{
        // An example trajectory to follow.  All units in meters.
     Trajectory exampleTrajectory = path.getTrajectory();
 
+    if(!inverted){
         // Create the ramsete controller command with the guide
-        RamseteCommand ramseteCommand = new RamseteCommand(
+        ramseteCommand = new RamseteCommand(
             exampleTrajectory, 
             robotDrive::getPose, 
             new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta), 
@@ -86,8 +90,80 @@ public class PathingCommand{
             new PIDController(RobotConstants.kPDriveVal, 0, 0),
             robotDrive::tankDriveVolts,
             robotDrive);
+    }
+    else{
+        // Create the ramsete controller command with the guide
+        ramseteCommand = new RamseteCommand(
+            exampleTrajectory, 
+            robotDrive::getPose, 
+            new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta), 
+            new SimpleMotorFeedforward(RobotConstants.kSVolts, 
+            RobotConstants.kvVoltMetersPerSecond,
+            RobotConstants.kaVoltMetersPerSecondSquared), 
+            RobotConstants.kDriveKinematics, 
+            robotDrive::getWheelSpeeds, 
+            new PIDController(RobotConstants.kPDriveVal, 0, 0), 
+            new PIDController(RobotConstants.kPDriveVal, 0, 0),
+            robotDrive::inverseTankDriveVolts,
+            robotDrive);
+    }
 
         // Return the command stating that the robot should halt after the path is complete
         return ramseteCommand.andThen(() -> robotDrive.tankDriveVolts(0, 0));
     }
+
+     /**
+     * Returns the command to run in autonomous, as well as giving the ability to run something after the path is complete
+     * @return
+     */
+    public Command getPathCommand(Path path, boolean inverted, Runnable endAction){
+
+    robotDrive.setInverted(inverted);
+        //Voltage/Speed Constraints
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
+        RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
+    
+        //Constraints for the trajectory to follow
+        TrajectoryConfig config = new TrajectoryConfig(RobotConstants.kMaxVelocityMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(RobotConstants.kDriveKinematics).addConstraint(autoVoltageConstraint);
+    
+           // An example trajectory to follow.  All units in meters.
+        Trajectory exampleTrajectory = path.getTrajectory();
+    
+        if(!inverted){
+            // Create the ramsete controller command with the guide
+            ramseteCommand = new RamseteCommand(
+                exampleTrajectory, 
+                robotDrive::getPose, 
+                new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta), 
+                new SimpleMotorFeedforward(RobotConstants.kSVolts, 
+                RobotConstants.kvVoltMetersPerSecond,
+                RobotConstants.kaVoltMetersPerSecondSquared), 
+                RobotConstants.kDriveKinematics, 
+                robotDrive::getWheelSpeeds, 
+                new PIDController(RobotConstants.kPDriveVal, 0, 0), 
+                new PIDController(RobotConstants.kPDriveVal, 0, 0),
+                robotDrive::tankDriveVolts,
+                robotDrive);
+        }
+        else{
+            // Create the ramsete controller command with the guide
+            ramseteCommand = new RamseteCommand(
+                exampleTrajectory, 
+                robotDrive::getPose, 
+                new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta), 
+                new SimpleMotorFeedforward(RobotConstants.kSVolts, 
+                RobotConstants.kvVoltMetersPerSecond,
+                RobotConstants.kaVoltMetersPerSecondSquared), 
+                RobotConstants.kDriveKinematics, 
+                robotDrive::getWheelSpeeds, 
+                new PIDController(RobotConstants.kPDriveVal, 0, 0), 
+                new PIDController(RobotConstants.kPDriveVal, 0, 0),
+                robotDrive::inverseTankDriveVolts,
+                robotDrive);
+        }
+    
+            // Return the command stating that the robot should halt after the path is complete
+            return ramseteCommand.andThen(endAction);
+        }
 }

@@ -29,7 +29,21 @@ public class Pathing{
     public void runPath(Path path){
         
         // Get the actual auto path command we will be running
-        pathCommand = pathingCommand.getPathCommand(path);
+        pathCommand = pathingCommand.getPathCommand(path, path.getInverted());
+
+        if(pathCommand != null && !pathCommand.isScheduled()){
+        pathCommand.schedule();
+        }
+    }
+
+    /**
+     * Run the selected path
+     * @param path
+     */
+    public void runPath(Path path, Runnable endAction){
+        
+        // Get the actual auto path command we will be running
+        pathCommand = pathingCommand.getPathCommand(path,path.getInverted(),endAction);
 
         if(pathCommand != null && !pathCommand.isScheduled()){
         pathCommand.schedule();

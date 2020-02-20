@@ -27,12 +27,18 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
     //Robots predictive location
     DifferentialDriveOdometry odometry;
 
+    boolean inverted;
+
     public TrajectoryDriveSubsystem(DriveTrainSystem drive){
         this.drive = drive;
 
         // Get instances of the dt encoders
         leftDriveTrainEncoder = drive.getLeftSideEncoder();
         rightDriveTrainEncoder = drive.getRightSideEncoder();
+
+        if(inverted){
+            
+        }
 
         // Get a reference to the NavX
         navX = NavX.get();
@@ -43,13 +49,25 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        // Update the odometry in the periodic block
-        odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance(),
-                        rightDriveTrainEncoder.getDistance());
+
+        if(inverted){
+             // Update the odometry in the periodic block
+            odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance()*-1,
+            rightDriveTrainEncoder.getDistance()*-1);
+        }
+        else{
+            // Update the odometry in the periodic block
+            odometry.update(Rotation2d.fromDegrees(getHeading()), leftDriveTrainEncoder.getDistance(),
+                            rightDriveTrainEncoder.getDistance());
+        }
 
         // Print out the current Translation and Rotational values
         //System.out.println("Current Translation: " + getPose().getTranslation());
         //System.out.println("Current Rotation: " + getPose().getRotation());
+    }
+
+    public void setInverted(boolean value){
+        inverted = value;
     }
 
     /**
@@ -60,6 +78,16 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
         drive.getRightSideMotors().setVoltage(rightVolts);
 
        
+    }
+
+    /**
+     * Adds the ability to drive the robot backwards
+     * @param leftVolts
+     * @param rightVolts
+     */
+    public void inverseTankDriveVolts(double leftVolts, double rightVolts){
+        drive.getLeftSideMotors().setVoltage(-leftVolts);
+        drive.getRightSideMotors().setVoltage(-rightVolts);
     }
 
     /**
@@ -100,13 +128,18 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
      * @return the altered heading
      */
     public double getHeading(){
+        if(inverted)
+            return Math.IEEEremainder(navX.getAngle(), 360) * (!RobotConstants.kGyroReversed ? -1.0 : 1.0);
+        
+        //If inverted
         return Math.IEEEremainder(navX.getAngle(), 360) * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
     }
-
     /**
      * Returns the turn rate factoring in weather or not the gyro is reversed
      */
     public double getTurnRate(){
+        if(inverted)
+            return navX.getRate() * (!RobotConstants.kGyroReversed ? -1.0 : 1.0);
         return navX.getRate() * (RobotConstants.kGyroReversed ? -1.0 : 1.0);
     }
     

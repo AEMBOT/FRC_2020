@@ -39,7 +39,7 @@ public class LimelightAlignment{
     /**
      * Run to align the robot
      */
-    public void controlLoop(){
+    public boolean controlLoop(){
         limelightX = limelight.getX(); 
         power = 0;
         power = pid.calcOutput(limelightX*-1);
@@ -53,11 +53,13 @@ public class LimelightAlignment{
         if(pid.isInRange() && limelight.getValidTarget() > 0){
             //System.out.println("Aligned");
             drive.arcadeDrive(0, 0);
+            return true;
         }
 
         // If not aligned then attempt to align 
         else{
             drive.arcadeDrive(power, 0);
+            return false;
         }
     }
 }
