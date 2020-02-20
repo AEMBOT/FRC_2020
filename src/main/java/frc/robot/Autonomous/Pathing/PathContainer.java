@@ -46,7 +46,13 @@ public class PathContainer{
         return path;
     }
 
-    public static Path turnAndShoot(){
+    /**
+     * Backs the robot up 1.4m and aligns
+     * @return the path to complete this action
+     */
+    public static Path basicEightPartOne(){
+
+        // Start at (0,0) (Subject to change) drive backwards because of the inverse "1 meter" with a waypoint .75 meters in the middle
         Path path = new Path(getConfig(), new Pose2d(1, 0, new Rotation2d(0)));
 
         path.setInverted(true);

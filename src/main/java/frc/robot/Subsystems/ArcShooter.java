@@ -143,6 +143,20 @@ public class ArcShooter{
     }
 
     /**
+     * Straight up sets the shooter to not toggled
+     */
+    public void stopShooter(){
+        toggledStatus = false;
+    }
+
+    /**
+     * Basic enable method to just turn on the shooter
+     */
+    public void enableShooter(){
+        toggledStatus = true;
+    }
+
+    /**
      * Update the dashboard stats of the motor
      */
     private void updateShooterStats(){

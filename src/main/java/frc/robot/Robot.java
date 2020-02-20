@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Autonomous.Pathing.AutonomousManager;
 import frc.robot.Autonomous.Pathing.PathContainer;
 import frc.robot.Autonomous.Pathing.Pathing;
 import frc.robot.Autonomous.Pathing.PathingCommand;
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
   //Auto
   private Pathing pathing;
   private LimelightAlignment alignment;
+  private AutonomousManager autoManager;
 
   // Temp-Auto
   private boolean tracking = false;
@@ -83,6 +85,8 @@ public class Robot extends TimedRobot {
     // Uses the limelight to align the robot to the goal
     alignment = new LimelightAlignment(drive);
 
+    // Create a new over all auto manager
+    autoManager = new AutonomousManager(alignment, pathing, ballSystem, drive, shooter);
 
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
@@ -110,19 +114,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // Reset Gryo, Position and Encoders
-    pathing.resetProperties();
-
-    hasAligned = false;
-    runningShooter = false;
-
+    // Stop running the compressor during auto
     AdvancedCompressor.stopCompressor();
 
-    ballSystem.getIndexer().stopIndexing();
-
-    // Schedule the path to run
-    //pathing.runPath(PathContainer.getExamplePath());
-    pathing.runPath(PathContainer.turnAndShoot(), () -> stopRobotAndRunMethod(()->tracking = true));
+    // Initializes the first path and resets everything
+    autoManager.getBasicEight().setup();
   }
 
   /**
@@ -130,31 +126,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {  
-    if(tracking == true){
-      alignShoot();
-    }
-  }
-
-  private void alignShoot(){
-    if( !hasAligned && alignment.controlLoop()){
-      if(alignCount == 10)
-        hasAligned = true;
-      else
-        alignCount++;
-        System.out.println(alignCount);
-
-    }
-    else if(!runningShooter){
-        shooter.toggleShooter();
-        runningShooter = true;
-    }
-
-    if(hasAligned == true && shooter.isFull()){
-      ballSystem.getIndexer().standardIndex();
-    }
-
-    subsystemUpdater();
-
+    
+    // Runs all required periodic functions
+    autoManager.getBasicEight().periodic();
   }
 
   /**
@@ -164,7 +138,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
 
     //Allows for raw telop input (subject to change)
-    //drive.disableRampRate();
+
   }
 
   /**

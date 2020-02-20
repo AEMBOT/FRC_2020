@@ -30,6 +30,7 @@ public class LimelightAlignment{
         // P, I, D, staticFrictionOffset
         pid = new PID(.029,0,0.0);
         pid.setAcceptableRange(approxRange);
+        pid.setLoopRequirement(10);
         
         
         this.drive = drive;

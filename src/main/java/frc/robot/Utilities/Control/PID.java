@@ -34,6 +34,10 @@ public class PID {
     // The point the module is trying to reach
     private double setpoint;
 
+    // The number of times the PID loop must be good to be considered in range
+    private int loopRequirement = 0;
+    private int currentLoop = 0;
+
     // The max output PID can create, default 1
     private double maxOutput = 1;
 
@@ -144,6 +148,15 @@ public class PID {
     }
 
     /**
+     * Sets the number of times the control loop must be in range to be considered accurate
+     * 
+     * @param value the number of loops required
+     */
+    public void setLoopRequirement(int value){
+        loopRequirement = value;
+    }
+
+    /**
      * This method runs all the PID code to output a value to send to the motors
      * 
      * @return motor power
@@ -164,10 +177,21 @@ public class PID {
         
         // If the value is in the acceptable range set the flag to true
         if (currentValue > setpoint - acceptableRange && currentValue < setpoint + acceptableRange) {
-            inRange = true;
+
+            //If the current loop count is greater than or equal to the required set in range to true, and vice versa
+            if(currentLoop >= loopRequirement)
+                inRange = true;
+            else
+                inRange = false;
             output = (P * p + I * i + D * d);
+
+            // Increase the current loop count while still in range
+            currentLoop++;
         } else {
             inRange = false;
+
+            // If out of range reset loop counter
+            currentLoop = 0;
             output = (P * p + I * i + D * d);
         }
 

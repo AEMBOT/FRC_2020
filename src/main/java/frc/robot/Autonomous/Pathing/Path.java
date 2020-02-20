@@ -3,7 +3,6 @@ package frc.robot.Autonomous.Pathing;
 
 import java.util.ArrayList;
 
-import javax.management.RuntimeErrorException;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -26,8 +25,10 @@ public class Path{
     private final Pose2d initialPose;
     private final Pose2d endPose;
 
+    // Configuration for the trajectory
     private final TrajectoryConfig config;
 
+    // If the path should be inverted to run the robot backwards
     private boolean inverted = false;
     
     /**
@@ -86,7 +87,7 @@ public class Path{
 
     /**
      * Invert the path
-     * @param value wheater or not to invert
+     * @param value Whether or not to invert
      */
     public void setInverted(boolean value){
         inverted = value;
