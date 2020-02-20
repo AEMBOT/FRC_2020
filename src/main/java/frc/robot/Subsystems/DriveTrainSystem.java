@@ -101,13 +101,23 @@ public class DriveTrainSystem {
         //SpeedControllerGroups that hold all meaningful 
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
         rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
+
+        //Maintain constant values for each of the spark maxes
+        for(CANSparkMax motor : rightMotorsArray){
+            motor.burnFlash();
+        }
+
+        //Maintain constant values for each of the spark maxes
+        for(CANSparkMax motor : leftMotorsArray){
+            motor.burnFlash();
+        }
         
         // Flip the forward direction of the drive train
         leftSide.setInverted(true);
     
         //Create the differential robot control system
         //NOTE: Right and Left are flipped to account for weird inverted values that I dont want to change because autonmous works
-        diffDrive = new DifferentialDrive(leftSide, rightSide);
+        diffDrive = new DifferentialDrive(rightSide, leftSide);
 
         diffDrive.setSafetyEnabled(false);
     }
@@ -143,7 +153,7 @@ public class DriveTrainSystem {
         //    drivePower = 0.5;
         //}
         
-        diffDrive.arcadeDrive(drivePower, -turnPower);
+        diffDrive.arcadeDrive(drivePower, turnPower);
 
         
     }
