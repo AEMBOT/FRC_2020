@@ -2,6 +2,7 @@ package frc.robot.Communication;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.Communication.Enums.Color;
 
 /**
  * Class used to interface with the FMS / Driver Station
@@ -44,6 +45,32 @@ public class FMS {
      */
     public static String getGameMessage() {
         return DriverStation.getInstance().getGameSpecificMessage();
+    }
+
+    /**
+     * Gets the specific control panel color from the FMS
+     * @return the color of the control panel
+     */
+    public static Color getControlPanelColor(){
+        String data = getGameMessage();
+
+        // Verify there is actual data there
+        if(data.length() > 0){
+            switch(data.charAt(0)){
+                case 'B':
+                    return Color.BLUE;
+                case 'G':
+                    return Color.GREEN;
+                case 'Y':
+                    return Color.YELLOW;
+                case 'R':
+                    return Color.RED;
+                default:
+                    return Color.BAD_DATA;
+            }
+        }
+        
+        return Color.NO_DATA;
     }
 
     /**
