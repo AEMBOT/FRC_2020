@@ -45,10 +45,13 @@ public class PathingCommand{
     /**
      * Reset all important parts of the path, NavX, Encoders, Odometry, etc.
      */
-    public void resetProperties(){
+    public double resetProperties(){
+        double currentYaw = NavX.get().getYaw();
         robotDrive.resetEncoders();
         NavX.get().resetYaw();
         resetOdometry();
+
+        return currentYaw;
     }
 
      /**
@@ -68,6 +71,10 @@ public class PathingCommand{
 
         // Return the command stating that the robot should halt after the path is complete
         return ramseteCommand.andThen(() -> robotDrive.tankDriveVolts(0, 0));
+    }
+
+    public TrajectoryDriveSubsystem getRobotDrive(){
+        return robotDrive;
     }
 
      /**

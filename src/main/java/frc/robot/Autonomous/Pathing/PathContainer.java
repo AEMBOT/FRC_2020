@@ -30,6 +30,22 @@ public class PathContainer{
         return Localconfig;
     }
 
+      /**
+     * Setup the actual drive train configuration variable
+     */
+    private static TrajectoryConfig getConfig(double maxVelocity){
+        
+        //Voltage/Speed Constraints
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(new SimpleMotorFeedforward(RobotConstants.kSVolts, RobotConstants.kvVoltMetersPerSecond, RobotConstants.kaVoltMetersPerSecondSquared), 
+        RobotConstants.kDriveKinematics, RobotConstants.kMaxUsableVoltage);
+
+        //Constraints for the trajectory to follow
+        TrajectoryConfig Localconfig = new TrajectoryConfig(maxVelocity, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(RobotConstants.kDriveKinematics).addConstraint(autoVoltageConstraint);
+
+        return Localconfig;
+    }
+
     /**
      * Get the example path of driving 3 meters with a curve at 1 meter and coming back in line at 2 meters
      * 
@@ -58,6 +74,35 @@ public class PathContainer{
         path.setInverted(true);
 
         path.addWaypoint(0.75, 0);
+
+        return path;
+    }
+
+    /**
+     * Turn the robot around and pick up 3 balls
+     * @return
+     */
+    public static Path turnAndPickUp(){
+        Path path = new Path(getConfig(0.8), new Pose2d(2, 0, new Rotation2d(Math.toRadians(0))));
+
+        path.setInverted(false);
+
+        path.addWaypoint(1, 0);
+
+
+
+        return path;
+    }
+
+    /**
+     * Drive from picking up the balls backwards to where we started
+     */
+    public static Path driveBackToStart(){
+        Path path = new Path(getConfig(), new Pose2d(3, 0, new Rotation2d(0)));
+
+        path.setInverted(true);
+
+        path.addWaypoint(2.5, 0);
 
         return path;
     }

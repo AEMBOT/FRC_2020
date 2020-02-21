@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
     }
     else{
       alignment.controlLoop();
-      drive.enableClosedRampRate(0.05);
+      drive.enableClosedRampRate(0.03);
     }
 
     // //Toggle the shooters run status
@@ -168,14 +168,14 @@ public class Robot extends TimedRobot {
     ///shooter.manualShooter(primary.rightTrigger(), 0);
 
     // //When A is pressed run the intake
-    // teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
-    // teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
+    teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
+    teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
 
-    // teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
-    // teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
+     //teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
+     //teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
 
     // //When Y is pressed attempt to index the balls into the shooter
-    //teleop.pressed(primary.A(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+    teleop.pressed(primary.dPadUp(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
     // //Extend and retract intake
      teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());

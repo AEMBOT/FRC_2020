@@ -11,7 +11,7 @@ import frc.robot.Subsystems.DriveTrainSystem;
 public class Pathing{
 
     // PathingCommand generation and command
-    private PathingCommand pathingCommand;
+    public PathingCommand pathingCommand;
     private Command pathCommand;
 
     /**
@@ -55,7 +55,7 @@ public class Pathing{
     /**
      * Resets all the physical location properties of the robot
      */
-    public void resetProperties(){
-        pathingCommand.resetProperties();
+    public double resetProperties(){
+        return pathingCommand.resetProperties();
     }
 }

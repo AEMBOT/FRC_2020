@@ -93,6 +93,8 @@ public class BallSystem{
      */
     public class Intake{
 
+        private boolean intakeStatus = false;
+
         /**
          * Runs the intake
          */
@@ -105,6 +107,19 @@ public class BallSystem{
          */
         public void runFrontIntakeBack(){
             frontIntakeMotor.set(0.5);
+        }
+
+        private void enableIntake(){
+            intakeStatus = true;
+        }
+
+        private void disableIntake(){
+            intakeStatus = false;
+        }
+
+        private void runIntake(){
+            if(intakeStatus)
+                frontIntakeMotor.set(-0.5);
         }
 
         /**

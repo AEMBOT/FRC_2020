@@ -1,10 +1,17 @@
 package frc.robot.Autonomous.Pathing;
 
+import java.sql.Time;
+
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Autonomous.Pathing.Commands.AlignShoot;
 import frc.robot.Autonomous.Pathing.Enums.AutoPaths;
+import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
 import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Control.LimelightAlignment;
+import frc.robot.Utilities.Control.PID;
 
 /**
  * The Autonomous Manager Class Handles All Control Of The Robot During The Autonomous Period
@@ -111,10 +118,32 @@ public class AutonomousManager{
      */
     public class EightBallOne{
 
+        private int alignLoop = 0;
+        private PID pid;
+
+        //Change later
+        private boolean hasShotBalls = true;
+        private boolean hasStartedSecondPath = false;
+        private boolean turned180 = false;
+        private boolean firstTurnPass = true;
+        private boolean shouldTurn = false;
+        private boolean stage3 = false;
+
+        private int turnLoopCount = 0;
+
+        private Command alignCommand;
+
         /**
          * Called in the autonomous init function to setup the required parts of the routine
          */
         public void setup(){
+
+            //Create a new align command, and tell it what to run after that command
+            alignCommand = new AlignShoot(alignment, shooter, ballSystem);
+            //alignCommand.andThen(next)
+
+            // Turn off tracking
+            limelightTracking = false;
 
             // Reset all characteristics of the robot on init
             pathing.resetProperties();
@@ -125,6 +154,15 @@ public class AutonomousManager{
             // Shooter is no longer running
             runningShooter = false;
 
+            hasShotBalls = true;
+            hasStartedSecondPath = false;
+            turned180 = false;
+            firstTurnPass = true;
+            shouldTurn = false;
+
+            turnLoopCount = 0;
+            
+
             // Stop the indexer
             ballSystem.getIndexer().stopIndexing();
 
@@ -133,20 +171,91 @@ public class AutonomousManager{
 
             // Starts the first section of the path and tells the robot to start tracking the target when complete
             pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->setTracking(true)));
-
             
+            //Test first
+            //pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->alignCommand.schedule()));
+
+            // Turning Constant
+            pid = new PID(.016,0,0.01);
+            pid.setAcceptableRange(0.25);
+            pid.setMaxOutput(0.2);
+           
         }
 
         /**
-         * Called during the autonomous periodic method to allow for active control 
+         * Called during the jautonomous periodic method to allow for active control 
          */
         public void periodic(){
 
-            // Initial tracking statement
+            //// Initial tracking statement
             if(getTrackingStatus()){
                 alignShoot();
+                System.out.println("Align");
+
+            }
+            else if(!getTrackingStatus() && shouldTurn && !turned180){
+                turn180();
+                System.out.println("Turn");
+            }
+            else if(!hasStartedSecondPath && !getTrackingStatus() && turned180){
+                ballSystem.getIntake().extendIntake();
+                ballSystem.getIntake().runFrontIntakeForward();
+
+                
+                //Get the actual yaw value
+                pathing.resetProperties();
+                pathing.runPath(PathContainer.turnAndPickUp(), () -> nextStage(() -> retractAndStopIntake()));
+                hasStartedSecondPath = true;
+            }
+            else if(stage3){
+                pathing.runPath(PathContainer.driveBackToStart());
             }
 
+            subsystemUpdater();
+        }
+
+        private void retractAndStopIntake(){
+            ballSystem.getIntake().stopFrontIntake();
+            ballSystem.getIntake().retractIntake();
+            stage3 = true;
+        }
+
+        /**
+         * Flip the robot 180 degrees
+         */
+        private boolean turn180(){
+
+            // If its the first time turning
+            if(firstTurnPass){
+                pid.setSetpoint(180);
+                drive.enableOpenRampRate(1);
+                firstTurnPass = false;
+                
+            }
+            else{
+            
+                double power = pid.calcOutput(NavX.get().getAngle());
+
+                // Check if the robots output power is less than 0.26 motor power if so apply an additional power of 0.3 ontop of the current power
+                if(Math.abs(power) < 0.26){
+                    power += Math.copySign(0.3, power);
+                }
+
+                if(pid.isInRange()){
+                    drive.arcadeDrive(0, 0);
+                    drive.enableOpenRampRate(0);
+                    turned180 = true;
+                    if(turnLoopCount == 5)
+                        return true;
+                    else
+                        turnLoopCount++;
+                }
+                else{
+                    drive.arcadeDrive(power, 0);
+                    return false;
+                }
+            }
+            return false;
         }
 
         /**
@@ -156,22 +265,44 @@ public class AutonomousManager{
 
             // Order is important so that the control loop doesn't run if the robot is already aligned
             if(!robotAligned && alignment.controlLoop()){
-                robotAligned = true;
+                if(alignLoop == 10){
+                    robotAligned = true;
+                    shouldTurn = true;
+                    
+                }
+                else
+                    alignLoop++;
             }
 
-            // Check if the robot is already running the shooter, if not start it
+            // // Check if the robot is already running the shooter, if not start it
             else if(!runningShooter){
                 shooter.enableShooter();
-                runningShooter = true;
+                System.out.println(shooter.getStatus());
+                if(shooter.getStatus()){
+                    shooter.stopShooter();
+                    runningShooter = false;
+                    
+                    setTracking(false);
+                }
+                
             }
 
             // Finally check if the robot is aligned at the shooter is at "Full speed", if so start the belts
-            else if(robotAligned == true && shooter.isFull()){
-                ballSystem.getIndexer().standardIndex();
-            }
+        //     else if(robotAligned == true && shooter.isFull() && !hasShotBalls){
+        //         ballSystem.getIndexer().standardIndex();
+        //        alignLoop = 0;
+        //     }
+
+        //     // Turn 180 if not already
+        //    else if(!hasStartedSecondPath && turn180() && !turned180){
+        //         turned180 = true;
+        //     }
+
+            
+
 
             // Update the shooter toggle
-            subsystemUpdater();
+            
         }
     }
 

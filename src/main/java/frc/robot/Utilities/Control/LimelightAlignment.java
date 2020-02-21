@@ -28,19 +28,23 @@ public class LimelightAlignment{
         limelight = new Limelight();
 
         // P, I, D, staticFrictionOffset
-        pid = new PID(.029,0,0.0);
+        pid = new PID(.027,0,0.0);
         pid.setAcceptableRange(approxRange);
-        pid.setLoopRequirement(10);
+       // pid.setLoopRequirement(10);
         
         
         this.drive = drive;
-        this.drive.enableClosedRampRate(0.05);
+        
     }
 
     /**
      * Run to align the robot
      */
     public boolean controlLoop(){
+        if(initalControlLoop){
+            this.drive.enableClosedRampRate(0.05);
+            initalControlLoop = false;
+        }
         limelightX = limelight.getX(); 
         power = 0;
         power = pid.calcOutput(limelightX*-1);

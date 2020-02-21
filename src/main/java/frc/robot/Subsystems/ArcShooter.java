@@ -147,6 +147,7 @@ public class ArcShooter{
      */
     public void stopShooter(){
         toggledStatus = false;
+        flywheelMotor.set(0);
     }
 
     /**
