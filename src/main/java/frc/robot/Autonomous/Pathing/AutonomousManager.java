@@ -5,6 +5,7 @@ import java.sql.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Autonomous.Pathing.Commands.AlignShoot;
+import frc.robot.Autonomous.Pathing.Commands.Turn180;
 import frc.robot.Autonomous.Pathing.Enums.AutoPaths;
 import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
@@ -131,16 +132,44 @@ public class AutonomousManager{
 
         private int turnLoopCount = 0;
 
+        // Command to run to allign the robot
         private Command alignCommand;
+        private Command turnAroundCommand;
 
         /**
          * Called in the autonomous init function to setup the required parts of the routine
          */
         public void setup(){
 
-            //Create a new align command, and tell it what to run after that command
-            alignCommand = new AlignShoot(alignment, shooter, ballSystem);
-            //alignCommand.andThen(next)
+            //Create new auto commands to assist the pathing
+            alignCommand = new AlignShoot(alignment, shooter, ballSystem, drive);
+            turnAroundCommand = new Turn180(drive);
+
+            // Run the turn around command after the align command is finished
+            alignCommand.andThen(() -> turnAroundCommand.schedule());
+            
+            /**
+             * 1. Turn Around
+             * 2. Reset the odometry
+             * 3. Extend and start the intake
+             * 4. Run the turn and pick up path
+             * 5. Stop intake and retract
+             * 6. Drive back to the start
+             * 7. Change the end method of the turn around method to the align command
+             * 8. Turn around
+             * 9. Align and shoot
+             */
+            turnAroundCommand.andThen(() -> runAndReset(
+                () -> extendAndRunIntake(),
+                () -> pathing.runPath(PathContainer.turnAndPickUp(), 
+                () -> nextStage(() -> retractAndStopIntake(
+                () -> pathing.runPath(PathContainer.driveBackToStart(), () -> runMultipleCommands(
+                    () -> turnAroundCommand.andThen(() -> alignCommand.schedule()),
+                    () -> turnAroundCommand.schedule()
+                ))
+                )))));
+
+            
 
             // Turn off tracking
             limelightTracking = false;
@@ -183,7 +212,27 @@ public class AutonomousManager{
         }
 
         /**
-         * Called during the jautonomous periodic method to allow for active control 
+         * Resets the odometry and then runs a function
+         */
+        private void runAndReset(Runnable... functions){
+            pathing.resetProperties();
+            for (Runnable runnable : functions) {
+                runnable.run();
+            }
+            
+        }
+
+        /**
+         * Run Multiple commands in sequence
+         */
+        private void runMultipleCommands(Runnable...runnables){
+            for (Runnable runnable : runnables) {
+                runnable.run();
+            }
+        }
+
+        /**
+         * Called during the autonomous periodic method to allow for active control 
          */
         public void periodic(){
 
@@ -214,10 +263,31 @@ public class AutonomousManager{
             subsystemUpdater();
         }
 
+        /**
+         * Stop running the front intake
+         */
         private void retractAndStopIntake(){
             ballSystem.getIntake().stopFrontIntake();
             ballSystem.getIntake().retractIntake();
             stage3 = true;
+        }
+
+        /**
+         * Stop running the front intake and then run another command
+         */
+        private void retractAndStopIntake(Runnable function){
+            ballSystem.getIntake().stopFrontIntake();
+            ballSystem.getIntake().retractIntake();
+            function.run();
+            stage3 = true;
+        }
+
+        /**
+         * Extend an start running the intake
+         */
+        private void extendAndRunIntake(){
+            ballSystem.getIntake().extendIntake();
+            ballSystem.getIntake().runFrontIntakeForward();
         }
 
         /**

@@ -10,6 +10,7 @@ package frc.robot.Autonomous.Pathing.Commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
+import frc.robot.Subsystems.DriveTrainSystem;
 import frc.robot.Utilities.Control.LimelightAlignment;
 
 /**
@@ -29,19 +30,22 @@ public class AlignShoot extends CommandBase {
   private LimelightAlignment alignment;
   private ArcShooter shooter;
   private BallSystem ballSystem;
+  private DriveTrainSystem drive;
 
   /**
    * Creates a new AlignShoot.
    */
-  public AlignShoot(LimelightAlignment alignment, ArcShooter shooter, BallSystem ballSystem) {
+  public AlignShoot(LimelightAlignment alignment, ArcShooter shooter, BallSystem ballSystem, DriveTrainSystem drive) {
     this.alignment = alignment;
     this.shooter = shooter;
     this.ballSystem = ballSystem;
+    this.drive = drive;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    drive.arcadeDrive(0, 0);
     alignLoopCount = 0;
     robotAligned = false;
     runningShooter = false;
@@ -83,6 +87,7 @@ public class AlignShoot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    drive.arcadeDrive(0, 0);
     ballSystem.getIndexer().stopIndexing();
     shooter.stopShooter();
   }
