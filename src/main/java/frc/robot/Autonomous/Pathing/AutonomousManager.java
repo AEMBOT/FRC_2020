@@ -145,6 +145,8 @@ public class AutonomousManager{
             alignCommand = new AlignShoot(alignment, shooter, ballSystem, drive);
             turnAroundCommand = new Turn180(drive);
 
+            
+
             // Run the turn around command after the align command is finished
             alignCommand.andThen(() -> turnAroundCommand.schedule());
             
@@ -169,8 +171,9 @@ public class AutonomousManager{
                 ))
                 )))));
 
+            // Start the entire path
+            //pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->alignCommand.schedule()));
             
-
             // Turn off tracking
             limelightTracking = false;
 
@@ -201,9 +204,6 @@ public class AutonomousManager{
             // Starts the first section of the path and tells the robot to start tracking the target when complete
             pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->setTracking(true)));
             
-            //Test first
-            //pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->alignCommand.schedule()));
-
             // Turning Constant
             pid = new PID(.016,0,0.01);
             pid.setAcceptableRange(0.25);
