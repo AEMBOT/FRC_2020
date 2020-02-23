@@ -25,13 +25,14 @@ public class RobotMap {
     public static final int RightSideEncoderB = 3;
 
     //Shooter Constants
-    public static final int ShooterFlyWheelMotor = 8;
-    public static final int ShooterFlyWheelMotor2 = 13;
+    public static final int ShooterFlyWheelMotor = 7;
+    public static final int ShooterFlyWheelMotor2 = 8;
 
     //Intake Constants
-    public static final int FrontIntakeMotor = 7;
+    public static final int FrontIntakeMotor = 14;
 
-    public static final int BeltMotor = 12;
+    // Motor to run the hopper belts
+    public static final int BeltMotor = 13;
 
     //Indexer Motors
     public static final int FrontIndexerMotor = 10;
@@ -41,8 +42,13 @@ public class RobotMap {
     public static final int IntakePistonA = 0;
     public static final int IntakePistonB = 1;
 
+    // Solenoid ports for the climbers
     public static final int ClimberPistonA = 2;
     public static final int ClimberPistonB = 3;
+
+    //Motors to run the climber winches
+    public static final int LefWinchMotor = 11;
+    public static final int RightWinchMotor = 12;
 
     
 

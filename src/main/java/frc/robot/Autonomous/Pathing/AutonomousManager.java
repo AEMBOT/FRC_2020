@@ -112,12 +112,12 @@ public class AutonomousManager{
                 break;
         }
     }
-   
 
     /**
      * First simple auto path for eight balls
      */
     public class EightBallOne{
+
 
         private int alignLoop = 0;
         private PID pid;
@@ -145,35 +145,6 @@ public class AutonomousManager{
             alignCommand = new AlignShoot(alignment, shooter, ballSystem, drive);
             turnAroundCommand = new Turn180(drive);
 
-            
-
-            // Run the turn around command after the align command is finished
-            alignCommand.andThen(() -> turnAroundCommand.schedule());
-            
-            /**
-             * 1. Turn Around
-             * 2. Reset the odometry
-             * 3. Extend and start the intake
-             * 4. Run the turn and pick up path
-             * 5. Stop intake and retract
-             * 6. Drive back to the start
-             * 7. Change the end method of the turn around method to the align command
-             * 8. Turn around
-             * 9. Align and shoot
-             */
-            turnAroundCommand.andThen(() -> runAndReset(
-                () -> extendAndRunIntake(),
-                () -> pathing.runPath(PathContainer.turnAndPickUp(), 
-                () -> nextStage(() -> retractAndStopIntake(
-                () -> pathing.runPath(PathContainer.driveBackToStart(), () -> runMultipleCommands(
-                    () -> turnAroundCommand.andThen(() -> alignCommand.schedule()),
-                    () -> turnAroundCommand.schedule()
-                ))
-                )))));
-
-            // Start the entire path
-            //pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->alignCommand.schedule()));
-            
             // Turn off tracking
             limelightTracking = false;
 
@@ -203,34 +174,8 @@ public class AutonomousManager{
 
             // Starts the first section of the path and tells the robot to start tracking the target when complete
             pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->setTracking(true)));
-            
-            // Turning Constant
-            pid = new PID(.016,0,0.01);
-            pid.setAcceptableRange(0.25);
-            pid.setMaxOutput(0.2);
-           
+                       
         }
-
-        /**
-         * Resets the odometry and then runs a function
-         */
-        private void runAndReset(Runnable... functions){
-            pathing.resetProperties();
-            for (Runnable runnable : functions) {
-                runnable.run();
-            }
-            
-        }
-
-        /**
-         * Run Multiple commands in sequence
-         */
-        private void runMultipleCommands(Runnable...runnables){
-            for (Runnable runnable : runnables) {
-                runnable.run();
-            }
-        }
-
         /**
          * Called during the autonomous periodic method to allow for active control 
          */
@@ -263,33 +208,7 @@ public class AutonomousManager{
             subsystemUpdater();
         }
 
-        /**
-         * Stop running the front intake
-         */
-        private void retractAndStopIntake(){
-            ballSystem.getIntake().stopFrontIntake();
-            ballSystem.getIntake().retractIntake();
-            stage3 = true;
-        }
-
-        /**
-         * Stop running the front intake and then run another command
-         */
-        private void retractAndStopIntake(Runnable function){
-            ballSystem.getIntake().stopFrontIntake();
-            ballSystem.getIntake().retractIntake();
-            function.run();
-            stage3 = true;
-        }
-
-        /**
-         * Extend an start running the intake
-         */
-        private void extendAndRunIntake(){
-            ballSystem.getIntake().extendIntake();
-            ballSystem.getIntake().runFrontIntakeForward();
-        }
-
+       
         /**
          * Flip the robot 180 degrees
          */
@@ -374,13 +293,49 @@ public class AutonomousManager{
             // Update the shooter toggle
             
         }
-    }
 
-     /**
+        /**
+         * Called in auto init and will run the entire robot path
+         */
+        public void runAuto(){
+
+             // Run the turn around command after the align command is finished
+             alignCommand.andThen(() -> turnAroundCommand.schedule());
+            
+             /**
+              * 1. Turn Around
+              * 2. Reset the odometry
+              * 3. Extend and start the intake
+              * 4. Run the turn and pick up path
+              * 5. Stop intake and retract
+              * 6. Drive back to the start
+              * 7. Change the end method of the turn around method to the align command
+              * 8. Turn around
+              * 9. Align and shoot
+              */
+             turnAroundCommand.andThen(() -> runAndReset(
+                 () -> extendAndRunIntake(),
+                 () -> pathing.runPath(PathContainer.turnAndPickUp(), 
+                 () -> nextStage(() -> retractAndStopIntake(
+                 () -> pathing.runPath(PathContainer.driveBackToStart(), () -> runMultipleCommands(
+                     () -> turnAroundCommand.andThen(() -> alignCommand.schedule()),
+                     () -> turnAroundCommand.schedule()
+                 ))
+                 )))));
+ 
+             // Start the entire path
+             pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->alignCommand.schedule()));
+        }
+
+       
+
+         /**
      * Set whether or not the limelight should be trying to track something
      * @param value the tracking value
      */
-    private void setTracking(boolean value){
+    
+    
+     private void setTracking(boolean value){
         limelightTracking = value;
     }
 
@@ -399,6 +354,52 @@ public class AutonomousManager{
         shooter.runShooter();
     }
 
+
+    /**
+     * Stop running the front intake
+     */
+    private void retractAndStopIntake(){
+        ballSystem.getIntake().stopFrontIntake();
+        ballSystem.getIntake().retractIntake();
+        stage3 = true;
+    }
+    /**
+     * Stop running the front intake and then run another command
+     */
+    private void retractAndStopIntake(Runnable function){
+        ballSystem.getIntake().stopFrontIntake();
+        ballSystem.getIntake().retractIntake();
+        function.run();
+        stage3 = true;
+    }
+    /**
+     * Extend an start running the intake
+     */
+    private void extendAndRunIntake(){
+        ballSystem.getIntake().extendIntake();
+        ballSystem.getIntake().runFrontIntakeForward();
+    }
+    
+    /**
+     * Run a set of commands after resetting the properties
+     */
+    private void runAndReset(Runnable... functions){
+       pathing.resetProperties();
+       for (Runnable runnable : functions) {
+           runnable.run();
+        }
+    }
+       
+   
+   /**
+    * Run Multiple commands in sequence
+    */
+    private void runMultipleCommands(Runnable...runnables){
+       for (Runnable runnable : runnables) {
+           runnable.run();
+       }
+    }
+
     /**
      * Is Called at the end of an auto path and it stops the robot and calls the next function in the path
      * @param nextFuntion the function to call
@@ -410,6 +411,7 @@ public class AutonomousManager{
 
         // Run the next function
         nextFuntion.run();
+    }
     }
 
 }

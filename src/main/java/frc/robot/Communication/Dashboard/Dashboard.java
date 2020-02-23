@@ -3,9 +3,12 @@ package frc.robot.Communication.Dashboard;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.function.Consumer;
 
 import javax.management.RuntimeErrorException;
@@ -135,6 +138,24 @@ public class Dashboard {
      */
     public static void enablePersistance(String entryName){
         SmartDashboard.setPersistent(entryName);
+    }
+
+    /**
+     * Create a drop down menu of options from an enum for the sendable chooser
+     * @param entryName the network table name
+     * @param options list of enums to add to the table, use .values when passed
+     * @return the created sendable chooser object
+     */
+    public static SendableChooser createSenableChooser(String entryName, Enum[] options){
+        SendableChooser chooser = new SendableChooser();
+        
+        for(Enum option : options){
+            chooser.addOption(option.name(), option);
+        }
+
+        SmartDashboard.putData(entryName, chooser);
+
+        return chooser;
     }
 
     /**
