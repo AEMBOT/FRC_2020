@@ -62,6 +62,8 @@ public class PathContainer{
         return path;
     }
 
+    //region 8 Ball Auto Paths
+
     /**
      * Backs the robot up 1.4m and aligns
      * @return the path to complete this action
@@ -107,5 +109,71 @@ public class PathContainer{
         return path;
     }
 
+    //endregion
+
+    //region 10 Ball Auto Paths
+
+    /**
+     * Grab the balls from the opposing trench
+     * 
+     * Drive forward 3.5 meters to the trench with a max velocity of 0.75m/s
+     * 
+     * @return the path to complete this action
+     */
+    public static Path grabBallsFromOpposingTrench(){
+        Path path = new Path(getConfig(0.75), new Pose2d(3.467, 0, new Rotation2d(0)));
+
+        path.addWaypoint(1.7335, 0);
+
+        path.setInverted(false);
+
+        return path;
+    }
+
+    /**
+     * Drive from the opposing trench to the center of the field to shoot all 5 balls
+     * 
+     * Initial Position: (3.467, 0) and 0 degrees
+     * Final Position  (1.77, 0) and 0 degrees
+     * 
+     * Added because it thinks its going forward
+     * 
+     * @return the path to complete this action
+     */
+    public static Path backOutOfTrench(){
+        Path path = new Path(getConfig(), new Pose2d(3.467, 0, new Rotation2d(0)), new Pose2d(5.237, 0, new Rotation2d(0)));
+
+        path.setInverted(true);
+
+        path.addWaypoint(4.352, 0);
+
+        return path;
+
+    }
+
+    /**
+     * After backing out of the trench we need to drive and shoot into the goal
+     * 
+     * Initial Position: (1.77, 0) and 0
+     * Final Position: (1.014, 5.223)
+     * 
+     * TODO: May need to turn to make the path work
+     * 
+     * @return path to complete
+     */
+    public static Path driveToShoot(){
+        Path path = new Path(getConfig(), new Pose2d(1.77, 0, new Rotation2d(0)), new Pose2d(1.014, 5.223, new Rotation2d(Math.toRadians(-180))));
+
+        path.setInverted(false);
+
+        path.addWaypoint(1.985, 1.30575);
+        path.addWaypoint(1.77, 2.6115);
+        path.addWaypoint(1.392, 5.223);
+
+        return path;
+    }
+
+
+    //endregion
 
 }

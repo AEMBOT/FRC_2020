@@ -414,4 +414,11 @@ public class AutonomousManager{
     }
     }
 
+    /**
+     * Ten ball auto that starts from and steals balls from the opposing trench
+     */
+    public class TenBall{
+
+    }
+
 }
