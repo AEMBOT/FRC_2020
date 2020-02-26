@@ -105,12 +105,10 @@ public class ArcShooter{
     /**
      * Run the shooter motor given a manual power
      */
-    public void manualShooter(double leftPower, double rightPower){
+    public void manualShooter(double leftPower){
         if(leftPower>0.1){
             flywheelMotor.set(leftPower);
         }
-        else if(rightPower>0.1)
-            flywheelMotor.set(-rightPower);
         else
             flywheelMotor.set(0);
         

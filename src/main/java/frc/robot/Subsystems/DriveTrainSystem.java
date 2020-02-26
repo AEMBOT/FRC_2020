@@ -117,7 +117,7 @@ public class DriveTrainSystem {
     
         //Create the differential robot control system
         //NOTE: Right and Left are flipped to account for weird inverted values that I dont want to change because autonmous works
-        diffDrive = new DifferentialDrive(rightSide, leftSide);
+        diffDrive = new DifferentialDrive(leftSide, rightSide);
 
         diffDrive.setSafetyEnabled(false);
     }

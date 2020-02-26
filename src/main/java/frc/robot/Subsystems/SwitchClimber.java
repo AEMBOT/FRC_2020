@@ -1,5 +1,10 @@
 package frc.robot.Subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import frc.robot.RobotMap;
 import frc.robot.Hardware.Pneumatics.DoublePiston;
 
@@ -11,12 +16,24 @@ public class SwitchClimber{
     //Climber pistons
     private DoublePiston climberPiston;
 
+    // Create the climber winches
+    private TalonFX rightWinch;
+    private TalonFX leftWinch;
+
     /**
      * Construct the climber
      */
     public SwitchClimber(){
         climberPiston = new DoublePiston(RobotMap.ClimberPistonA, RobotMap.ClimberPistonB);
     
+        // Create the winch motors
+        rightWinch = new TalonFX(RobotMap.RightWinchMotor);
+        leftWinch = new TalonFX(RobotMap.LefWinchMotor);
+
+        // Set the left winch to follow the right winch
+        //leftWinch.follow(rightWinch, FollowerType.PercentOutput);
+        //leftWinch.setInverted(InvertType.OpposeMaster);
+
     }
 
     /**
@@ -25,9 +42,31 @@ public class SwitchClimber{
     public void deployClimber(){
         climberPiston.actuate();
     }
+    
 
+    /**
+     * Retract the climber
+     */
     public void retractClimber(){
         climberPiston.retract();
+    }
+
+    /**
+     * Run the winch manually down
+     * @param power the power to apply winch
+     */
+    public void manualWinch(double power){
+        rightWinch.set(ControlMode.PercentOutput, power);
+    }
+
+
+    public void runLeftWinch(double power){
+        leftWinch.follow(leftWinch);
+        leftWinch.set(ControlMode.PercentOutput, power);
+    }
+
+    public void runRightWinch(double power){
+        rightWinch.set(ControlMode.PercentOutput, power);
     }
 
 }

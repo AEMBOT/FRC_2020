@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,6 +37,7 @@ public class Robot extends TimedRobot {
 
   // Joysticks / UI variables
   private Xbox primary;
+  private Xbox secondary;
 
   // Subsystems
   private DriveTrainSystem drive;
@@ -64,6 +68,9 @@ public class Robot extends TimedRobot {
 
     // Assign the primary joystick to the correct port
     primary = new Xbox(new XboxController(0));
+    
+    // Secondary controller
+    secondary = new Xbox(new XboxController(1));
 
     //Create a new shooter object
     shooter = new ArcShooter();
@@ -147,45 +154,70 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //Control the robot drive train
+    //Control the robot drive train and tracking
     if(!tracking){
       drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
       drive.disableOpenRampRate();
     }
     else{
+      if(Math.abs(primary.rightStickX()) > 0.1 || Math.abs(primary.leftStickY()) > 0.1)
+        tracking = false;
+      
       alignment.controlLoop();
       drive.enableClosedRampRate(0.03);
     }
 
-    // //Toggle the shooters run status
-    teleop.runOncePerPress(primary.rightBumper(), () -> shooter.toggleShooter());
-    
-    teleop.runOncePerPress(primary.X(), () -> tracking = true);
-    teleop.runOncePerPress(primary.Y(), () -> tracking = false);
+    //Toggle the shooters run status
+    //teleop.runOncePerPress(secondary.leftBumper(), () -> shooter.toggleShooter());
 
+    // If left trigger run winchs
+    if(secondary.rightTrigger() > 0.1){
+      climber.runLeftWinch(secondary.rightTrigger());
+    }
+    else{
+      climber.manualWinch(0);
+    }
+
+    // if(secondary.rightTrigger() > 0.1){
+    //   climber.runRightWinch(secondary.rightTrigger());
+    // }
+    // else{
+    //   climber.manualWinch(0);
+    // }
+    
+    // Track the target
+    teleop.runOncePerPress(primary.A(), () -> tracking = true);
+
+    // Run until the compressor is full
     AdvancedCompressor.runUntilFull();
 
-    ///shooter.manualShooter(primary.rightTrigger(), 0);
+    // Temp. shooter control
+    shooter.manualShooter(secondary.leftTrigger());
 
-    // //When A is pressed run the intake
-    teleop.runOncePerPress(primary.dPadDown(), () -> ballSystem.getIntake().stopFrontIntake());
-    teleop.runOncePerPress(primary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeForward());
+    // When A is pressed run the intake
+    teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
+    teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeForward());
 
      //teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
      //teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
 
-    // //When Y is pressed attempt to index the balls into the shooter
-    teleop.pressed(primary.dPadUp(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
+    //When X is pressed attempt to index the balls into the shooter
+    teleop.pressed(secondary.X(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
-    // //Extend and retract intake
-     teleop.runOncePerPress(primary.B(), () -> ballSystem.getIntake().extendIntake());
-     teleop.runOncePerPress(primary.A(), () -> ballSystem.getIntake().retractIntake());
+    //Extend and retract intake
+     teleop.runOncePerPress(secondary.B(), () -> ballSystem.getIntake().extendIntake());
+     teleop.runOncePerPress(secondary.A(), () -> ballSystem.getIntake().retractIntake());
 
-    // // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
-    // // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
+    // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
+    // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
+
+    // When both DpadUp and X are pressed climb
+    if (secondary.dPadUp() && secondary.Y()){
+      // Initiate climb
+    }
 
     // //Update subsystems
-     subsystemUpdater();
+     //subsystemUpdater();
     
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
@@ -243,6 +275,7 @@ public class Robot extends TimedRobot {
 
       Dashboard.createEntry("Belt-Current", 0.0);
       Dashboard.createEntry("FrontIndexer-Current", 0.0);
+      Dashboard.createEntry("BackIndexer-Current", 0.0);
 
       //Add the NavX to the dashboard
       Dashboard.createEntry("Gyro");
@@ -292,7 +325,9 @@ public class Robot extends TimedRobot {
     Dashboard.setValue("Right-Side-Temperature", drive.getRightSideTemp());
 
     Dashboard.setValue("Belt-Current", ballSystem.getIndexer().getBeltCurrent());
-    Dashboard.setValue("FrontIndexer-Current", ballSystem.getIntake().getIntakeCurrent());
+    Dashboard.setValue("FrontIndexer-Current", ballSystem.getIndexer().getFrontIndexerCurrent());
+    Dashboard.setValue("BackIndexer-Current", ballSystem.getIndexer().getBackIndexerCurrent());
+
     //Update the navX angle on the dashboard
     Dashboard.setValue("Gyro", NavX.get().getAhrs());
   }

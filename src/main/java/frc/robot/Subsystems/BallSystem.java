@@ -50,6 +50,8 @@ public class BallSystem{
         backIndexerMotor = new CANSparkMax(RobotMap.BackIndexerMotor, MotorType.kBrushless);
         frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
 
+        backIndexerMotor.follow(frontIndexerMotor);
+
         transportBeltMotor = new CANSparkMax(RobotMap.BeltMotor, MotorType.kBrushless);
 
         //New intake object
@@ -99,7 +101,7 @@ public class BallSystem{
          * Runs the intake
          */
         public void runFrontIntakeForward(){
-            frontIntakeMotor.set(-0.5);
+            frontIntakeMotor.set(-0.4);
         }
 
          /**
@@ -170,12 +172,10 @@ public class BallSystem{
      * Class used to handle indexing of balls into the shooter
      */
     public class Indexer{
-
         /**
          * Run normal shooter index
          */
         public void standardIndex(){
-            backIndexerMotor.set(-1);
             frontIndexerMotor.set(-1);
             runBelts();
         }
@@ -192,8 +192,12 @@ public class BallSystem{
             return transportBeltMotor.getOutputCurrent();
         }
         
-        public double getIndexerCurrent(){
+        public double getFrontIndexerCurrent(){
             return frontIndexerMotor.getOutputCurrent();
+        }
+
+        public double getBackIndexerCurrent(){
+            return backIndexerMotor.getOutputCurrent();
         }
 
         /**
