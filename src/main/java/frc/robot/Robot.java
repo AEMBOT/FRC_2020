@@ -206,8 +206,8 @@ public class Robot extends TimedRobot {
     //teleop.runOncePerPress(secondary.leftBumper(), () -> shooter.toggleShooter());
 
     // If left trigger run winches
-    if(secondary.rightStickY() > 0.1){
-      climber.manualWinch(secondary.rightStickY());
+    if(secondary.leftStickY() > 0.1){
+      climber.manualWinch(secondary.leftStickY());
     }
     else{
       climber.manualWinch(0);
