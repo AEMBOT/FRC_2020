@@ -57,7 +57,7 @@ public class SwitchClimber{
      */
     public void manualWinch(double power){
         rightWinch.set(ControlMode.PercentOutput, power);
-        leftWinch.set(ControlMode.PercentOutput, power);
+        leftWinch.set(ControlMode.PercentOutput, -power);
     }
 
     public void reverseWinch(double power){
