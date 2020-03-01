@@ -179,7 +179,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
-    //Allows for raw telop input (subject to change)
+    climber.retractClimber();
 
   }
 
