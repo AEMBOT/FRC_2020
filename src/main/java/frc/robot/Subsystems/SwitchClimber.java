@@ -40,7 +40,7 @@ public class SwitchClimber{
      * Deploy the hook
      */
     public void deployClimber(){
-        climberPiston.actuate();
+        climberPiston.retract();
     }
     
 
@@ -48,7 +48,7 @@ public class SwitchClimber{
      * Retract the climber
      */
     public void retractClimber(){
-        climberPiston.retract();
+        climberPiston.actuate();
     }
 
     /**
