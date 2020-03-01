@@ -250,7 +250,7 @@ public class Robot extends TimedRobot {
 
     // When both DpadUp and X are pressed climb
     if (secondary.dPadRight() && secondary.Y()){
-      // Initiate climb
+      climber.deployClimber();
     }
 
     // //Update subsystems
