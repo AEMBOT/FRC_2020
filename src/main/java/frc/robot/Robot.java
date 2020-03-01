@@ -10,10 +10,14 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Autonomous.Basic.BasicAuto;
+import frc.robot.Autonomous.Control.AutoDriveControl;
 import frc.robot.Autonomous.Pathing.AutonomousManager;
 import frc.robot.Autonomous.Pathing.PathContainer;
 import frc.robot.Autonomous.Pathing.Pathing;
@@ -50,12 +54,17 @@ public class Robot extends TimedRobot {
   private Pathing pathing;
   private LimelightAlignment alignment;
   private AutonomousManager autoManager;
+  private AutoDriveControl autoDriveControl;
+
+  private BasicAuto basicAuto;
 
   // Temp-Auto
   private boolean tracking = false;
   private boolean hasAligned = false;
   private boolean runningShooter = false;
   private int alignCount = 0;
+
+  private boolean hasBackedUp = false;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -95,9 +104,18 @@ public class Robot extends TimedRobot {
     // Create a new over all auto manager
     autoManager = new AutonomousManager(alignment, pathing, ballSystem, drive, shooter);
 
+    autoDriveControl = new AutoDriveControl(drive);
+
+    basicAuto = new BasicAuto(alignment, autoDriveControl, shooter, ballSystem);
+
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
     
+
+    NavX.get().reset();
+    NavX.get().resetYaw();
+
+    pathing.resetProperties();
     //Reset the encoder positions at start
     drive.resetEncoders();
 
@@ -124,8 +142,22 @@ public class Robot extends TimedRobot {
     // Stop running the compressor during auto
     AdvancedCompressor.stopCompressor();
 
+    NavX.get().reset();
+
+    drive.resetEncoders();
+
+    drive.enableOpenRampRate(0.5);
+
+    shooter.stopShooter();
+    ballSystem.getIndexer().stopIndexing();
+
+    basicAuto.runRendezvousFiveSetup();
+
+   
+    //pathing.runPath(PathContainer.basicEightPartOne());
+
     // Initializes the first path and resets everything
-    autoManager.getBasicEight().setup();
+    //autoManager.getBasicEight().setup();
   }
 
   /**
@@ -135,7 +167,10 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {  
     
     // Runs all required periodic functions
-    autoManager.getBasicEight().periodic();
+   //autoManager.getBasicEight().periodic();
+
+    basicAuto.runRendezvousFive();
+   
   }
 
   /**
@@ -172,7 +207,7 @@ public class Robot extends TimedRobot {
 
     // If left trigger run winchs
     if(secondary.rightTrigger() > 0.1){
-      climber.runLeftWinch(secondary.rightTrigger());
+      climber.reverseWinch(secondary.rightTrigger());
     }
     else{
       climber.manualWinch(0);
@@ -195,8 +230,10 @@ public class Robot extends TimedRobot {
     shooter.manualShooter(secondary.leftTrigger());
 
     // When A is pressed run the intake
-    teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
-    teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeForward());
+    if(secondary.dPadUp())
+      teleop.pressed(secondary.dPadUp(), () -> ballSystem.getIntake().runFrontIntakeBack(), () -> ballSystem.getIntake().stopFrontIntake());
+    else
+      teleop.pressed(secondary.dPadDown(), () -> ballSystem.getIntake().runFrontIntakeForward(), () -> ballSystem.getIntake().stopFrontIntake());
 
      //teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
      //teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
@@ -205,14 +242,14 @@ public class Robot extends TimedRobot {
     teleop.pressed(secondary.X(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
     //Extend and retract intake
-     teleop.runOncePerPress(secondary.B(), () -> ballSystem.getIntake().extendIntake());
-     teleop.runOncePerPress(secondary.A(), () -> ballSystem.getIntake().retractIntake());
+     teleop.runOncePerPress(secondary.A(), () -> ballSystem.getIntake().extendIntake());
+     teleop.runOncePerPress(secondary.B(), () -> ballSystem.getIntake().retractIntake());
 
     // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
     // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
 
     // When both DpadUp and X are pressed climb
-    if (secondary.dPadUp() && secondary.Y()){
+    if (secondary.dPadRight() && secondary.Y()){
       // Initiate climb
     }
 
@@ -254,6 +291,8 @@ public class Robot extends TimedRobot {
       Dashboard.createEntry("Fly-Wheel-RPM", 0.0);
       Dashboard.createEntry("Fly-Wheel-Speed-Status", false);
       Dashboard.createEntry("Fly-Wheel-Total", 0.0);
+
+      SmartDashboard.putBoolean("BallsInHopper", true);
 
       //Create entry for the shooter current draw
       Dashboard.createEntry("Shooter-Current-Draw");

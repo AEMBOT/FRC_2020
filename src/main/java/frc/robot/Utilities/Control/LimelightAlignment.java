@@ -28,8 +28,9 @@ public class LimelightAlignment{
         limelight = new Limelight();
 
         // P, I, D, staticFrictionOffset
-        pid = new PID(.027,0,0.0);
+        pid = new PID(.025,0,0.2);
         pid.setAcceptableRange(approxRange);
+        pid.setMaxOutput(0.6);
        // pid.setLoopRequirement(10);
         
         
@@ -42,7 +43,8 @@ public class LimelightAlignment{
      */
     public boolean controlLoop(){
         if(initalControlLoop){
-            this.drive.enableClosedRampRate(0.05);
+            this.drive.disableOpenRampRate();
+            this.drive.enableClosedRampRate(0.02);
             initalControlLoop = false;
         }
         limelightX = limelight.getX(); 
@@ -50,7 +52,7 @@ public class LimelightAlignment{
         power = pid.calcOutput(limelightX*-1);
 
         // Check if the robots output power is less than 0.26 motor power if so apply an additional power of 0.3 ontop of the current power
-        if(Math.abs(power) < 0.26){
+        if(Math.abs(power) < 0.35){
             power += Math.copySign(0.3, power);
         }
 

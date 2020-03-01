@@ -142,14 +142,16 @@ public class AutonomousManager{
         public void setup(){
 
             //Create new auto commands to assist the pathing
-            alignCommand = new AlignShoot(alignment, shooter, ballSystem, drive);
-            turnAroundCommand = new Turn180(drive);
+           // alignCommand = new AlignShoot(alignment, shooter, ballSystem, drive);
+            //turnAroundCommand = new Turn180(drive);
 
             // Turn off tracking
             limelightTracking = false;
 
             // Reset all characteristics of the robot on init
             pathing.resetProperties();
+
+            NavX.get().reset();
 
             // Robot is no longer aligned
             robotAligned = false;
@@ -173,7 +175,7 @@ public class AutonomousManager{
             shooter.stopShooter();
 
             // Starts the first section of the path and tells the robot to start tracking the target when complete
-            pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->setTracking(true)));
+            pathing.runPath(PathContainer.basicEightPartOne(), () -> nextStage(()->setTracking(false)));
                        
         }
         /**

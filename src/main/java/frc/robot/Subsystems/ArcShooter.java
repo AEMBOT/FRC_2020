@@ -54,7 +54,7 @@ public class ArcShooter{
         //flywheelMotor2.setInverted(true);
 
         //Set a 300ms ramp rate for the motor
-        //flywheelMotor.setClosedLoopRampRate(0.7);
+        flywheelMotor.setOpenLoopRampRate(3);
 
         
     }
@@ -99,7 +99,7 @@ public class ArcShooter{
      * @return
      */
     public boolean isFull(){
-        return ((Math.abs(flywheelMotor.getEncoder().getVelocity())*2) > 10_000);
+        return ((Math.abs(flywheelMotor.getEncoder().getVelocity()*2)) > 8000);
     }
 
     /**

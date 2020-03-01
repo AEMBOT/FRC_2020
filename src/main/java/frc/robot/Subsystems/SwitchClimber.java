@@ -32,7 +32,7 @@ public class SwitchClimber{
 
         // Set the left winch to follow the right winch
         //leftWinch.follow(rightWinch, FollowerType.PercentOutput);
-        //leftWinch.setInverted(InvertType.OpposeMaster);
+       rightWinch.setInverted(InvertType.InvertMotorOutput);
 
     }
 
@@ -57,14 +57,24 @@ public class SwitchClimber{
      */
     public void manualWinch(double power){
         rightWinch.set(ControlMode.PercentOutput, power);
-    }
-
-
-    public void runLeftWinch(double power){
-        leftWinch.follow(leftWinch);
         leftWinch.set(ControlMode.PercentOutput, power);
     }
 
+    public void reverseWinch(double power){
+        rightWinch.set(ControlMode.PercentOutput, power);
+        leftWinch.set(ControlMode.PercentOutput, -power);
+    }
+
+    /**
+     * Runs the left winch individually
+     */
+    public void runLeftWinch(double power){
+        leftWinch.set(ControlMode.PercentOutput, power);
+    }
+
+    /**
+     * Run the right winch individually
+     */
     public void runRightWinch(double power){
         rightWinch.set(ControlMode.PercentOutput, power);
     }

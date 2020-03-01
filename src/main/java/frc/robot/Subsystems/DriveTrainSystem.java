@@ -102,16 +102,6 @@ public class DriveTrainSystem {
         leftSide = new SpeedControllerGroup(LeftFrontMotor, LeftMiddleMotor, LeftBackMotor);
         rightSide = new SpeedControllerGroup(RightFrontMotor, RightMiddleMotor, RightBackMotor);
 
-        //Maintain constant values for each of the spark maxes
-        for(CANSparkMax motor : rightMotorsArray){
-            motor.burnFlash();
-        }
-
-        //Maintain constant values for each of the spark maxes
-        for(CANSparkMax motor : leftMotorsArray){
-            motor.burnFlash();
-        }
-        
         // Flip the forward direction of the drive train
         leftSide.setInverted(true);
     
@@ -153,7 +143,7 @@ public class DriveTrainSystem {
         //    drivePower = 0.5;
         //}
         
-        diffDrive.arcadeDrive(drivePower, turnPower);
+        diffDrive.arcadeDrive(-drivePower, -turnPower);
 
         
     }

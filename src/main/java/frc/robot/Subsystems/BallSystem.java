@@ -50,9 +50,11 @@ public class BallSystem{
         backIndexerMotor = new CANSparkMax(RobotMap.BackIndexerMotor, MotorType.kBrushless);
         frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
 
-        backIndexerMotor.follow(frontIndexerMotor);
+    
 
         transportBeltMotor = new CANSparkMax(RobotMap.BeltMotor, MotorType.kBrushless);
+
+        transportBeltMotor.setOpenLoopRampRate(0.5);
 
         //New intake object
         intake = new Intake();
@@ -101,14 +103,14 @@ public class BallSystem{
          * Runs the intake
          */
         public void runFrontIntakeForward(){
-            frontIntakeMotor.set(-0.4);
+            frontIntakeMotor.set(-0.6);
         }
 
          /**
          * Runs the intake
          */
         public void runFrontIntakeBack(){
-            frontIntakeMotor.set(0.5);
+            frontIntakeMotor.set(0.6);
         }
 
         private void enableIntake(){
@@ -151,7 +153,7 @@ public class BallSystem{
          * Actuates both pistons causing the intake to extend
          */
         public void extendIntake(){
-            intakePiston.actuate();
+            intakePiston.retract();
 
             // Attempt to maintain a constant pressure by recharging after use
             AdvancedCompressor.startTimedRecharge(0.75);
@@ -161,7 +163,7 @@ public class BallSystem{
          * Retracts both pistons causing the intake to retract
          */
         public void retractIntake(){
-            intakePiston.retract();
+            intakePiston.actuate();
 
             // Attempt to maintain a constant pressure by recharging after use
             AdvancedCompressor.startTimedRecharge(0.75);
@@ -176,7 +178,8 @@ public class BallSystem{
          * Run normal shooter index
          */
         public void standardIndex(){
-            frontIndexerMotor.set(-1);
+            frontIndexerMotor.set(1);
+            backIndexerMotor.set(1);
             runBelts();
         }
 

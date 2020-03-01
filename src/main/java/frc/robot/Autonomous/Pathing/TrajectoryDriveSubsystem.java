@@ -81,8 +81,8 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
      * Drive the robot with a tank style drive, but pass voltages to the motor controllers instead of "powers"
      */
     public void tankDriveVolts(double leftVolts, double rightVolts){
-        drive.getLeftSideMotors().setVoltage(leftVolts);
-        drive.getRightSideMotors().setVoltage(rightVolts);
+        drive.getLeftSideMotors().setVoltage(-leftVolts);
+        drive.getRightSideMotors().setVoltage(-rightVolts);
 
     }
 
@@ -92,8 +92,8 @@ public class TrajectoryDriveSubsystem extends SubsystemBase{
      * @param rightVolts power to the right side of the drive train
      */
     public void inverseTankDriveVolts(double leftVolts, double rightVolts){
-        drive.getLeftSideMotors().setVoltage(-leftVolts);
-        drive.getRightSideMotors().setVoltage(-rightVolts);
+        drive.getLeftSideMotors().setVoltage(leftVolts);
+        drive.getRightSideMotors().setVoltage(rightVolts);
     }
 
     /**

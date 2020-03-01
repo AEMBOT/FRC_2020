@@ -23,6 +23,8 @@ public class AutoDriveControl {
     // Instance of the NavX
     private NavX navX;
 
+    private int alignedCount = 0;
+
     // PID Constants for turning, TODO: Tune
     private final double turn_kP = 0.02;
     private final double turn_kI = 0;
@@ -46,13 +48,14 @@ public class AutoDriveControl {
 
         // Creates a new PID controller that will account for the overflow of the NavX
         // when turning
-        turnPID = new PID(turn_kP, turn_kI, turn_kD);
-        turnPID.setAcceptableRange(0.02);
-
+        // Turning Constant
+        turnPID = new PID(.016,0,0.01);
+        turnPID.setAcceptableRange(0.25);
+        turnPID.setMaxOutput(0.2);
         // Creates a new PID controller to handle accurate of distances, larger range
         // because working in ticks instead of degrees
         drivePID = new PID(drive_kP, drive_kI, drive_kD);
-        drivePID.setAcceptableRange(0.02);
+        drivePID.setAcceptableRange(0.07);
     }
 
     /**
@@ -74,8 +77,8 @@ public class AutoDriveControl {
         System.out.println("Position: " + drive.getAverageEncoderDistance());
 
 
-        if(Math.abs(motorPower) > 0.7){
-            motorPower = Math.copySign(0.7, motorPower);
+        if(Math.abs(motorPower) > 0.5){
+            motorPower = Math.copySign(0.5, motorPower);
         }
         
 
@@ -89,7 +92,49 @@ public class AutoDriveControl {
         // If not in range keep driving and tell the program that it hasn't finished its
         // loop yet
         else {
-            drive.arcadeDrive(motorPower, 0);
+            drive.arcadeDrive(0, motorPower);
+            return false;
+        }
+
+    }
+
+    /**
+     * Method created to handle simple distance driving, returns bool to signify
+     * when complete
+     * 
+     * @param distance the wanted distance in inches
+     * @return the status of completion
+     */
+    public boolean DriveDistance(double distance, double maxPower) {
+
+        // Set the point for the PID loop that we want to reach
+        drivePID.setSetpoint(distance);
+        drive.enableOpenRampRate(1);
+
+        // Calculate the value needed to reach that point
+        double motorPower = drivePID.calcOutput(drive.getAverageEncoderDistance());
+
+        System.out.println("Setpoint: " + distance);
+        System.out.println("Position: " + drive.getAverageEncoderDistance());
+
+
+        if(Math.abs(motorPower) > maxPower){
+            motorPower = Math.copySign(maxPower, motorPower);
+        }
+        
+
+        // If in range stop the robot and report that the loop is done
+        if (drivePID.isInRange()) {
+            drive.arcadeDrive(0, 0);
+            drive.resetEncoders();
+            drive.disableOpenRampRate();
+            return true;
+        }
+
+        // If not in range keep driving and tell the program that it hasn't finished its
+        // loop yet
+        else {
+            drive.arcadeDrive(0, motorPower);
             return false;
         }
 
@@ -107,8 +152,8 @@ public class AutoDriveControl {
 
         // Use the yaw corrected from 0-180 to 0-360 and pass it as the input to the PID
         // loop
-        double power = turnPID.calcOutput(navX.getYaw());
-        System.out.println("Calculated Angle: " + navX.getYaw());
+        double power = turnPID.calcOutput(navX.getAngle());
+        System.out.println("Calculated Angle: " + navX.getAngle());
 
         if(Math.abs(power) > 0.5){
             power = Math.copySign(0.5, power);
@@ -123,7 +168,13 @@ public class AutoDriveControl {
         if (turnPID.isInRange()) {
             drive.arcadeDrive(0, 0);
             drive.resetEncoders();
-            return false;
+            if(alignedCount >= 5)
+                return true;
+            else{
+                alignedCount++;
+                return false;
+            }
+            
         }
 
         // If not in range keep driving and return false saying it is incomplete
