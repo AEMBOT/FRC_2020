@@ -253,6 +253,10 @@ public class Robot extends TimedRobot {
       climber.deployClimber();
     }
 
+    if(secondary.dPadLeft() && secondary.Y()){
+      climber.retractClimber();
+    }
+
     // //Update subsystems
      //subsystemUpdater();
     
