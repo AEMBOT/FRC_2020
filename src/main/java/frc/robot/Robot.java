@@ -111,6 +111,8 @@ public class Robot extends TimedRobot {
     //Clears sticky faults at robot start
     PDP.clearStickyFaults();
     
+    // Start reading camera
+    CameraServer.getInstance().startAutomaticCapture();
 
     NavX.get().reset();
     NavX.get().resetYaw();
@@ -118,6 +120,8 @@ public class Robot extends TimedRobot {
     pathing.resetProperties();
     //Reset the encoder positions at start
     drive.resetEncoders();
+
+    ballSystem.getIndexer().resetControllers();
 
   }
 
@@ -151,7 +155,9 @@ public class Robot extends TimedRobot {
     shooter.stopShooter();
     ballSystem.getIndexer().stopIndexing();
 
-    basicAuto.runRendezvousFiveSetup();
+    basicAuto.runBasicBack();
+
+    climber.retractClimber();
 
    
     //pathing.runPath(PathContainer.basicEightPartOne());
@@ -169,7 +175,7 @@ public class Robot extends TimedRobot {
     // Runs all required periodic functions
    //autoManager.getBasicEight().periodic();
 
-    basicAuto.runRendezvousFive();
+    basicAuto.runBasicBack();
    
   }
 
@@ -202,16 +208,24 @@ public class Robot extends TimedRobot {
       drive.enableClosedRampRate(0.03);
     }
 
-    //Toggle the shooters run status
-    //teleop.runOncePerPress(secondary.leftBumper(), () -> shooter.toggleShooter());
-
-    // If left trigger run winches
-    if(Math.abs(secondary.leftStickY()) > 0.1){
-      climber.manualWinch(secondary.leftStickY());
+    // If left trigger run left winch
+    if(secondary.leftStickY() < -0.1){
+      climber.runLeftWinch(secondary.leftStickY());
     }
     else{
-      climber.manualWinch(0);
+      climber.runLeftWinch(0);
     }
+
+    // If the right stick is greater than 0.1
+    if(secondary.rightStickY() < -0.1){
+      climber.runRightWinch(secondary.rightStickY());
+    }
+    else{
+      climber.runRightWinch(0);
+    }
+
+    
+    teleop.pressed(primary.leftBumper(), () -> shooter.enableShooter(), () -> shooter.stopShooter());
 
     // if(secondary.rightTrigger() > 0.1){
     //   climber.runRightWinch(secondary.rightTrigger());
@@ -224,10 +238,10 @@ public class Robot extends TimedRobot {
     teleop.runOncePerPress(primary.A(), () -> tracking = true);
 
     // Run until the compressor is full
-    AdvancedCompressor.runUntilFull();
+    
 
     // Temp. shooter control
-    shooter.manualShooter(secondary.leftTrigger());
+    //shooter.manualShooter(secondary.leftTrigger());
 
     // When A is pressed run the intake
     if(secondary.dPadUp())
@@ -258,7 +272,14 @@ public class Robot extends TimedRobot {
     }
 
     // //Update subsystems
-     //subsystemUpdater();
+     shooter.runShooter();
+
+     if(shooter.isFull()){
+       ballSystem.getIndexer().standardIndex();
+     }
+     else{
+       ballSystem.getIndexer().stopIndexing();
+     }
     
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
@@ -271,7 +292,24 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-      
+      // If left trigger run left winch
+      if(secondary.leftStickY() > 0.1){
+        climber.runLeftWinch(secondary.leftStickY());
+      }
+      else{
+        climber.runLeftWinch(0);
+      }
+
+      // If the right stick is greater than 0.1
+      if(secondary.rightStickY() > 0.1){
+        climber.runRightWinch(secondary.rightStickY());
+      }
+      else{
+        climber.runRightWinch(0);
+      }
+
+      AdvancedCompressor.runUntilFull();
+
   }
 
   /**

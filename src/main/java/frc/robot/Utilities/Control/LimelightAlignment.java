@@ -64,9 +64,11 @@ public class LimelightAlignment{
         }
 
         // If not aligned then attempt to align 
-        else{
+        else if(limelight.getValidTarget() > 0){
             drive.arcadeDrive(power, 0);
             return false;
         }
+
+        return false;
     }
 }

@@ -50,10 +50,10 @@ public class BallSystem{
         backIndexerMotor = new CANSparkMax(RobotMap.BackIndexerMotor, MotorType.kBrushless);
         frontIndexerMotor = new CANSparkMax(RobotMap.FrontIndexerMotor, MotorType.kBrushless);
 
-    
-
         transportBeltMotor = new CANSparkMax(RobotMap.BeltMotor, MotorType.kBrushless);
 
+        backIndexerMotor.setOpenLoopRampRate(0.5);
+        frontIndexerMotor.setOpenLoopRampRate(0.5);
         transportBeltMotor.setOpenLoopRampRate(0.5);
 
         //New intake object
@@ -179,12 +179,24 @@ public class BallSystem{
          */
         public void standardIndex(){
             frontIndexerMotor.set(1);
-            backIndexerMotor.set(1);
+            backIndexerMotor.set(-1);
             runBelts();
         }
 
+        /**
+         * Reset the motor controllers
+         */
+        public void resetControllers(){
+            frontIndexerMotor.restoreFactoryDefaults();
+            backIndexerMotor.restoreFactoryDefaults();
+            transportBeltMotor.restoreFactoryDefaults();
+            frontIndexerMotor.burnFlash();
+            backIndexerMotor.burnFlash();
+            transportBeltMotor.burnFlash();
+        }
+
         public void runBelts(){
-            transportBeltMotor.set(-0.5);
+            transportBeltMotor.set(-0.75);
         }
 
         public void stopBelts(){

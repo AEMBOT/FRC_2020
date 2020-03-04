@@ -3,6 +3,7 @@ package frc.robot.Autonomous.Basic;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Autonomous.Control.AutoDriveControl;
+import frc.robot.Autonomous.Pathing.Enums.AutoPaths;
 import frc.robot.Hardware.Sensors.NavX;
 import frc.robot.Subsystems.ArcShooter;
 import frc.robot.Subsystems.BallSystem;
@@ -40,6 +41,22 @@ public class BasicAuto{
 
         this.shooter = shooter;
         this.ballSystem = ballSystem;
+
+        shooterTimeout = new Timer();
+    }
+
+    /**
+     * Sets up the auto and initilizes variables
+     */
+    public void setupAuto(AutoPaths autoPaths){
+
+    }
+
+    /**
+     * Run the actual auto path
+     */
+    public void runAuto(AutoPaths autoPaths){
+
     }
 
     /**
@@ -68,10 +85,11 @@ public class BasicAuto{
         if(alignCount>=7)
           hasAligned = true;
        }
-       else if(hasAligned){
+       else if(hasAligned && shooterTimeout.get() < 5){
          shooter.enableShooter();
          if(shooter.isFull()){
            ballSystem.getIndexer().standardIndex();
+           System.out.println(shooterTimeout.get());
            if(shooterTimeout.get() <= 0)
             shooterTimeout.start();
          }
