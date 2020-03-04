@@ -23,20 +23,36 @@ public class DoublePiston{
         solenoidPiston = new DoubleSolenoid(forwardPort, reversePort);
 
         // Keep the current piston retracted at start so it doesn't fall outside the frame parameter
-        retract();
+        retract_true();
     }
 
     /**
-     * Extend the piston
+     * Actually extend the piston
      */
-    public void actuate(){
+    public void actuate_true(){
         solenoidPiston.set(Value.kForward);
     }
 
     /**
-     * Retract the piston
+     * Starts a thread to actuate the piston
+     */
+    public void actuate(){
+        actuatePiston actuation = new actuatePiston();
+        actuation.start();
+    }
+
+    /**
+     * Starts a thread to retract the piston
      */
     public void retract(){
+        retractPiston retraction = new retractPiston();
+        retraction.start();
+    }
+
+    /**
+     * Actually retract the piston
+     */
+    public void retract_true(){
         solenoidPiston.set(Value.kReverse);
     }
 
@@ -54,6 +70,22 @@ public class DoublePiston{
         return solenoidPiston.get();
     }
 
+    /**
+     * Thread used to actuate the piston
+     */
+    class actuatePiston extends Thread{
+        public void run(){
+            actuate_true();
+        }
+    }
 
+    /**
+     * Thread used to retract the piston
+     */
+    class retractPiston extends Thread{
+        public void run(){
+            retract_true();
+        }
+    }
 
 }

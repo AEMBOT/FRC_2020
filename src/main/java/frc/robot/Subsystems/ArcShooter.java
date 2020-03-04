@@ -28,6 +28,12 @@ public class ArcShooter{
 
     private SmartMotion flyWheelProfile;
 
+    private double[] prevoiusSpeeds = new double[10];
+    private int speedLoop = 0;
+    private double currentSpeed = 0;
+    private boolean hasLoopedOnce = false;
+
+
     //PIDF, TODO: Tune Values
     private final double[] pidf = {1.0, 0.0, 0.0, 0.0};
 
@@ -103,6 +109,37 @@ public class ArcShooter{
     }
 
     /**
+     * Will dynmaically take the change in 2 speeds and check if the change is negligible
+     * @return whether or not the shooter is at full speed
+     */
+    public boolean dynamicIsFull(){
+        currentSpeed = Math.abs(flywheelMotor.getEncoder().getVelocity());
+
+        if(hasLoopedOnce){
+            double difference = prevoiusSpeeds[prevoiusSpeeds.length-1] - prevoiusSpeeds[0];
+            if(difference > 200){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+
+        prevoiusSpeeds[speedLoop] = currentSpeed;
+
+        // Check if the loop is at the end of the array
+        if(speedLoop == 9){
+            speedLoop = 0;
+            hasLoopedOnce = true;
+        }
+        else{
+            speedLoop++;
+        }
+
+        return false;
+    }
+
+    /**
      * Run the shooter motor given a manual power
      */
     public void manualShooter(double leftPower){
@@ -145,6 +182,8 @@ public class ArcShooter{
      */
     public void stopShooter(){
         toggledStatus = false;
+        speedLoop = 0;
+        prevoiusSpeeds = new double[10];
         flywheelMotor.set(0);
     }
 
