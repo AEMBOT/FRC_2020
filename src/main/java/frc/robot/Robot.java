@@ -60,11 +60,6 @@ public class Robot extends TimedRobot {
 
   // Temp-Auto
   private boolean tracking = false;
-  private boolean hasAligned = false;
-  private boolean runningShooter = false;
-  private int alignCount = 0;
-
-  private boolean hasBackedUp = false;
 
   /**
    * Called as soon as the Robo-Rio boots, use like a constructor
@@ -146,24 +141,26 @@ public class Robot extends TimedRobot {
     // Stop running the compressor during auto
     AdvancedCompressor.stopCompressor();
 
+    // Reset Gyro
     NavX.get().reset();
 
+    // Reset drive encoders
     drive.resetEncoders();
 
+    // Enable a 1/2 second ramp rate to smooth out driving
     drive.enableOpenRampRate(0.5);
 
+    // Stop running the shooter
     shooter.stopShooter();
+
+    // Stop running the indexer
     ballSystem.getIndexer().stopIndexing();
 
-    basicAuto.runBasicBack();
+    // Run the setup procedure for basic backwards movement
+    basicAuto.runBasicBackStartup();
 
+    // Make sure the climber is retracted
     climber.retractClimber();
-
-   
-    //pathing.runPath(PathContainer.basicEightPartOne());
-
-    // Initializes the first path and resets everything
-    //autoManager.getBasicEight().setup();
   }
 
   /**
@@ -171,10 +168,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {  
-    
-    // Runs all required periodic functions
-   //autoManager.getBasicEight().periodic();
 
+    // During auto run the basic backwards auto
     basicAuto.runBasicBack();
    
   }
@@ -185,6 +180,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
+    // Make sure the climber is retracted at teleop start
     climber.retractClimber();
 
   }
@@ -195,7 +191,16 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //Control the robot drive train and tracking
+    /**
+     * Normal drive + tracking
+     * 
+     * If the robot is not in tracking mode
+     *  - Drive normally with no motor ramp rate
+     * 
+     * If the robot is in tracking mode
+     *  - Assign control to the tracking loop until the drive presses either of the joysticks in any direction
+     *  - And set the ramp rate to 0.03
+     */
     if(!tracking){
       drive.arcadeDrive(primary.rightStickX(), primary.leftStickY());
       drive.disableOpenRampRate();
@@ -208,40 +213,11 @@ public class Robot extends TimedRobot {
       drive.enableClosedRampRate(0.03);
     }
 
-    // If left trigger run left winch
-    if(secondary.leftStickY() < -0.1){
-      climber.runLeftWinch(secondary.leftStickY());
-    }
-    else{
-      climber.runLeftWinch(0);
-    }
-
-    // If the right stick is greater than 0.1
-    if(secondary.rightStickY() < -0.1){
-      climber.runRightWinch(secondary.rightStickY());
-    }
-    else{
-      climber.runRightWinch(0);
-    }
-
-    
+    // Toggle the shooter on or off if the left bumper is being held down
     teleop.pressed(primary.leftBumper(), () -> shooter.enableShooter(), () -> shooter.stopShooter());
 
-    // if(secondary.rightTrigger() > 0.1){
-    //   climber.runRightWinch(secondary.rightTrigger());
-    // }
-    // else{
-    //   climber.manualWinch(0);
-    // }
-    
     // Track the target
     teleop.runOncePerPress(primary.A(), () -> tracking = true);
-
-    // Run until the compressor is full
-    
-
-    // Temp. shooter control
-    //shooter.manualShooter(secondary.leftTrigger());
 
     // When A is pressed run the intake
     if(secondary.dPadUp())
@@ -249,38 +225,42 @@ public class Robot extends TimedRobot {
     else
       teleop.pressed(secondary.dPadDown(), () -> ballSystem.getIntake().runFrontIntakeForward(), () -> ballSystem.getIntake().stopFrontIntake());
 
-     //teleop.runOncePerPress(primary.dPadRight(), () -> ballSystem.getIntake().stopFrontIntake());
-     //teleop.runOncePerPress(primary.dPadLeft(), () -> ballSystem.getIntake().runFrontIntakeBack());
-
     //When X is pressed attempt to index the balls into the shooter
     teleop.pressed(secondary.X(), () -> ballSystem.getIndexer().standardIndex(), () -> ballSystem.getIndexer().stopIndexing());
 
     //Extend and retract intake
-     teleop.runOncePerPress(secondary.A(), () -> ballSystem.getIntake().extendIntake());
-     teleop.runOncePerPress(secondary.B(), () -> ballSystem.getIntake().retractIntake());
-
-    // teleop.runOncePerPress(primary.dPadLeft(), () -> climber.deployClimber());
-    // teleop.runOncePerPress(primary.dPadRight(), () -> climber.retractClimber());
+    teleop.runOncePerPress(secondary.A(), () -> ballSystem.getIntake().extendIntake());
+    teleop.runOncePerPress(secondary.B(), () -> ballSystem.getIntake().retractIntake());
 
     // When both DpadUp and X are pressed climb
     if (secondary.dPadRight() && secondary.Y()){
       climber.deployClimber();
     }
 
+    // Allows retraction of the climber
     if(secondary.dPadLeft() && secondary.Y()){
       climber.retractClimber();
     }
 
-    // //Update subsystems
-     shooter.runShooter();
+    // Runs the left winch in to climb
+    if(secondary.leftStickY() < -0.1){
+      climber.runLeftWinch(secondary.leftStickY());
+    }
+    else{
+      climber.runLeftWinch(0);
+    }
 
-     if(shooter.isFull()){
-       ballSystem.getIndexer().standardIndex();
-     }
-     else{
-       ballSystem.getIndexer().stopIndexing();
-     }
-    
+    // Runs the right winch in to climb
+    if(secondary.rightStickY() < -0.1){
+      climber.runRightWinch(secondary.rightStickY());
+    }
+    else{
+      climber.runRightWinch(0);
+    }
+
+    // Make sure systems that need constant updates are recieving them
+    subsystemUpdater();
+
     // Called to signify the end of one teleop loop to reset button properties,
     // don't delete
     teleop.endPeriodic();
@@ -317,6 +297,14 @@ public class Robot extends TimedRobot {
    */
   private void subsystemUpdater(){
     shooter.runShooter();
+
+    // When the shooter is at full speed run the indexers automatically
+    if(shooter.isFull()){
+      ballSystem.getIndexer().standardIndex();
+    }
+    else{
+      ballSystem.getIndexer().stopIndexing();
+    }
 
     //AdvancedCompressor.runUntilFull();
   }
