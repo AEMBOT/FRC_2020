@@ -125,14 +125,21 @@ public class BasicAuto{
             hasDroppedIntake = true;
         }
         else if(!hasBackedUp)
-            hasBackedUp = autoDriveControl.DriveDistance(2.3876, 0.35);
+            hasBackedUp = autoDriveControl.DriveDistance(1.6, 0.35, 0.1);
         else if(!hasRaisedIntake){
             ballSystem.getIntake().retractIntake();
             ballSystem.getIntake().stopFrontIntake();
             hasRaisedIntake = true;
         }
-        else if(!hasTurned)
-            hasTurned = autoDriveControl.TurnToAngle(180);
+        else if(!hasTurned){
+            hasTurned = (alignment.limelight.getValidTarget() > 0);
+            if(hasTurned){
+              autoDriveControl.drive.arcadeDrive(0, 0);
+            }
+            else{
+              autoDriveControl.drive.arcadeDrive(-0.45, 0);
+            }
+        }
         else if(!hasAligned){
             if(alignment.controlLoop())
                 alignCount++;
@@ -143,7 +150,7 @@ public class BasicAuto{
                 hasAligned = true;
             
         }
-        else if(hasAligned){
+        else if(hasAligned && shooterTimeout.get() < 5){
             shooter.enableShooter();
             if(shooter.isFull()){
               ballSystem.getIndexer().standardIndex();

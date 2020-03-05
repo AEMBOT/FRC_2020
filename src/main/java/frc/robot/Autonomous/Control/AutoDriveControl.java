@@ -13,7 +13,7 @@ import frc.robot.Utilities.Control.PID;
 public class AutoDriveControl {
 
     // Get a local instance of the Drive Train System
-    private DriveTrainSystem drive;
+    public DriveTrainSystem drive;
 
     // Holds the PID object which allows for precise movements, for turing and
     // driving respectively
@@ -49,9 +49,9 @@ public class AutoDriveControl {
         // Creates a new PID controller that will account for the overflow of the NavX
         // when turning
         // Turning Constant
-        turnPID = new PID(.016,0,0.01);
+        turnPID = new PID(0.02,0,0.4);
         turnPID.setAcceptableRange(0.25);
-        turnPID.setMaxOutput(0.2);
+        turnPID.setMaxOutput(0.5);
         // Creates a new PID controller to handle accurate of distances, larger range
         // because working in ticks instead of degrees
         drivePID = new PID(drive_kP, drive_kI, drive_kD);
@@ -105,10 +105,11 @@ public class AutoDriveControl {
      * @param distance the wanted distance in inches
      * @return the status of completion
      */
-    public boolean DriveDistance(double distance, double maxPower) {
+    public boolean DriveDistance(double distance, double maxPower, double acceptableRange) {
 
         // Set the point for the PID loop that we want to reach
         drivePID.setSetpoint(distance);
+        drivePID.setAcceptableRange(acceptableRange);
         drive.enableOpenRampRate(1);
 
         // Calculate the value needed to reach that point
@@ -149,11 +150,14 @@ public class AutoDriveControl {
     public boolean TurnToAngle(double angle) {
 
         turnPID.setSetpoint(angle);
+        drive.enableOpenRampRate(0.5);
 
         // Use the yaw corrected from 0-180 to 0-360 and pass it as the input to the PID
         // loop
-        double power = turnPID.calcOutput(navX.getAngle());
-        System.out.println("Calculated Angle: " + navX.getAngle());
+        double power = turnPID.calcOutput(navX.getCorrectAngle());
+        System.out.println("Current Angle: " + navX.getCorrectAngle());
+        System.out.println("Wanted Angle: " + angle);
+        System.out.println("Power: " + power);
 
         if(Math.abs(power) > 0.5){
             power = Math.copySign(0.5, power);
@@ -179,7 +183,7 @@ public class AutoDriveControl {
 
         // If not in range keep driving and return false saying it is incomplete
         else {
-            drive.arcadeDrive(0, power);
+            drive.arcadeDrive(power, 0);
             return false;
         }
     }

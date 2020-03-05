@@ -154,9 +154,6 @@ public class BallSystem{
          */
         public void extendIntake(){
             intakePiston.retract();
-
-            // Attempt to maintain a constant pressure by recharging after use
-            AdvancedCompressor.startTimedRecharge(0.75);
         }
 
         /**
@@ -164,9 +161,6 @@ public class BallSystem{
          */
         public void retractIntake(){
             intakePiston.actuate();
-
-            // Attempt to maintain a constant pressure by recharging after use
-            AdvancedCompressor.startTimedRecharge(0.75);
         }
     }
 

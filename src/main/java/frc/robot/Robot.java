@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
     ballSystem.getIndexer().stopIndexing();
 
     // Run the setup procedure for basic backwards movement
-    basicAuto.runBasicBackStartup();
+    basicAuto.runRendezvousFiveSetup();
 
     // Make sure the climber is retracted
     climber.retractClimber();
@@ -170,7 +170,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {  
 
     // During auto run the basic backwards auto
-    basicAuto.runBasicBack();
+    basicAuto.runRendezvousFive();
    
   }
 
@@ -180,6 +180,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
+    NavX.get().reset();
     // Make sure the climber is retracted at teleop start
     climber.retractClimber();
 
@@ -190,6 +191,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    System.out.println(NavX.get().getAngle());
 
     /**
      * Normal drive + tracking
@@ -297,6 +300,8 @@ public class Robot extends TimedRobot {
    */
   private void subsystemUpdater(){
     shooter.runShooter();
+
+    AdvancedCompressor.runUntilFull();
 
     // When the shooter is at full speed run the indexers automatically
     if(shooter.isFull()){

@@ -124,6 +124,10 @@ public class NavX {
         return ahrs.isCalibrating();
     }
 
+    public double getCorrectAngle(){
+        return Math.IEEEremainder(getAngle(), 360) * -1;
+    }
+
     /**
      * Return the rate at which the NavX is moving
      * @return rate of change in seconds
