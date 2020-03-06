@@ -13,9 +13,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Autonomous.Basic.AutoPaths;
 import frc.robot.Autonomous.Basic.BasicAuto;
 import frc.robot.Autonomous.Control.AutoDriveControl;
 import frc.robot.Autonomous.Pathing.AutonomousManager;
@@ -55,6 +57,10 @@ public class Robot extends TimedRobot {
   private LimelightAlignment alignment;
   private AutonomousManager autoManager;
   private AutoDriveControl autoDriveControl;
+
+  // Selection to choose autos
+  private SendableChooser<AutoPaths> autoChooser;
+  private AutoPaths autoPath;
 
   private BasicAuto basicAuto;
 
@@ -118,6 +124,14 @@ public class Robot extends TimedRobot {
 
     ballSystem.getIndexer().resetControllers();
 
+    autoChooser = new SendableChooser<>();
+
+    // Add options to the chooser
+    autoChooser.setDefaultOption("3 Ball Auto", AutoPaths.BACKUP3);
+    autoChooser.addOption("5 Ball Randezvous", AutoPaths.RENDEZVOUSFIVE);
+    SmartDashboard.putData("Auto Options", autoChooser);
+
+
   }
 
   /**
@@ -138,6 +152,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    // Get the selected auto
+    autoPath = autoChooser.getSelected();
+
     // Stop running the compressor during auto
     AdvancedCompressor.stopCompressor();
 
@@ -156,8 +173,15 @@ public class Robot extends TimedRobot {
     // Stop running the indexer
     ballSystem.getIndexer().stopIndexing();
 
-    // Run the setup procedure for basic backwards movement
-    basicAuto.runRendezvousFiveSetup();
+    // Selects the selected auto
+    switch(autoPath){
+      case BACKUP3:
+        basicAuto.runBasicBackStartup();
+        break;
+      case RENDEZVOUSFIVE:
+        basicAuto.runRendezvousFiveSetup();
+        break;
+    }
 
     // Make sure the climber is retracted
     climber.retractClimber();
@@ -169,8 +193,15 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {  
 
-    // During auto run the basic backwards auto
-    basicAuto.runRendezvousFive();
+    // Runs the selected auto in auto
+    if(autoPath == AutoPaths.BACKUP3){
+      basicAuto.runBasicBack();
+    }
+    else if(autoPath == AutoPaths.RENDEZVOUSFIVE){
+      // During auto run the basic backwards auto
+      basicAuto.runRendezvousFive();
+    }
+
    
   }
 
@@ -301,13 +332,19 @@ public class Robot extends TimedRobot {
   private void subsystemUpdater(){
     shooter.runShooter();
 
-    AdvancedCompressor.runUntilFull();
+    // Stop the compressor if the shooter is running
+    if(!shooter.isRunning())
+      AdvancedCompressor.runUntilFull();
+    else
+      AdvancedCompressor.stopCompressor();
+
 
     // When the shooter is at full speed run the indexers automatically
-    if(shooter.isFull()){
+    if(shooter.isFull() && !secondary.X()){
       ballSystem.getIndexer().standardIndex();
     }
-    else{
+
+    else if(!secondary.X()){
       ballSystem.getIndexer().stopIndexing();
     }
 
