@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
 
     // Add options to the chooser
     autoChooser.setDefaultOption("3 Ball Auto", AutoPaths.BACKUP3);
-    autoChooser.addOption("5 Ball Randezvous", AutoPaths.RENDEZVOUSFIVE);
+    autoChooser.addOption("5 Ball Rendezvous", AutoPaths.RENDEZVOUSFIVE);
     SmartDashboard.putData("Auto Options", autoChooser);
 
 

@@ -33,6 +33,7 @@ public class BasicAuto{
     private boolean hasTurned = false;
 
     private Timer shooterTimeout;
+    private Timer intakeTime;
     
 
     public BasicAuto(LimelightAlignment alignment, AutoDriveControl autoDriveControl, ArcShooter shooter, BallSystem ballSystem){
@@ -42,21 +43,8 @@ public class BasicAuto{
         this.shooter = shooter;
         this.ballSystem = ballSystem;
 
+        intakeTime = new Timer();
         shooterTimeout = new Timer();
-    }
-
-    /**
-     * Sets up the auto and initilizes variables
-     */
-    public void setupAuto(AutoPaths autoPaths){
-
-    }
-
-    /**
-     * Run the actual auto path
-     */
-    public void runAuto(AutoPaths autoPaths){
-
     }
 
     /**
@@ -125,11 +113,16 @@ public class BasicAuto{
             hasDroppedIntake = true;
         }
         else if(!hasBackedUp)
-            hasBackedUp = autoDriveControl.DriveDistance(1.6, 0.35, 0.1);
+            hasBackedUp = autoDriveControl.DriveDistance(1.7, 0.35, 0.1);
+            if(hasBackedUp)
+              intakeTime.start();
         else if(!hasRaisedIntake){
-            ballSystem.getIntake().retractIntake();
-            ballSystem.getIntake().stopFrontIntake();
-            hasRaisedIntake = true;
+            if(intakeTime.get() > 0.5)
+            {
+              ballSystem.getIntake().retractIntake();
+              ballSystem.getIntake().stopFrontIntake();
+              hasRaisedIntake = true;
+            }
         }
         else if(!hasTurned){
             hasTurned = (alignment.limelight.getValidTarget() > 0);
